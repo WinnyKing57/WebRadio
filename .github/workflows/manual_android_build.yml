@@ -34,8 +34,6 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3 # Updated to v3 which is the latest
         with:
-          ndk: '25.2.9519653' # Updated NDK version
-          cmake: '3.22.1'
 
       - name: Debug Workspace Structure
         run: |
@@ -47,18 +45,18 @@ jobs:
 
       - name: Grant Gradle execution permission
         run: chmod +x ./gradlew
-        working-directory: ${{ github.workspace }}/WebRadio
+        working-directory: ${{ github.workspace }}/WebradioApp
 
       # Debugging step removed.
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
-        working-directory: ${{ github.workspace }}/WebRadio
+        working-directory: ${{ github.workspace }}/WebradioApp
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4 # Or v3 if v4 has issues
         with:
           name: webradio-debug-apk # Name of the artifact to be uploaded
-          path: ${{ github.workspace }}/WebRadio/app/build/outputs/apk/debug/app-debug.apk # Path to the APK file
+          path: ${{ github.workspace }}/WebradioApp/app/build/outputs/apk/debug/app-debug.apk # Path to the APK file
           if-no-files-found: error # Optional: 'warn' or 'ignore' if an error isn't desired
           # retention-days: 90 # Optional: Number of days to retain the artifact (default is 90)
