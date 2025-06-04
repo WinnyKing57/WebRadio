@@ -40,6 +40,13 @@ jobs:
       - name: Grant Gradle execution permission
         run: chmod +x ./gradlew
 
+      - name: Debug NDK llvm-strip path
+        run: |
+          echo "Checking for llvm-strip..."
+          ls -la /opt/hostedtoolcache/ndk/25.1.8937393/x86_64/bin/
+          echo "ANDROID_NDK_HOME: $ANDROID_NDK_HOME"
+          echo "PATH: $PATH"
+
       - name: Build with Gradle
         run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
 
