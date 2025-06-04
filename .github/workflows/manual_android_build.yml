@@ -2,16 +2,6 @@ name: Manual Android Build
 
 on:
   workflow_dispatch:
-    # Inputs can be defined here if needed in the future, for example:
-    # inputs:
-    #   build_type:
-    #     description: 'Build type'
-    #     required: true
-    #     default: 'Debug'
-    #     type: choice
-    #     options:
-    #     - Debug
-    #     - Release
 
 jobs:
   build_android:
@@ -20,48 +10,51 @@ jobs:
 
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4 # Or v3 if v4 has issues, but v4 is current
-        # with:
-        #   fetch-depth: 0 # Fetches all history, uncomment if needed for versioning etc.
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4 # Or v3 if v4 has issues
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin' # Adoptium Temurin is a popular, free, and open-source JDK
+          distribution: 'temurin'
           cache: 'gradle'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3 # Updated to v3 which is the latest
+        uses: android-actions/setup-android@v3
 
       - name: Debug Workspace Structure
         run: |
           echo "GITHUB_WORKSPACE is: ${{ github.workspace }}"
-          echo "Listing contents of GITHUB_WORKSPACE (${{ github.workspace }}):"
           ls -la ${{ github.workspace }}
-          echo "Listing contents of GITHUB_WORKSPACE/WebradioApp (${{ github.workspace }}/WebradioApp):"
-          ls -la ${{ github.workspace }}/WebradioApp || echo "Directory GITHUB_WORKSPACE/WebradioApp not found or ls failed"
+          ls -la ${{ github.workspace }}/WebradioApp || echo "WebradioApp not found"
+
+      - name: Download gradle-wrapper.jar if missing
+        run: |
+          WRAPPER_DIR="${{ github.workspace }}/WebradioApp/gradle/wrapper"
+          mkdir -p "$WRAPPER_DIR"
+          if [ ! -f "$WRAPPER_DIR/gradle-wrapper.jar" ]; then
+            echo "gradle-wrapper.jar not found, downloading..."
+            curl -sL -o gradle-8.5-bin.zip https://services.gradle.org/distributions/gradle-8.5-bin.zip
+            unzip -p gradle-8.5-bin.zip gradle/wrapper/gradle-wrapper.jar > "$WRAPPER_DIR/gradle-wrapper.jar"
+            echo "Downloaded gradle-wrapper.jar"
+          else
+            echo "gradle-wrapper.jar already exists"
+          fi
 
       - name: Grant Gradle execution permission
         run: |
-          set -e
           cd ${{ github.workspace }}/WebradioApp || exit 1
-          pwd
-          ls -la
-          sudo chmod +x gradlew
+          chmod +x gradlew
           echo "Permissions after chmod:"
           ls -la gradlew
 
-      # Debugging step removed.
-
       - name: Build with Gradle
-        run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
+        run: ./gradlew assembleDebug
         working-directory: ${{ github.workspace }}/WebradioApp
 
       - name: Upload Debug APK
-        uses: actions/upload-artifact@v4 # Or v3 if v4 has issues
+        uses: actions/upload-artifact@v4
         with:
-          name: webradio-debug-apk # Name of the artifact to be uploaded
-          path: ${{ github.workspace }}/WebradioApp/app/build/outputs/apk/debug/app-debug.apk # Path to the APK file
-          if-no-files-found: error # Optional: 'warn' or 'ignore' if an error isn't desired
-          # retention-days: 90 # Optional: Number of days to retain the artifact (default is 90)
+          name: webradio-debug-apk
+          path: ${{ github.workspace }}/WebradioApp/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
