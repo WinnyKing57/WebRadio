@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Theme Colors -->
+    <!-- Primary Colors -->
+    <color name="purple_200">#FFBB86FC</color> <!-- Often used as primary variant in dark -->
+    <color name="purple_500">#FFBB86FC</color> <!-- Lighter purple for dark theme primary -->
+    <color name="purple_700">#FF3700B3</color> <!-- Kept for consistency, or could be lighter -->
+
+    <!-- Secondary Colors -->
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF03DAC5</color> <!-- teal_200 is often used as main secondary in dark -->
+
+    <!-- Standard Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Background and Surface Colors for Dark Theme -->
+    <!-- Default Material Design Dark Theme surface and background colors -->
+    <color name="material_surface">#121212</color>
+    <color name="material_background">#121212</color>
+    <color name="material_on_primary">#FF000000</color> <!-- Text/icons on primary color -->
+    <color name="material_on_secondary">#FF000000</color><!-- Text/icons on secondary color -->
+    <color name="material_on_surface">#FFFFFFFF</color> <!-- Text/icons on surface color -->
+    <color name="material_on_background">#FFFFFFFF</color><!-- Text/icons on background color -->
+
+
+    <!-- Star Colors for Dark Theme (adjust if needed for better contrast) -->
+    <color name="yellow_700_star">#FDD835</color> <!-- Slightly brighter yellow for dark bg -->
+    <color name="grey_500_star">#BDBDBD</color> <!-- Lighter grey for dark bg -->
+</resources>

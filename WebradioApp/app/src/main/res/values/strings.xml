@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WebradioApp</string>
+
+    <!-- Notification Channel Strings -->
+    <string name="notification_channel_name_station_updates">Station Updates</string>
+    <string name="notification_channel_description_station_updates">Notifications about station updates or general app information.</string>
+</resources>
