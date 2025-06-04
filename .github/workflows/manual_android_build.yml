@@ -45,12 +45,12 @@ jobs:
       - name: Grant Gradle execution permission
         run: |
           set -e
+          cd ${{ github.workspace }}/WebradioApp || exit 1
           pwd
           ls -la
           chmod +x gradlew
           echo "Permissions after chmod:"
           ls -la gradlew
-        working-directory: ${{ github.workspace }}/WebradioApp
 
       # Debugging step removed.
 
