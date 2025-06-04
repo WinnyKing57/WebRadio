@@ -42,6 +42,14 @@ jobs:
           echo "Listing contents of GITHUB_WORKSPACE/WebRadio (${{ github.workspace }}/WebRadio):"
           ls -la ${{ github.workspace }}/WebRadio || echo "Directory GITHUB_WORKSPACE/WebRadio not found or ls failed"
 
+      - name: Check WebradioApp contents and gradlew permissions
+        run: |
+          echo "Listing contents of ${{ github.workspace }}/WebradioApp:"
+          ls -la ${{ github.workspace }}/WebradioApp
+          echo "Checking gradlew specifically:"
+          ls -la ${{ github.workspace }}/WebradioApp/gradlew || echo "gradlew not found at expected path"
+        working-directory: ${{ github.workspace }}/WebradioApp
+
       - name: Grant Gradle execution permission
         run: chmod +x ./gradlew
         working-directory: ${{ github.workspace }}/WebradioApp
