@@ -34,18 +34,13 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3 # Updated to v3 which is the latest
         with:
-          ndk: '25.1.8937393'
+          ndk: '25.2.9519653' # Updated NDK version
           cmake: '3.22.1'
 
       - name: Grant Gradle execution permission
         run: chmod +x ./gradlew
 
-      - name: Debug NDK llvm-strip path
-        run: |
-          echo "Checking for llvm-strip..."
-          ls -la /opt/hostedtoolcache/ndk/25.1.8937393/x86_64/bin/
-          echo "ANDROID_NDK_HOME: $ANDROID_NDK_HOME"
-          echo "PATH: $PATH"
+      # Debugging step removed.
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
