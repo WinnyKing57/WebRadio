@@ -1,0 +1,54 @@
+name: Manual Android Build
+
+on:
+  workflow_dispatch:
+    # Inputs can be defined here if needed in the future, for example:
+    # inputs:
+    #   build_type:
+    #     description: 'Build type'
+    #     required: true
+    #     default: 'Debug'
+    #     type: choice
+    #     options:
+    #     - Debug
+    #     - Release
+
+jobs:
+  build_android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4 # Or v3 if v4 has issues, but v4 is current
+        # with:
+        #   fetch-depth: 0 # Fetches all history, uncomment if needed for versioning etc.
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4 # Or v3 if v4 has issues
+        with:
+          java-version: '17'
+          distribution: 'temurin' # Adoptium Temurin is a popular, free, and open-source JDK
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3 # Updated to v3 which is the latest
+        # with:
+        #   api-level: 34 # Optional: specify API level for SDK platforms
+        #   build-tools: "34.0.0" # Optional: specify build-tools version
+        #   ndk: "25.2.9519653" # Optional: specify NDK version
+        #   cmake: "3.22.1" # Optional: specify CMake version
+
+      - name: Grant Gradle execution permission
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4 # Or v3 if v4 has issues
+        with:
+          name: webradio-debug-apk # Name of the artifact to be uploaded
+          path: app/build/outputs/apk/debug/app-debug.apk # Path to the APK file
+          if-no-files-found: error # Optional: 'warn' or 'ignore' if an error isn't desired
+          # retention-days: 90 # Optional: Number of days to retain the artifact (default is 90)
