@@ -19,4 +19,30 @@
         <item name="colorOnSurface">@color/black</item> <!-- Text on light surface -->
         <item name="colorOnBackground">@color/black</item> <!-- Text on light background -->
     </style>
+
+    <!-- Accent Color Theme Overlays -->
+    <style name="Theme.WebradioApp.AccentBlue" parent="Theme.WebradioApp">
+        <item name="colorPrimary">@color/custom_accent_blue_500</item>
+        <item name="colorPrimaryVariant">@color/custom_accent_blue_700</item>
+        <item name="colorSecondary">@color/custom_accent_blue_200</item>
+        <item name="colorAccent">@color/custom_accent_blue_500</item>
+        <item name="colorOnPrimary">@color/white</item> <!-- Assuming white text on this blue -->
+    </style>
+
+    <style name="Theme.WebradioApp.AccentGreen" parent="Theme.WebradioApp">
+        <item name="colorPrimary">@color/custom_accent_green_500</item>
+        <item name="colorPrimaryVariant">@color/custom_accent_green_700</item>
+        <item name="colorSecondary">@color/custom_accent_green_200</item>
+        <item name="colorAccent">@color/custom_accent_green_500</item>
+        <item name="colorOnPrimary">@color/white</item> <!-- Assuming white text on this green -->
+    </style>
+
+    <style name="Theme.WebradioApp.AccentOrange" parent="Theme.WebradioApp">
+        <item name="colorPrimary">@color/custom_accent_orange_500</item>
+        <item name="colorPrimaryVariant">@color/custom_accent_orange_700</item>
+        <item name="colorSecondary">@color/custom_accent_orange_200</item>
+        <item name="colorAccent">@color/custom_accent_orange_500</item>
+        <item name="colorOnPrimary">@color/black</item> <!-- Orange might need black text for contrast -->
+    </style>
+
 </resources>

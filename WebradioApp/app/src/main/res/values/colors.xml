@@ -10,4 +10,22 @@
 
     <color name="yellow_700_star">#FBC02D</color> <!-- Standard Yellow 700 -->
     <color name="grey_500_star">#9E9E9E</color> <!-- Standard Grey 500 -->
+
+    <!-- Accent Color Options -->
+    <!-- Default (already defined: purple_500, purple_700, teal_200) -->
+
+    <!-- Blue Accent -->
+    <color name="custom_accent_blue_500">#2196F3</color> <!-- Material Blue 500 -->
+    <color name="custom_accent_blue_700">#1976D2</color> <!-- Material Blue 700 -->
+    <color name="custom_accent_blue_200">#90CAF9</color> <!-- Material Blue 200 -->
+
+    <!-- Green Accent -->
+    <color name="custom_accent_green_500">#4CAF50</color> <!-- Material Green 500 -->
+    <color name="custom_accent_green_700">#388E3C</color> <!-- Material Green 700 -->
+    <color name="custom_accent_green_200">#A5D6A7</color> <!-- Material Green 200 -->
+
+    <!-- Orange Accent -->
+    <color name="custom_accent_orange_500">#FF9800</color> <!-- Material Orange 500 -->
+    <color name="custom_accent_orange_700">#F57C00</color> <!-- Material Orange 700 -->
+    <color name="custom_accent_orange_200">#FFCC80</color> <!-- Material Orange 200 -->
 </resources>

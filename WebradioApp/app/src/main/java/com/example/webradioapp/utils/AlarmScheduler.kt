@@ -10,13 +10,26 @@ import com.example.webradioapp.AlarmReceiver
 import com.example.webradioapp.model.RadioStation
 import com.google.gson.Gson
 
+/**
+ * Utility object for scheduling and canceling alarms using [AlarmManager].
+ * Alarms are used to trigger radio playback at a specified time.
+ * Alarm details (time and station) are stored in a dedicated SharedPreferences file.
+ */
 object AlarmScheduler {
 
-    private const val ALARM_REQUEST_CODE = 12345
+    private const val ALARM_REQUEST_CODE = 12345 // Unique request code for the alarm PendingIntent
+    private const val ALARM_PREFS_NAME = "alarm_prefs" // Name for SharedPreferences file for alarm data
     private const val PREF_KEY_ALARM_TIME = "alarm_time_millis"
     private const val PREF_KEY_ALARM_STATION_JSON = "alarm_station_json"
 
-
+    /**
+     * Schedules an alarm to play a specified radio station at a given time.
+     *
+     * @param context The application context.
+     * @param timeInMillis The time in milliseconds (epoch time) at which the alarm should trigger.
+     * @param stationToPlay The [RadioStation] to be played when the alarm triggers. Can be null if
+     *                      the [AlarmReceiver] has a fallback mechanism (e.g., play last station).
+     */
     fun scheduleAlarm(context: Context, timeInMillis: Long, stationToPlay: RadioStation?) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -83,11 +96,7 @@ object AlarmScheduler {
     }
 
     private fun saveAlarmDetails(context: Context, timeInMillis: Long, station: RadioStation?) {
-        val prefs = SharedPreferencesManager(context) // Assuming SharedPreferencesManager can handle generic key-value
-        // This is not ideal as SharedPreferencesManager is specific.
-        // For simplicity, using its underlying prefs object if possible, or add generic methods to it.
-        // Or, create a new shared preference file just for alarm.
-        val editor = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE).edit()
+        val editor = context.getSharedPreferences(ALARM_PREFS_NAME, Context.MODE_PRIVATE).edit()
         editor.putLong(PREF_KEY_ALARM_TIME, timeInMillis)
         if (station != null) {
             editor.putString(PREF_KEY_ALARM_STATION_JSON, Gson().toJson(station))
@@ -105,12 +114,13 @@ object AlarmScheduler {
     }
 
     fun getScheduledAlarmTime(context: Context): Long {
-        val prefs = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(ALARM_PREFS_NAME, Context.MODE_PRIVATE)
         return prefs.getLong(PREF_KEY_ALARM_TIME, 0L)
     }
 
+    /** Retrieves the [RadioStation] scheduled for the current alarm, if any. */
     fun getScheduledAlarmStation(context: Context): RadioStation? {
-        val prefs = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(ALARM_PREFS_NAME, Context.MODE_PRIVATE)
         val json = prefs.getString(PREF_KEY_ALARM_STATION_JSON, null)
         return json?.let { Gson().fromJson(it, RadioStation::class.java) }
     }

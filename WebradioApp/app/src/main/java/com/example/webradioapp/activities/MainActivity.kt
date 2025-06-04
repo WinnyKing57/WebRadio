@@ -1,9 +1,12 @@
 package com.example.webradioapp.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+// Explicit import for SharedPreferencesManager
+import com.example.webradioapp.utils.SharedPreferencesManager
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.example.webradioapp.R
@@ -13,6 +16,11 @@ import com.example.webradioapp.fragments.SearchFragment
 import com.example.webradioapp.fragments.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+/**
+ * The main activity of the application.
+ * This activity hosts the bottom navigation bar and manages the display of different content fragments.
+ * It also handles the application of the selected accent color theme and initializes the Google Cast context.
+ */
 class MainActivity : AppCompatActivity() {
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -28,6 +36,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Apply accent color theme from SharedPreferences BEFORE super.onCreate()
+        // This ensures the theme is set before any views are inflated.
+        val prefs = SharedPreferencesManager(this) // Using explicit import if auto-import fails
+        val accentThemeName = prefs.getAccentColorTheme()
+        if (accentThemeName != SharedPreferencesManager.ACCENT_THEME_DEFAULT) {
+            try {
+                // The theme name in styles.xml is "Theme.WebradioApp.AccentBlue", etc.
+                // The stored name is "AccentBlue" (e.g., SharedPreferencesManager.ACCENT_THEME_BLUE).
+                val fullThemeName = "Theme.WebradioApp.$accentThemeName"
+                val themeResId = resources.getIdentifier(fullThemeName, "style", packageName)
+                if (themeResId != 0) {
+                    setTheme(themeResId)
+                    Log.d("MainActivity", "Applied accent theme: $fullThemeName (ID: $themeResId)")
+                } else {
+                    Log.w("MainActivity", "Accent theme resource ID not found for $fullThemeName")
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error applying accent theme $accentThemeName", e)
+            }
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

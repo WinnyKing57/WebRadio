@@ -25,6 +25,7 @@ class SettingsFragment : Fragment() {
     private lateinit var rbThemeLight: RadioButton
     private lateinit var rbThemeDark: RadioButton
     private lateinit var rbThemeSystem: RadioButton
+    private lateinit var switchStationUpdatesNotifications: com.google.android.material.switchmaterial.SwitchMaterial
     private lateinit var btnShowTestNotification: Button
     private lateinit var etSleepTimerMinutes: android.widget.EditText
     private lateinit var btnSetSleepTimer: Button
@@ -32,6 +33,11 @@ class SettingsFragment : Fragment() {
     private lateinit var tvCurrentAlarm: android.widget.TextView
     private lateinit var btnSetAlarm: Button
     private lateinit var btnCancelAlarm: Button
+    private lateinit var rgAccentColor: RadioGroup
+    private lateinit var rbAccentDefault: RadioButton
+    private lateinit var rbAccentBlue: RadioButton
+    private lateinit var rbAccentGreen: RadioButton
+    private lateinit var rbAccentOrange: RadioButton
     private lateinit var sharedPrefsManager: SharedPreferencesManager
 
     private val requestPermissionLauncher =
@@ -61,6 +67,7 @@ class SettingsFragment : Fragment() {
         rbThemeLight = view.findViewById(R.id.rb_theme_light)
         rbThemeDark = view.findViewById(R.id.rb_theme_dark)
         rbThemeSystem = view.findViewById(R.id.rb_theme_system)
+        switchStationUpdatesNotifications = view.findViewById(R.id.switch_station_updates_notifications)
         btnShowTestNotification = view.findViewById(R.id.btn_show_test_notification)
         etSleepTimerMinutes = view.findViewById(R.id.et_sleep_timer_minutes)
         btnSetSleepTimer = view.findViewById(R.id.btn_set_sleep_timer)
@@ -68,16 +75,68 @@ class SettingsFragment : Fragment() {
         tvCurrentAlarm = view.findViewById(R.id.tv_current_alarm)
         btnSetAlarm = view.findViewById(R.id.btn_set_alarm)
         btnCancelAlarm = view.findViewById(R.id.btn_cancel_alarm)
+        rgAccentColor = view.findViewById(R.id.rg_accent_color)
+        rbAccentDefault = view.findViewById(R.id.rb_accent_default)
+        rbAccentBlue = view.findViewById(R.id.rb_accent_blue)
+        rbAccentGreen = view.findViewById(R.id.rb_accent_green)
+        rbAccentOrange = view.findViewById(R.id.rb_accent_orange)
 
 
         loadCurrentThemePreference()
         setupThemeSelectionListener()
+        loadNotificationPreferences()
+        setupNotificationPreferenceListener()
+        loadAccentColorPreference()
+        setupAccentColorListener()
         setupTestNotificationButton()
         setupSleepTimerButtons()
         setupAlarmButtons()
         updateAlarmDisplay()
 
         return view
+    }
+
+    private fun loadAccentColorPreference() {
+        when (sharedPrefsManager.getAccentColorTheme()) {
+            SharedPreferencesManager.ACCENT_THEME_BLUE -> rbAccentBlue.isChecked = true
+            SharedPreferencesManager.ACCENT_THEME_GREEN -> rbAccentGreen.isChecked = true
+            SharedPreferencesManager.ACCENT_THEME_ORANGE -> rbAccentOrange.isChecked = true
+            else -> rbAccentDefault.isChecked = true // Default
+        }
+    }
+
+    private fun setupAccentColorListener() {
+        rgAccentColor.setOnCheckedChangeListener { _, checkedId ->
+            val selectedThemeName = when (checkedId) {
+                R.id.rb_accent_blue -> SharedPreferencesManager.ACCENT_THEME_BLUE
+                R.id.rb_accent_green -> SharedPreferencesManager.ACCENT_THEME_GREEN
+                R.id.rb_accent_orange -> SharedPreferencesManager.ACCENT_THEME_ORANGE
+                else -> SharedPreferencesManager.ACCENT_THEME_DEFAULT
+            }
+
+            val currentThemeName = sharedPrefsManager.getAccentColorTheme()
+            if (currentThemeName != selectedThemeName) {
+                sharedPrefsManager.setAccentColorTheme(selectedThemeName)
+                requireActivity().recreate() // Recreate activity to apply new theme
+            }
+        }
+    }
+
+
+    private fun loadNotificationPreferences() {
+        switchStationUpdatesNotifications.isChecked = sharedPrefsManager.isStationUpdatesNotificationEnabled()
+    }
+
+    private fun setupNotificationPreferenceListener() {
+        switchStationUpdatesNotifications.setOnCheckedChangeListener { _, isChecked ->
+            sharedPrefsManager.setStationUpdatesNotificationEnabled(isChecked)
+            // Optionally, provide feedback like a Toast
+            if (isChecked) {
+                Toast.makeText(context, "Station update notifications enabled.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Station update notifications disabled.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun updateAlarmDisplay() {
@@ -192,6 +251,12 @@ class SettingsFragment : Fragment() {
 
     private fun setupTestNotificationButton() {
         btnShowTestNotification.setOnClickListener {
+            // First, check our in-app preference
+            if (!sharedPrefsManager.isStationUpdatesNotificationEnabled()) {
+                Toast.makeText(requireContext(), "Notifications are disabled in app settings.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
                 when {
                     ContextCompat.checkSelfPermission(

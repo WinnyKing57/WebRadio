@@ -35,9 +35,11 @@ class SearchFragment : Fragment() {
     private lateinit var tvError: TextView
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
+    private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels()
+    private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels() // To observe all favorites
     private var searchJob: Job? = null
+    private var currentStationList: List<RadioStation> = emptyList()
 
-    // private val allStations: List<RadioStation> = SampleData.stations // Removed SampleData
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,9 +54,9 @@ class SearchFragment : Fragment() {
 
         setupRecyclerView()
         setupSearchView()
+        observeFavoriteChanges()
 
-        // Load initial data or popular stations? For now, search will trigger loading.
-        // performSearch(null) // Optionally perform an initial empty search for popular stations
+
         showEmptyState("Search for radio stations above.")
 
         return view
@@ -63,7 +65,7 @@ class SearchFragment : Fragment() {
     private fun setupRecyclerView() {
         stationAdapter = StationAdapter(
             requireContext(),
-            emptyList(),
+            // emptyList() will be replaced by ListAdapter's submitList
             onPlayClicked = { station ->
                 val serviceIntent = Intent(activity, StreamingService::class.java).apply {
                     action = StreamingService.ACTION_PLAY
@@ -71,14 +73,31 @@ class SearchFragment : Fragment() {
                     putExtra(StreamingService.EXTRA_STATION_OBJECT, station)
                 }
                 activity?.startService(serviceIntent)
+                // Also add to history via ViewModel
+                stationViewModel.addStationToHistory(station)
             },
-            onFavoriteToggle = { _, _ ->
-                // Favorite toggle might require re-fetching or just updating the item in adapter
-                // For simplicity, current adapter handles UI, SharedPreferencesManager handles storage.
+            onFavoriteToggle = { station ->
+                stationViewModel.toggleFavoriteStatus(station)
+                // The observer for favoriteStationsFlow should ideally update the list
+                // and re-submit, or we need to manually update the item's state.
+                // For now, the adapter's item will be rebound if list is resubmitted.
             }
         )
         recyclerViewStations.layoutManager = LinearLayoutManager(context)
         recyclerViewStations.adapter = stationAdapter
+    }
+
+    private fun observeFavoriteChanges() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            favoritesViewModel.favoriteStations.collect { favoriteStations ->
+                // When the list of all favorites changes, update the displayed list's items
+                val favoriteIds = favoriteStations.map { it.id }.toSet()
+                currentStationList = currentStationList.map { station ->
+                    station.copy(isFavorite = favoriteIds.contains(station.id))
+                }
+                stationAdapter.submitList(currentStationList.toList()) // toList to create a new list for diffing
+            }
+        }
     }
 
     private fun setupSearchView() {
@@ -100,7 +119,8 @@ class SearchFragment : Fragment() {
                     }
                 } else if (newText.isNullOrBlank()){
                     // Clear results if search text is empty
-                     stationAdapter.updateStations(emptyList())
+                     stationAdapter.submitList(emptyList())
+                     currentStationList = emptyList()
                      showEmptyState("Search for radio stations above.")
                 }
                 return true
@@ -111,24 +131,29 @@ class SearchFragment : Fragment() {
     private fun performSearch(query: String?) {
         showLoading(true)
         tvError.visibility = View.GONE
-        recyclerViewStations.visibility = View.GONE
+        // recyclerViewStations.visibility = View.GONE // Keep visible for smooth updates
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = apiService.searchStations(
-                    name = if (query.isNullOrBlank()) null else query, // Search by name
-                    // tag = if (query.isNullOrBlank()) "top" else null, // Example: search by tag "top" if query is blank
-                    limit = 50 // Limit results for now
+                    name = if (query.isNullOrBlank()) null else query,
+                    limit = 50
                 )
                 if (response.isSuccessful) {
                     val apiStations = response.body() ?: emptyList()
-                    val domainStations = apiStations.mapNotNull { it.toDomain() } // mapNotNull filters out nulls from toDomain()
+                    // Map to domain and then merge favorite status
+                    val favoriteIds = favoritesViewModel.favoriteStations.value.map { it.id }.toSet() // Get current favorites
 
-                    if (domainStations.isNotEmpty()) {
-                        stationAdapter.updateStations(domainStations)
-                        showLoading(false)
+                    currentStationList = apiStations.mapNotNull { it.toDomain() }.map { station ->
+                        station.copy(isFavorite = favoriteIds.contains(station.id))
+                    }
+
+                    if (currentStationList.isNotEmpty()) {
+                        stationAdapter.submitList(currentStationList.toList()) // Submit new list
                         recyclerViewStations.visibility = View.VISIBLE
+                        tvError.visibility = View.GONE
                     } else {
+                        stationAdapter.submitList(emptyList())
                         showError("No stations found for '$query'.")
                     }
                 } else {

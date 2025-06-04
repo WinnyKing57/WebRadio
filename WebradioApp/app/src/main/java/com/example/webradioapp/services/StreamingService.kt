@@ -28,7 +28,17 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManager
 import com.google.android.gms.cast.framework.SessionManagerListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
+/**
+ * Foreground service for handling audio streaming and Cast playback.
+ * Manages ExoPlayer for local playback and CastPlayer for Chromecast sessions.
+ * Handles audio focus, media notifications, sleep timer, and history logging.
+ */
 class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
     private var localPlayer: ExoPlayer? = null // Renamed from player to localPlayer
@@ -40,7 +50,10 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     private val binder = LocalBinder()
     private lateinit var audioManager: AudioManager
     private var audioFocusRequest: AudioFocusRequest? = null
-    private lateinit var sharedPrefsManager: SharedPreferencesManager
+    private lateinit var sharedPrefsManager: SharedPreferencesManager // Still used for Theme
+    private lateinit var stationRepository: com.example.webradioapp.db.StationRepository
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
 
     // Listener for Cast session events
     private val sessionManagerListener = object : SessionManagerListener<CastSession> {
@@ -101,7 +114,10 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     override fun onCreate() {
         super.onCreate()
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        sharedPrefsManager = SharedPreferencesManager(applicationContext)
+        sharedPrefsManager = SharedPreferencesManager(applicationContext) // For theme
+
+        val database = com.example.webradioapp.db.AppDatabase.getDatabase(applicationContext)
+        stationRepository = com.example.webradioapp.db.StationRepository(database.favoriteStationDao(), database.historyStationDao())
 
         castContext = CastContext.getSharedInstance(this)
         sessionManager = castContext.sessionManager
@@ -180,8 +196,10 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                         activePlayer?.prepare()
                         activePlayer?.play()
 
-                        // Log to history only once when play action is initiated
-                        sharedPrefsManager.addStationToHistory(station)
+                        // Log to history using Repository and serviceScope
+                        serviceScope.launch {
+                            stationRepository.addStationToHistory(station)
+                        }
 
                         // Notification will be updated by playerListener.onIsPlayingChanged
                     }
@@ -345,6 +363,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        serviceScope.cancel() // Cancel all coroutines started by this service
         localPlayer?.release()
         localPlayer = null
         castPlayer.release() // Release CastPlayer

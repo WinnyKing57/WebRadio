@@ -8,22 +8,21 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter // Changed to ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.webradioapp.R
 import com.example.webradioapp.model.RadioStation
-import com.example.webradioapp.utils.SharedPreferencesManager
+// Removed: import com.example.webradioapp.utils.SharedPreferencesManager
 
 class StationAdapter(
-    private val context: Context, // Added context for SharedPreferencesManager
-    private var stations: List<RadioStation>,
+    private val context: Context,
     private val onPlayClicked: (RadioStation) -> Unit,
-    private val onFavoriteToggle: (RadioStation, Boolean) -> Unit, // Callback for favorite toggle
-    private val showFavoriteButton: Boolean = true // To hide favorite button in FavoritesFragment if needed
-) : RecyclerView.Adapter<StationAdapter.StationViewHolder>() {
+    private val onFavoriteToggle: (RadioStation) -> Unit, // Simplified callback
+    private val showFavoriteButton: Boolean = true
+) : ListAdapter<RadioStation, StationAdapter.StationViewHolder>(StationDiffCallback()) { // Using ListAdapter
 
-    private val sharedPrefsManager: SharedPreferencesManager by lazy {
-        SharedPreferencesManager(context)
-    }
+    // Removed: private val sharedPrefsManager
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -33,15 +32,11 @@ class StationAdapter(
 
     override fun onBindViewHolder(holder: StationViewHolder, position: Int) {
         val station = stations[position]
+        val station = getItem(position) // ListAdapter provides getItem()
         holder.bind(station)
     }
 
-    override fun getItemCount(): Int = stations.size
-
-    fun updateStations(newStations: List<RadioStation>) {
-        stations = newStations
-        notifyDataSetChanged() // Consider using DiffUtil for better performance
-    }
+    // Removed: getItemCount(), updateStations() - Handled by ListAdapter
 
     inner class StationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTextView: TextView = itemView.findViewById(R.id.tv_station_name)
@@ -59,31 +54,43 @@ class StationAdapter(
 
             if (showFavoriteButton) {
                 favoriteButton.visibility = View.VISIBLE
-                updateFavoriteButtonState(station.id)
+                updateFavoriteButtonState(station) // Pass the whole station
 
                 favoriteButton.setOnClickListener {
-                    val isCurrentlyFavorite = sharedPrefsManager.isFavorite(station.id)
-                    if (isCurrentlyFavorite) {
-                        sharedPrefsManager.removeFavorite(station.id)
-                    } else {
-                        sharedPrefsManager.addFavorite(station)
-                    }
-                    updateFavoriteButtonState(station.id)
-                    onFavoriteToggle(station, !isCurrentlyFavorite) // Notify fragment
+                    // The station object itself might be stale regarding isFavorite if not from a Flow.
+                    // However, the click should toggle the *current* DB state.
+                    // The ViewModel will handle the logic of current state and toggle.
+                    onFavoriteToggle(station)
+                    // The UI update for the star should ideally come from observing the Flow
+                    // for this specific station, or by re-submitting the list.
+                    // For now, optimistic update:
+                    // updateFavoriteButtonState(station.copy(isFavorite = !station.isFavorite))
+                    // Better: Let the fragment observe changes and submit new list.
                 }
             } else {
                 favoriteButton.visibility = View.GONE
             }
         }
 
-        private fun updateFavoriteButtonState(stationId: String) {
-            if (sharedPrefsManager.isFavorite(stationId)) {
+        private fun updateFavoriteButtonState(station: RadioStation) {
+            // isFavorite is now part of the RadioStation object from DB/ViewModel
+            if (station.isFavorite) {
                 favoriteButton.setImageResource(R.drawable.ic_star_filled)
-                favoriteButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow_700_star)); // Example color
+                favoriteButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow_700_star))
             } else {
                 favoriteButton.setImageResource(R.drawable.ic_star_border)
-                favoriteButton.setColorFilter(ContextCompat.getColor(context, R.color.grey_500_star)); // Example color
+                favoriteButton.setColorFilter(ContextCompat.getColor(context, R.color.grey_500_star))
             }
         }
+    }
+}
+
+class StationDiffCallback : DiffUtil.ItemCallback<RadioStation>() {
+    override fun areItemsTheSame(oldItem: RadioStation, newItem: RadioStation): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: RadioStation, newItem: RadioStation): Boolean {
+        return oldItem == newItem // Relies on data class equals() for content comparison
     }
 }

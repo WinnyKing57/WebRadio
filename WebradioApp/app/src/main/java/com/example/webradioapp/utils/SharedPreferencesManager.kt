@@ -6,16 +6,23 @@ import com.example.webradioapp.model.RadioStation
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+/**
+ * Manages application preferences using SharedPreferences.
+ * This class handles storing and retrieving user settings such as theme choice,
+ * notification enablement, and accent color preferences.
+ *
+ * @param context The application context, used to access SharedPreferences.
+ */
 class SharedPreferencesManager(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    private val gson = Gson()
+    private val gson = Gson() // Retained in case of future complex object storage needs, though not currently used.
 
     companion object {
         private const val PREFS_NAME = "webradio_prefs"
-        private const val KEY_FAVORITE_STATIONS = "favorite_stations"
-        private const val KEY_STATION_HISTORY = "station_history"
-        private const val MAX_HISTORY_SIZE = 20
+        // Removed: KEY_FAVORITE_STATIONS
+        // Removed: KEY_STATION_HISTORY
+        // Removed: MAX_HISTORY_SIZE
 
         // Theme Preferences
         private const val KEY_THEME_PREFERENCE = "theme_preference"
@@ -23,75 +30,50 @@ class SharedPreferencesManager(context: Context) {
         const val THEME_LIGHT = 1 // AppCompatDelegate.MODE_NIGHT_NO
         const val THEME_DARK = 2  // AppCompatDelegate.MODE_NIGHT_YES
         const val THEME_SYSTEM_DEFAULT = -1 // AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+
+        // Notification Preferences
+        private const val PREF_ENABLE_STATION_UPDATES_NOTIFICATIONS = "enable_station_updates_notifications"
+
+        // Accent Color Theme Preference
+        private const val PREF_ACCENT_COLOR_THEME_NAME = "accent_color_theme_name"
+        const val ACCENT_THEME_DEFAULT = "Default" // Represents Theme.WebradioApp
+        const val ACCENT_THEME_BLUE = "AccentBlue"
+        const val ACCENT_THEME_GREEN = "AccentGreen"
+        const val ACCENT_THEME_ORANGE = "AccentOrange"
+
     }
 
-    // Theme Preference
+    /** Sets the user's preferred app theme (Light, Dark, System Default). */
     fun setThemePreference(themeMode: Int) {
         prefs.edit().putInt(KEY_THEME_PREFERENCE, themeMode).apply()
     }
 
+    /** Gets the user's preferred app theme. Defaults to System Default. */
     fun getThemePreference(): Int {
         // Default to System Default if no preference is set
         return prefs.getInt(KEY_THEME_PREFERENCE, THEME_SYSTEM_DEFAULT)
     }
 
-
-    // Favorites
-    fun addFavorite(station: RadioStation) {
-        val favorites = getFavoriteStations().toMutableList()
-        if (!favorites.any { it.id == station.id }) {
-            favorites.add(station)
-            saveStationList(KEY_FAVORITE_STATIONS, favorites)
-        }
+    /** Enables or disables station update notifications. */
+    fun setStationUpdatesNotificationEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean(PREF_ENABLE_STATION_UPDATES_NOTIFICATIONS, enabled).apply()
     }
 
-    fun removeFavorite(stationId: String) {
-        val favorites = getFavoriteStations().toMutableList()
-        favorites.removeAll { it.id == stationId }
-        saveStationList(KEY_FAVORITE_STATIONS, favorites)
+    /** Checks if station update notifications are enabled. Defaults to true. */
+    fun isStationUpdatesNotificationEnabled(): Boolean {
+        // Default to true (enabled)
+        return prefs.getBoolean(PREF_ENABLE_STATION_UPDATES_NOTIFICATIONS, true)
     }
 
-    fun getFavoriteStations(): List<RadioStation> {
-        return getStationList(KEY_FAVORITE_STATIONS)
+    /** Sets the user's chosen accent color theme name. */
+    fun setAccentColorTheme(themeName: String) {
+        prefs.edit().putString(PREF_ACCENT_COLOR_THEME_NAME, themeName).apply()
     }
 
-    fun isFavorite(stationId: String): Boolean {
-        return getFavoriteStations().any { it.id == stationId }
+    /** Gets the user's chosen accent color theme name. Defaults to "Default". */
+    fun getAccentColorTheme(): String {
+        return prefs.getString(PREF_ACCENT_COLOR_THEME_NAME, ACCENT_THEME_DEFAULT) ?: ACCENT_THEME_DEFAULT
     }
 
-    // History
-    fun addStationToHistory(station: RadioStation) {
-        val history = getStationHistory().toMutableList()
-        // Remove if already exists to move it to the top (most recent)
-        history.removeAll { it.id == station.id }
-        history.add(0, station) // Add to the beginning of the list
-
-        // Trim history if it exceeds max size
-        val trimmedHistory = if (history.size > MAX_HISTORY_SIZE) {
-            history.subList(0, MAX_HISTORY_SIZE)
-        } else {
-            history
-        }
-        saveStationList(KEY_STATION_HISTORY, trimmedHistory)
-    }
-
-    fun getStationHistory(): List<RadioStation> {
-        return getStationList(KEY_STATION_HISTORY)
-    }
-
-    // Generic methods for saving/retrieving lists
-    private fun saveStationList(key: String, stations: List<RadioStation>) {
-        val json = gson.toJson(stations)
-        prefs.edit().putString(key, json).apply()
-    }
-
-    private fun getStationList(key: String): List<RadioStation> {
-        val json = prefs.getString(key, null)
-        return if (json != null) {
-            val type = object : TypeToken<List<RadioStation>>() {}.type
-            gson.fromJson(json, type) ?: emptyList()
-        } else {
-            emptyList()
-        }
-    }
+    // Removed Favorite and History methods as they are now handled by Room DB
 }

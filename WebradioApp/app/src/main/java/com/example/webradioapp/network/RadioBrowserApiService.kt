@@ -6,9 +6,25 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url // For dynamic base URL if needed later
 
+/**
+ * Retrofit service interface for interacting with the Radio-Browser API.
+ * Defines suspend functions for fetching radio station data.
+ */
 interface RadioBrowserApiService {
 
-    // Base URL will be provided by Retrofit instance. This path is relative to base.
+    /**
+     * Searches for radio stations based on various criteria.
+     * @param name Search by station name.
+     * @param genre Search by station genre (tag).
+     * @param countryCode Search by country code (e.g., "US").
+     * @param language Search by language (e.g., "english").
+     * @param limit Maximum number of results to return.
+     * @param offset Offset for pagination.
+     * @param hideBroken If true, tries to hide stations that are known to be broken.
+     * @param order Field to order results by (e.g., "clickcount", "name", "votes").
+     * @param reverse If true, reverses the order (descending).
+     * @return A [Response] containing a list of [ApiRadioStation] objects.
+     */
     @GET("json/stations/search")
     suspend fun searchStations(
         @Query("name") name: String? = null,
