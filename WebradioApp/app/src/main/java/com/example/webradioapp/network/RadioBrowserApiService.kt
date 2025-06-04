@@ -1,0 +1,49 @@
+package com.example.webradioapp.network
+
+import com.example.webradioapp.network.model.ApiRadioStation
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Query
+import retrofit2.http.Url // For dynamic base URL if needed later
+
+interface RadioBrowserApiService {
+
+    // Base URL will be provided by Retrofit instance. This path is relative to base.
+    @GET("json/stations/search")
+    suspend fun searchStations(
+        @Query("name") name: String? = null,
+        @Query("tag") genre: String? = null,
+        @Query("countrycode") countryCode: String? = null,
+        @Query("language") language: String? = null,
+        @Query("limit") limit: Int = 100,
+        @Query("offset") offset: Int = 0,
+        @Query("hidebroken") hideBroken: Boolean = true, // Good default to filter out broken streams
+        @Query("order") order: String = "clickcount", // Order by popularity (clickcount) or votes
+        @Query("reverse") reverse: Boolean = true // True for descending order (most popular first)
+    ): Response<List<ApiRadioStation>>
+
+    @GET("json/stations/bytag/{tag}")
+    suspend fun getStationsByGenre(
+        @Query("tag") genre: String,
+        @Query("limit") limit: Int = 100,
+        @Query("offset") offset: Int = 0,
+        @Query("hidebroken") hideBroken: Boolean = true,
+        @Query("order") order: String = "clickcount",
+        @Query("reverse") reverse: Boolean = true
+    ): Response<List<ApiRadioStation>>
+
+    // Example of how to get stations by language
+    @GET("json/stations/bylanguage/{languageName}")
+    suspend fun getStationsByLanguage(
+        @Query("languageName") languageName: String,
+        @Query("limit") limit: Int = 100,
+        @Query("offset") offset: Int = 0,
+        @Query("hidebroken") hideBroken: Boolean = true,
+        @Query("order") order: String = "clickcount",
+        @Query("reverse") reverse: Boolean = true
+    ): Response<List<ApiRadioStation>>
+
+    // It might be useful to have a method to directly get a station by its UUID
+    @GET("json/stations/byuuid")
+    suspend fun getStationByUuid(@Query("uuids") uuid: String): Response<List<ApiRadioStation>> // API returns a list even for single UUID
+}

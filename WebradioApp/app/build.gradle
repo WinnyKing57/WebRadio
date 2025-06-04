@@ -1,0 +1,61 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace 'com.example.webradioapp'
+    compileSdk 33 // Or a recent API level
+
+    defaultConfig {
+        applicationId "com.example.webradioapp"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true // Enable view binding if needed later, good practice
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.9.0' // Example version
+    implementation 'androidx.appcompat:appcompat:1.6.1' // Example version
+    implementation 'com.google.android.material:material:1.10.0' // Material Components
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4' // Example version
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1' // Example version
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1' // Example version
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3' // Example version for navigation component (optional for this step but good to have)
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3' // Example version
+    implementation 'com.google.android.exoplayer:exoplayer:2.19.1' // ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer-cast:2.19.1' // ExoPlayer Cast Extension
+    implementation 'com.google.android.gms:play-services-cast-framework:21.3.0' // Google Play Services Cast Framework
+    implementation 'com.google.code.gson:gson:2.10.1' // Gson for JSON serialization
+
+    // Retrofit & OkHttp
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0' // Optional for debugging
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
