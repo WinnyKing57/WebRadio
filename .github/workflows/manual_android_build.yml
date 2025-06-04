@@ -39,8 +39,8 @@ jobs:
           echo "GITHUB_WORKSPACE is: ${{ github.workspace }}"
           echo "Listing contents of GITHUB_WORKSPACE (${{ github.workspace }}):"
           ls -la ${{ github.workspace }}
-          echo "Listing contents of GITHUB_WORKSPACE/WebRadio (${{ github.workspace }}/WebRadio):"
-          ls -la ${{ github.workspace }}/WebRadio || echo "Directory GITHUB_WORKSPACE/WebRadio not found or ls failed"
+          echo "Listing contents of GITHUB_WORKSPACE/WebradioApp (${{ github.workspace }}/WebradioApp):"
+          ls -la ${{ github.workspace }}/WebradioApp || echo "Directory GITHUB_WORKSPACE/WebradioApp not found or ls failed"
 
       - name: Grant Gradle execution permission
         run: |
@@ -48,7 +48,7 @@ jobs:
           cd ${{ github.workspace }}/WebradioApp || exit 1
           pwd
           ls -la
-          chmod +x gradlew
+          sudo chmod +x gradlew
           echo "Permissions after chmod:"
           ls -la gradlew
 
