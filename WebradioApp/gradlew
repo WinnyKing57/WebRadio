@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 #
-# Gradle start-up script for UN*X
-# Simplified version for GitHub Actions
+# Gradle Wrapper script (Unix)
 DIR="$(cd "$(dirname "$0")" && pwd)"
-exec "$DIR/gradle/wrapper/gradle-wrapper.jar" "$@"
+exec "${JAVA_HOME:-$(which java)}" -jar "$DIR/gradle/wrapper/gradle-wrapper.jar" "$@"
