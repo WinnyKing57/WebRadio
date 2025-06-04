@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 #
-# Gradle Wrapper script (Unix)
+# Corrected Gradle Wrapper script for Unix-based systems
+
 DIR="$(cd "$(dirname "$0")" && pwd)"
-exec "${JAVA_HOME:-$(which java)}" -jar "$DIR/gradle/wrapper/gradle-wrapper.jar" "$@"
+JAVA_BIN="${JAVA_HOME:-$(dirname $(dirname $(which javac)))}"/bin/java
+
+exec "$JAVA_BIN" -jar "$DIR/gradle/wrapper/gradle-wrapper.jar" "$@"
