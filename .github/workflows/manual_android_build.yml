@@ -22,32 +22,18 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Debug Workspace Structure
+      - name: Debug project structure
         run: |
-          echo "GITHUB_WORKSPACE is: ${{ github.workspace }}"
+          echo "Listing root directory:"
           ls -la ${{ github.workspace }}
+          echo "Listing WebradioApp directory:"
           ls -la ${{ github.workspace }}/WebradioApp || echo "WebradioApp not found"
 
-      - name: Download Gradle ZIP with wrapper
-        run: curl -sL -o gradle-8.5-all.zip https://services.gradle.org/distributions/gradle-8.5-all.zip
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+        working-directory: ${{ github.workspace }}/WebradioApp
 
-      - name: List contents of Gradle ZIP (debug)
-        run: unzip -l gradle-8.5-all.zip
-
-      - name: Extract gradle-wrapper.jar
-        run: |
-          WRAPPER_DIR="${{ github.workspace }}/WebradioApp/gradle/wrapper"
-          mkdir -p "$WRAPPER_DIR"
-          unzip -p gradle-8.5-all.zip gradle/wrapper/gradle-wrapper.jar > "$WRAPPER_DIR/gradle-wrapper.jar"
-
-      - name: Grant Gradle execution permission
-        run: |
-          cd ${{ github.workspace }}/WebradioApp || exit 1
-          chmod +x gradlew
-          echo "Permissions after chmod:"
-          ls -la gradlew
-
-      - name: Build with Gradle
+      - name: Build APK
         run: ./gradlew assembleDebug
         working-directory: ${{ github.workspace }}/WebradioApp
 
