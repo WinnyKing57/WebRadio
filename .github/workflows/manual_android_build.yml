@@ -33,14 +33,14 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3 # Updated to v3 which is the latest
-        # with:
-        #   api-level: 34 # Optional: specify API level for SDK platforms
-        #   build-tools: "34.0.0" # Optional: specify build-tools version
-        #   ndk: "25.2.9519653" # Optional: specify NDK version
-        #   cmake: "3.22.1" # Optional: specify CMake version
+        with:
+          ndk: '25.2.9519653' # Updated NDK version
+          cmake: '3.22.1'
 
       - name: Grant Gradle execution permission
         run: chmod +x ./gradlew
+
+      # Debugging step removed.
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
