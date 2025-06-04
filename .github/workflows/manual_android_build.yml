@@ -37,6 +37,9 @@ jobs:
           ndk: '25.2.9519653' # Updated NDK version
           cmake: '3.22.1'
 
+      - name: List files in workspace
+        run: ls -la
+
       - name: Grant Gradle execution permission
         run: chmod +x ./gradlew
 
