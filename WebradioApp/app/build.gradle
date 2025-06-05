@@ -65,25 +65,3 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
-
-
-tasks.register('printAgpVersion') {
-    description = 'Prints the version of the Android Gradle Plugin being used.'
-    group = 'Help' // Optional: assign to a task group
-
-    doLast {
-        if (project.plugins.hasPlugin('com.android.application')) {
-            try {
-                // The 'android' extension is added by the AGP.
-                // AGP also adds a 'pluginVersion' property to this extension.
-                String agpVersion = project.android.pluginVersion
-                println "Android Gradle Plugin (AGP) version: " + agpVersion
-            } catch (Exception e) {
-                println "Could not determine AGP version using project.android.pluginVersion. Error: " + e.getMessage()
-                println "This might indicate an older AGP version or an unusual setup."
-            }
-        } else {
-            println "Android Application plugin (com.android.application) is not applied to this project."
-        }
-    }
-}
