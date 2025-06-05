@@ -13,16 +13,28 @@ jobs:
 
     - name: Verify Checkout - Root
       run: ls -la
-    - name: Verify Checkout - WebradioApp
-      run: ls -la WebradioApp/
-    - name: Verify Checkout - WebradioApp app
-      run: ls -la WebradioApp/app/
-    - name: Verify Checkout - WebradioApp app src
-      run: ls -la WebradioApp/app/src/
-    - name: Verify Checkout - WebradioApp app src main
-      run: ls -la WebradioApp/app/src/main/
-    - name: Verify Checkout - WebradioApp app src main res
-      run: ls -la WebradioApp/app/src/main/res/
+
+    - name: Show Current Directory # New
+      run: pwd
+
+    - name: Stat WebradioApp Directory # New
+      run: stat WebradioApp/
+
+    - name: Attempt to cd into WebradioApp and list contents # Modified/Replaces several ls steps
+      run: |
+        cd WebradioApp || exit 1
+        echo "Successfully changed to WebradioApp directory. Current path:"
+        pwd
+        echo "Contents of WebradioApp:"
+        ls -la
+        # Attempt to cd back to GITHUB_WORKSPACE to not affect subsequent steps if they rely on it.
+        # However, if cd WebradioApp fails, the script exits due to 'exit 1', so cd $GITHUB_WORKSPACE might not run.
+        # A safer approach might be to run these in a subshell if we were concerned about pwd for next steps,
+        # but for now, let's see the output. If this step succeeds, subsequent steps might operate
+        # from within WebradioApp if not explicitly changed back.
+        # For now, the primary goal is to see if 'cd WebradioApp' works.
+        # Let's add a cd back for safety for subsequent steps, assuming this one passes.
+        cd $GITHUB_WORKSPACE
 
     - name: Delete local.properties files # New step
       run: |
@@ -44,8 +56,8 @@ jobs:
         java -version
         echo "JAVA_HOME is: $JAVA_HOME"
 
-    - name: List contents of font directory # New step
-      run: ls -la WebradioApp/app/src/main/res/font/
+    # - name: List contents of font directory # Temporarily commented out
+    #  run: ls -la WebradioApp/app/src/main/res/font/
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
