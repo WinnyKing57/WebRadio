@@ -46,6 +46,9 @@ jobs:
         java -version
         echo "JAVA_HOME is: $JAVA_HOME"
 
+    - name: Print AGP Version # New step
+      run: ./gradlew :WebradioApp:app:printAgpVersion
+
     - name: Make gradlew executable
       run: chmod +x ./gradlew
 
