@@ -11,6 +11,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Delete local.properties files # New step
+      run: |
+        find . -name local.properties -print -delete
+        echo "Ensured no local.properties files exist."
+
     - name: Set up JDK 17
       id: setup_jdk # Add an id to reference the output
       uses: actions/setup-java@v4
