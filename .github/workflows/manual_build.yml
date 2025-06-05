@@ -23,9 +23,6 @@ jobs:
       run: ls -la WebradioApp/app/src/main/
     - name: Verify Checkout - WebradioApp app src main res # Restored
       run: ls -la WebradioApp/app/src/main/res/
-    - name: List contents of font directory # Moved here for grouping
-      run: ls -la WebradioApp/app/src/main/res/font/
-
     - name: Delete local.properties files # New step
       run: |
         find . -name local.properties -print -delete
@@ -50,4 +47,6 @@ jobs:
       run: chmod +x ./gradlew
 
     - name: Build with Gradle # Modified step
-      run: ./gradlew clean build --stacktrace --info
+      run: |
+        ls -la gradle/wrapper/
+        ./gradlew clean build --stacktrace --info
