@@ -45,7 +45,7 @@ jobs:
       - name: Download gradle-wrapper.jar
         run: |
           mkdir -p ${{ github.workspace }}/WebradioApp/gradle/wrapper
-          curl -L -o ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+          curl -L -o ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar https://search.maven.org/remotecontent?filepath=org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
 
       - name: Verify downloaded gradle-wrapper.jar
         run: |
