@@ -33,32 +33,41 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3 # Updated to v3 which is the latest
-        with:
-          ndk: '25.2.9519653' # Updated NDK version
-          cmake: '3.22.1'
 
       - name: Debug Workspace Structure
         run: |
           echo "GITHUB_WORKSPACE is: ${{ github.workspace }}"
           echo "Listing contents of GITHUB_WORKSPACE (${{ github.workspace }}):"
           ls -la ${{ github.workspace }}
-          echo "Listing contents of GITHUB_WORKSPACE/WebRadio (${{ github.workspace }}/WebRadio):"
-          ls -la ${{ github.workspace }}/WebRadio || echo "Directory GITHUB_WORKSPACE/WebRadio not found or ls failed"
+          echo "Listing contents of GITHUB_WORKSPACE/WebradioApp (${{ github.workspace }}/WebradioApp):"
+          ls -la ${{ github.workspace }}/WebradioApp || echo "Directory GITHUB_WORKSPACE/WebradioApp not found or ls failed"
 
       - name: Grant Gradle execution permission
-        run: chmod +x ./gradlew
-        working-directory: ${{ github.workspace }}/WebRadio
+        run: |
+          set -e
+          cd ${{ github.workspace }}/WebradioApp || exit 1
+          pwd
+          ls -la
+          sudo chmod +x gradlew
+          echo "Permissions after chmod:"
+          ls -la gradlew
+
+      - name: Delete existing gradle-wrapper.jar to force re-download
+        run: rm -f ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar
+        working-directory: ${{ github.workspace }}/WebradioApp/gradle/wrapper
+        # It's safer to specify working directory to ensure rm targets the correct file,
+        # though the absolute path in rm -f should also be safe.
 
       # Debugging step removed.
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
-        working-directory: ${{ github.workspace }}/WebRadio
+        working-directory: ${{ github.workspace }}/WebradioApp
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4 # Or v3 if v4 has issues
         with:
           name: webradio-debug-apk # Name of the artifact to be uploaded
-          path: ${{ github.workspace }}/WebRadio/app/build/outputs/apk/debug/app-debug.apk # Path to the APK file
+          path: ${{ github.workspace }}/WebradioApp/app/build/outputs/apk/debug/app-debug.apk # Path to the APK file
           if-no-files-found: error # Optional: 'warn' or 'ignore' if an error isn't desired
           # retention-days: 90 # Optional: Number of days to retain the artifact (default is 90)
