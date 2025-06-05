@@ -26,8 +26,11 @@ jobs:
         java -version
         echo "JAVA_HOME is: $JAVA_HOME"
 
+    - name: List contents of font directory # New step
+      run: ls -la WebradioApp/app/src/main/res/font/
+
     - name: Make gradlew executable
       run: chmod +x ./gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Build with Gradle # Modified step
+      run: ./gradlew clean build
