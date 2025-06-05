@@ -42,20 +42,6 @@ jobs:
           echo "Listing contents of GITHUB_WORKSPACE/WebradioApp (${{ github.workspace }}/WebradioApp):"
           ls -la ${{ github.workspace }}/WebradioApp || echo "Directory GITHUB_WORKSPACE/WebradioApp not found or ls failed"
 
-      - name: Download gradle-wrapper.jar
-        run: |
-          mkdir -p ${{ github.workspace }}/WebradioApp/gradle/wrapper
-          curl -L -o ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar https://search.maven.org/remotecontent?filepath=org/gradle/gradle-wrapper/8.5/gradle-wrapper-8.5.jar
-
-      - name: Verify downloaded gradle-wrapper.jar
-        run: |
-          echo "Checking downloaded gradle-wrapper.jar details:"
-          ls -la ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar
-          echo "SHA256 Checksum:"
-          sha256sum ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar || echo "Checksum command failed or file not found"
-          echo "Content of the downloaded file (first 10 lines):"
-          head -n 10 ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar || echo "head command failed or file empty"
-
       - name: Grant Gradle execution permission
         run: |
           set -e
