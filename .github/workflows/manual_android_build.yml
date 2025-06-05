@@ -42,20 +42,28 @@ jobs:
           echo "Listing contents of GITHUB_WORKSPACE/WebradioApp (${{ github.workspace }}/WebradioApp):"
           ls -la ${{ github.workspace }}/WebradioApp || echo "Directory GITHUB_WORKSPACE/WebradioApp not found or ls failed"
 
-      - name: Grant Gradle execution permission
+      - name: Download and Install Gradle
         run: |
           set -e
-          cd ${{ github.workspace }}/WebradioApp || exit 1
-          pwd
-          ls -la
-          sudo chmod +x gradlew
-          echo "Permissions after chmod:"
-          ls -la gradlew
+          mkdir -p ${{ github.workspace }}/gradle-installation
+          echo "Downloading Gradle 8.5..."
+          curl -L -o ${{ github.workspace }}/gradle-installation/gradle-8.5-all.zip https://services.gradle.org/distributions/gradle-8.5-all.zip
+          echo "Unzipping Gradle..."
+          unzip -q -d ${{ github.workspace }}/gradle-installation ${{ github.workspace }}/gradle-installation/gradle-8.5-all.zip
+          echo "Contents of gradle-installation directory:"
+          ls -la ${{ github.workspace }}/gradle-installation
+          echo "Finding Gradle executable directory name..."
+          # This attempts to find the extracted directory name, assuming it's the only one starting with 'gradle-'
+          GRADLE_DIR_NAME=$(ls ${{ github.workspace }}/gradle-installation | grep '^gradle-')
+          echo "GRADLE_DIR_NAME is $GRADLE_DIR_NAME"
+          echo "GRADLE_HOME_DIR=${{ github.workspace }}/gradle-installation/$GRADLE_DIR_NAME" >> $GITHUB_ENV
+          echo "Listing contents of extracted Gradle directory:"
+          ls -la ${{ github.workspace }}/gradle-installation/$GRADLE_DIR_NAME
 
       # Debugging step removed.
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug # Or use :app:assembleDebug if your app module is named 'app'
+        run: ${{ env.GRADLE_HOME_DIR }}/bin/gradle assembleDebug
         working-directory: ${{ github.workspace }}/WebradioApp
 
       - name: Upload Debug APK
