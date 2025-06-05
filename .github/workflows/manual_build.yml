@@ -12,10 +12,19 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
+      id: setup_jdk # Add an id to reference the output
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        distribution: 'temurin' # Popular distribution
+        distribution: 'temurin'
+
+    - name: Export JAVA_HOME # New step
+      run: echo "JAVA_HOME=${{ steps.setup_jdk.outputs.jdk-path }}" >> $GITHUB_ENV
+
+    - name: Verify Java installation # New step
+      run: |
+        java -version
+        echo "JAVA_HOME is: $JAVA_HOME"
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
