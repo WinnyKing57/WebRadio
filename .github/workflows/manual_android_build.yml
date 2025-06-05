@@ -53,6 +53,8 @@ jobs:
           ls -la ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar
           echo "SHA256 Checksum:"
           sha256sum ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar || echo "Checksum command failed or file not found"
+          echo "Content of the downloaded file (first 10 lines):"
+          head -n 10 ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar || echo "head command failed or file empty"
 
       - name: Grant Gradle execution permission
         run: |
