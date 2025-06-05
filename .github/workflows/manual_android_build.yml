@@ -47,6 +47,13 @@ jobs:
           mkdir -p ${{ github.workspace }}/WebradioApp/gradle/wrapper
           curl -L -o ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
 
+      - name: Verify downloaded gradle-wrapper.jar
+        run: |
+          echo "Checking downloaded gradle-wrapper.jar details:"
+          ls -la ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar
+          echo "SHA256 Checksum:"
+          sha256sum ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar || echo "Checksum command failed or file not found"
+
       - name: Grant Gradle execution permission
         run: |
           set -e
