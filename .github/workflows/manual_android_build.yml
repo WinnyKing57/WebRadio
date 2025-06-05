@@ -42,6 +42,11 @@ jobs:
           echo "Listing contents of GITHUB_WORKSPACE/WebradioApp (${{ github.workspace }}/WebradioApp):"
           ls -la ${{ github.workspace }}/WebradioApp || echo "Directory GITHUB_WORKSPACE/WebradioApp not found or ls failed"
 
+      - name: Download gradle-wrapper.jar
+        run: |
+          mkdir -p ${{ github.workspace }}/WebradioApp/gradle/wrapper
+          curl -L -o ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+
       - name: Grant Gradle execution permission
         run: |
           set -e
@@ -51,12 +56,6 @@ jobs:
           sudo chmod +x gradlew
           echo "Permissions after chmod:"
           ls -la gradlew
-
-      - name: Delete existing gradle-wrapper.jar to force re-download
-        run: rm -f ${{ github.workspace }}/WebradioApp/gradle/wrapper/gradle-wrapper.jar
-        working-directory: ${{ github.workspace }}/WebradioApp/gradle/wrapper
-        # It's safer to specify working directory to ensure rm targets the correct file,
-        # though the absolute path in rm -f should also be safe.
 
       # Debugging step removed.
 
