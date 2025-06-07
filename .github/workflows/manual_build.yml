@@ -38,15 +38,6 @@ jobs:
       with:
         cache-disabled: true # Keep cache disabled for now
 
-    - name: Attempt to regenerate Gradle Wrapper
-      run: |
-        echo "Attempting to regenerate gradle-wrapper.jar using 'gradle wrapper' command..."
-        # setup-gradle should have put a gradle executable in the PATH
-        gradle wrapper --gradle-version 8.5 --stacktrace
-        echo "Listing contents of gradle/wrapper/ after attempt:"
-        ls -l gradle/wrapper/
-      shell: bash
-
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew # Present in both, keep one
 

@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- For Android 12 (API 31) and above, this is more specific for media playback -->
-    <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" /> <!-- For older APIs or if setExact needed -->
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" /> <!-- For Android 13+ if using exact alarms -->
@@ -31,7 +31,8 @@
         <service
             android:name=".services.StreamingService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
             <!-- For newer Android versions, you might need to specify foregroundServiceType -->
             <!-- android:foregroundServiceType="mediaPlayback" -->
 
