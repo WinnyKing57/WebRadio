@@ -38,7 +38,7 @@ jobs:
         mv $HOME/Android/cmdline-tools/cmdline-tools/* $HOME/Android/sdk/cmdline-tools/latest/
         export ANDROID_SDK_ROOT=$HOME/Android/sdk
         export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
-        yes | sdkmanager --licenses
+        yes | sdkmanager --licenses || true
         yes | sdkmanager "platforms;android-33" "build-tools;33.0.2"
       shell: bash
 
