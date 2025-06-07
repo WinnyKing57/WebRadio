@@ -1,6 +1,10 @@
-name: Manual Android Build
+name: Build Jules CI
 
 on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 jobs:
@@ -11,42 +15,52 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Verify Checkout - Root
-      run: ls -la
-    - name: Verify Checkout - WebradioApp # Restored
-      run: ls -la WebradioApp/
-    - name: Verify Checkout - WebradioApp app # Restored
-      run: ls -la WebradioApp/app/
-    - name: Verify Checkout - WebradioApp app src # Restored
-      run: ls -la WebradioApp/app/src/
-    - name: Verify Checkout - WebradioApp app src main # Restored
-      run: ls -la WebradioApp/app/src/main/
-    - name: Verify Checkout - WebradioApp app src main res # Restored
-      run: ls -la WebradioApp/app/src/main/res/
-    - name: Delete local.properties files # New step
+    - name: Show GITHUB_WORKSPACE structure
       run: |
-        find . -name local.properties -print -delete
-        echo "Ensured no local.properties files exist."
+        echo "GITHUB_WORKSPACE is: ${{ github.workspace }}"
+        ls -R ${{ github.workspace }}
+      shell: bash
 
     - name: Set up JDK 17
-      id: setup_jdk # Add an id to reference the output
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Export JAVA_HOME # New step
-      run: echo "JAVA_HOME=${{ steps.setup_jdk.outputs.jdk-path }}" >> $GITHUB_ENV
-
-    - name: Verify Java installation # New step
+    - name: Delete local.properties files # From my changes
       run: |
-        java -version
-        echo "JAVA_HOME is: $JAVA_HOME"
+        find . -name local.properties -print -delete
+        echo "Ensured no local.properties files exist."
+      shell: bash
 
-    - name: Make gradlew executable
-      run: chmod +x ./gradlew
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        cache-disabled: true # Keep cache disabled for now
 
-    - name: Build with Gradle # Modified step
+    - name: Attempt to regenerate Gradle Wrapper
       run: |
-        ls -la gradle/wrapper/
-        ./gradlew :WebradioApp:app:clean :WebradioApp:app:build --stacktrace --info
+        echo "Attempting to regenerate gradle-wrapper.jar using 'gradle wrapper' command..."
+        # setup-gradle should have put a gradle executable in the PATH
+        gradle wrapper --gradle-version 8.5 --stacktrace
+        echo "Listing contents of gradle/wrapper/ after attempt:"
+        ls -l gradle/wrapper/
+      shell: bash
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew # Present in both, keep one
+
+    - name: Show current directory before build
+      run: pwd
+      shell: bash
+
+    - name: Build with Gradle
+      # Using correct module path and user's preferred task (assembleDebug) + clean
+      run: ./gradlew :WebradioApp:app:clean :WebradioApp:app:assembleDebug --stacktrace --info
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        # Path needs to be relative to GITHUB_WORKSPACE, and module is WebradioApp/app
+        path: WebradioApp/app/build/outputs/apk/debug/app-debug.apk
