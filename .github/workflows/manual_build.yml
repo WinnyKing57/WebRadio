@@ -27,6 +27,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+
     - name: Delete local.properties files # From my changes
       run: |
         find . -name local.properties -print -delete
