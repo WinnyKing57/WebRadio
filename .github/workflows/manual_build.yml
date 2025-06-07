@@ -57,14 +57,6 @@ jobs:
       with:
         cache-disabled: true
 
-    - name: Attempt to regenerate Gradle Wrapper
-      run: |
-        echo "Attempting to regenerate gradle-wrapper.jar using './gradlew wrapper' command..."
-        ./gradlew wrapper --gradle-version 8.5 --stacktrace
-        echo "Listing contents of gradle/wrapper/ after attempt:"
-        ls -l gradle/wrapper/
-      shell: bash
-
     - name: Show current directory before build
       run: pwd
       shell: bash
