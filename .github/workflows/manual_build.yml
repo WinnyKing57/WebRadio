@@ -27,10 +27,20 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Install Android SDK 33 and Build-Tools
+    - name: Install Android SDK Command Line Tools and SDK 33
       run: |
+        sudo apt-get update
+        sudo apt-get install -y unzip wget
+        wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
+        mkdir -p $HOME/Android/cmdline-tools
+        unzip cmdline-tools.zip -d $HOME/Android/cmdline-tools
+        mkdir -p $HOME/Android/sdk/cmdline-tools/latest
+        mv $HOME/Android/cmdline-tools/cmdline-tools/* $HOME/Android/sdk/cmdline-tools/latest/
+        export ANDROID_SDK_ROOT=$HOME/Android/sdk
+        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
         yes | sdkmanager --licenses
         yes | sdkmanager "platforms;android-33" "build-tools;33.0.2"
+      shell: bash
 
     - name: Delete local.properties files
       run: |
