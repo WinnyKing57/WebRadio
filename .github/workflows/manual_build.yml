@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: ${{ env.HOME }}/Android/sdk
+      PATH: ${{ env.HOME }}/Android/sdk/cmdline-tools/latest/bin:${{ env.PATH }}
 
     steps:
     - name: Checkout code
@@ -36,8 +39,6 @@ jobs:
         unzip cmdline-tools.zip -d $HOME/Android/cmdline-tools
         mkdir -p $HOME/Android/sdk/cmdline-tools/latest
         mv $HOME/Android/cmdline-tools/cmdline-tools/* $HOME/Android/sdk/cmdline-tools/latest/
-        export ANDROID_SDK_ROOT=$HOME/Android/sdk
-        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
         yes | sdkmanager --licenses || true
         yes | sdkmanager "platforms;android-33" "build-tools;33.0.2"
       shell: bash
