@@ -1,6 +1,7 @@
 package com.example.webradioapp.network.model
 
 import com.google.gson.annotations.SerializedName
+import com.example.webradioapp.model.RadioStation // Import the domain model
 
 // Based on fields from https://de1.api.radio-browser.info/
 // Not all fields are included, only those relevant for mapping to RadioStation or potential future use.
@@ -18,7 +19,6 @@ data class ApiRadioStation(
     @SerializedName("hls") val hls: Int?, // 1 if HLS, 0 otherwise
     @SerializedName("lastcheckok") val lastCheckOk: Int?, // 1 if last check was okay
     @SerializedName("lastcheckoktime_iso8601") val lastCheckOkTime: String?
-import com.example.webradioapp.model.RadioStation // Import the domain model
 
 )
 

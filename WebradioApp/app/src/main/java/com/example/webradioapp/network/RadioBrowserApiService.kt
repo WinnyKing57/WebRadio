@@ -3,6 +3,7 @@ package com.example.webradioapp.network
 import com.example.webradioapp.network.model.ApiRadioStation
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Url // For dynamic base URL if needed later
 
@@ -40,7 +41,7 @@ interface RadioBrowserApiService {
 
     @GET("json/stations/bytag/{tag}")
     suspend fun getStationsByGenre(
-        @Query("tag") genre: String,
+        @Path("tag") genre: String,
         @Query("limit") limit: Int = 100,
         @Query("offset") offset: Int = 0,
         @Query("hidebroken") hideBroken: Boolean = true,
@@ -51,7 +52,7 @@ interface RadioBrowserApiService {
     // Example of how to get stations by language
     @GET("json/stations/bylanguage/{languageName}")
     suspend fun getStationsByLanguage(
-        @Query("languageName") languageName: String,
+        @Path("languageName") languageName: String,
         @Query("limit") limit: Int = 100,
         @Query("offset") offset: Int = 0,
         @Query("hidebroken") hideBroken: Boolean = true,
