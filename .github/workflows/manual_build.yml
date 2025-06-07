@@ -27,6 +27,11 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
+    - name: Install Android SDK 33 and Build-Tools
+      run: |
+        yes | sdkmanager --licenses
+        yes | sdkmanager "platforms;android-33" "build-tools;33.0.2"
+
     - name: Delete local.properties files
       run: |
         find . -name local.properties -print -delete
