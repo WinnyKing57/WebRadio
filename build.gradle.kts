@@ -11,3 +11,8 @@ plugins {
  * Learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.14.1/samples
  * This project uses @Incubating APIs which are subject to change.
  */
+
+repositories {
+    google()
+    mavenCentral()
+}
