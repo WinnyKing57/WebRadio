@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.9.0' // Example version
+    implementation 'androidx.core:core-ktx:1.12.0' // Example version
     implementation 'androidx.appcompat:appcompat:1.6.1' // Example version
     implementation 'com.google.android.material:material:1.10.0' // Material Components
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4' // Example version
