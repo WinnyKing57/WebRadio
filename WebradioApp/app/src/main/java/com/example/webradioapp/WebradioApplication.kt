@@ -13,6 +13,7 @@ class WebradioApplication : Application() {
         // Initialize SharedPreferencesManager
         val sharedPrefsManager = SharedPreferencesManager(applicationContext)
         val themePreference = sharedPrefsManager.getThemePreference()
+        // Ensure themePreference is a valid value for setDefaultNightMode
         AppCompatDelegate.setDefaultNightMode(themePreference)
 
         // Create Notification Channel(s)
