@@ -47,7 +47,7 @@ jobs:
 
     - name: Build with Gradle
       # Using correct module path and user's preferred task (assembleDebug) + clean
-      run: ./gradlew :WebradioApp:app:clean :WebradioApp:app:assembleDebug --stacktrace --info --refresh-dependencies
+      run: ./gradlew :WebradioApp:app:clean :WebradioApp:app:assembleDebug --stacktrace --info --refresh-dependencies --no-configuration-cache
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
