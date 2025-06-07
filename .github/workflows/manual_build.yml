@@ -36,11 +36,6 @@ jobs:
         echo "Ensured no local.properties files exist."
       shell: bash
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        cache-disabled: true # Keep cache disabled for now
-
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew # Present in both, keep one
 
