@@ -7,3 +7,4 @@
  */
 
 rootProject.name = "WebRadio"
+include(":WebradioApp:app") // Added this line
