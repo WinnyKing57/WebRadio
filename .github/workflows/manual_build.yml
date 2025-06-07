@@ -18,6 +18,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+
     - name: Show GITHUB_WORKSPACE structure
       run: |
         echo "GITHUB_WORKSPACE is: ${{ github.workspace }}"
@@ -56,14 +59,11 @@ jobs:
 
     - name: Attempt to regenerate Gradle Wrapper
       run: |
-        echo "Attempting to regenerate gradle-wrapper.jar using 'gradle wrapper' command..."
-        gradle wrapper --gradle-version 8.5 --stacktrace
+        echo "Attempting to regenerate gradle-wrapper.jar using './gradlew wrapper' command..."
+        ./gradlew wrapper --gradle-version 8.5 --stacktrace
         echo "Listing contents of gradle/wrapper/ after attempt:"
         ls -l gradle/wrapper/
       shell: bash
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
 
     - name: Show current directory before build
       run: pwd
