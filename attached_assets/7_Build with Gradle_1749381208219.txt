@@ -1,0 +1,256 @@
+﻿2025-06-08T11:04:17.6316192Z ##[group]Run ./gradlew build
+2025-06-08T11:04:17.6316473Z [36;1m./gradlew build[0m
+2025-06-08T11:04:17.6361988Z shell: /usr/bin/bash -e {0}
+2025-06-08T11:04:17.6362205Z env:
+2025-06-08T11:04:17.6362461Z   ANDROID_SDK_ROOT: /home/runner/work/WebRadio/WebRadio/android-sdk
+2025-06-08T11:04:17.6362885Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.15-6/x64
+2025-06-08T11:04:17.6363311Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.15-6/x64
+2025-06-08T11:04:17.6363724Z   ANDROID_HOME: /home/runner/work/WebRadio/WebRadio/android-sdk
+2025-06-08T11:04:17.6364010Z ##[endgroup]
+2025-06-08T11:04:17.7203473Z Downloading https://services.gradle.org/distributions/gradle-8.5-bin.zip
+2025-06-08T11:04:19.2222407Z ............10%.............20%............30%.............40%.............50%............60%.............70%.............80%............90%.............100%
+2025-06-08T11:04:20.3702496Z 
+2025-06-08T11:04:20.3704360Z Welcome to Gradle 8.5!
+2025-06-08T11:04:20.3704699Z 
+2025-06-08T11:04:20.3705209Z Here are the highlights of this release:
+2025-06-08T11:04:20.3707367Z  - Support for running on Java 21
+2025-06-08T11:04:20.3709050Z  - Faster first use with Kotlin DSL
+2025-06-08T11:04:20.3710535Z  - Improved error and warning messages
+2025-06-08T11:04:20.3711021Z 
+2025-06-08T11:04:20.3713388Z For more details see https://docs.gradle.org/8.5/release-notes.html
+2025-06-08T11:04:20.3714023Z 
+2025-06-08T11:04:20.8694888Z Starting a Gradle Daemon (subsequent builds will be faster)
+2025-06-08T11:04:23.7698861Z Calculating task graph as no cached configuration is available for tasks: build
+2025-06-08T11:05:13.6730131Z Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+2025-06-08T11:05:49.7730070Z > Task :WebradioApp:app:preBuild UP-TO-DATE
+2025-06-08T11:05:49.7734109Z > Task :WebradioApp:app:preReleaseBuild UP-TO-DATE
+2025-06-08T11:05:49.7738194Z > Task :WebradioApp:app:preDebugBuild UP-TO-DATE
+2025-06-08T11:05:49.8701804Z > Task :WebradioApp:app:mergeDebugNativeDebugMetadata NO-SOURCE
+2025-06-08T11:05:49.8704073Z > Task :WebradioApp:app:extractProguardFiles
+2025-06-08T11:05:49.8729022Z > Task :WebradioApp:app:generateDebugResValues
+2025-06-08T11:05:49.8731794Z > Task :WebradioApp:app:generateDebugResources
+2025-06-08T11:05:49.8736482Z > Task :WebradioApp:app:buildKotlinToolingMetadata
+2025-06-08T11:05:50.5699164Z > Task :WebradioApp:app:packageDebugResources
+2025-06-08T11:05:51.8699186Z > Task :WebradioApp:app:dataBindingMergeDependencyArtifactsRelease
+2025-06-08T11:05:51.8712316Z > Task :WebradioApp:app:dataBindingMergeDependencyArtifactsDebug
+2025-06-08T11:05:51.8713078Z > Task :WebradioApp:app:mapDebugSourceSetPaths
+2025-06-08T11:05:51.8713825Z > Task :WebradioApp:app:createDebugCompatibleScreenManifests
+2025-06-08T11:05:51.9696580Z > Task :WebradioApp:app:extractDeepLinksDebug
+2025-06-08T11:05:52.1695649Z > Task :WebradioApp:app:parseDebugLocalResources
+2025-06-08T11:05:52.5696399Z > Task :WebradioApp:app:checkDebugAarMetadata
+2025-06-08T11:05:52.5697582Z > Task :WebradioApp:app:mergeDebugShaders
+2025-06-08T11:05:52.5698422Z > Task :WebradioApp:app:compileDebugShaders NO-SOURCE
+2025-06-08T11:05:52.5699275Z > Task :WebradioApp:app:generateDebugAssets UP-TO-DATE
+2025-06-08T11:05:52.8715581Z > Task :WebradioApp:app:processDebugMainManifest
+2025-06-08T11:05:52.8716814Z > Task :WebradioApp:app:mergeDebugAssets FROM-CACHE
+2025-06-08T11:05:52.8717543Z > Task :WebradioApp:app:compressDebugAssets
+2025-06-08T11:05:53.1694558Z > Task :WebradioApp:app:processDebugManifest
+2025-06-08T11:05:53.1716116Z > Task :WebradioApp:app:javaPreCompileDebug
+2025-06-08T11:05:53.1721005Z > Task :WebradioApp:app:processDebugManifestForPackage
+2025-06-08T11:05:53.1769098Z > Task :WebradioApp:app:mergeDebugJniLibFolders FROM-CACHE
+2025-06-08T11:05:56.1695811Z > Task :WebradioApp:app:mergeDebugNativeLibs NO-SOURCE
+2025-06-08T11:05:56.1703064Z > Task :WebradioApp:app:stripDebugDebugSymbols NO-SOURCE
+2025-06-08T11:05:56.2695248Z > Task :WebradioApp:app:checkDebugDuplicateClasses
+2025-06-08T11:05:56.3723211Z > Task :WebradioApp:app:mergeLibDexDebug
+2025-06-08T11:05:56.3724311Z > Task :WebradioApp:app:writeDebugAppMetadata
+2025-06-08T11:05:56.3725235Z > Task :WebradioApp:app:writeDebugSigningConfigVersions
+2025-06-08T11:05:56.3726023Z > Task :WebradioApp:app:generateReleaseResValues FROM-CACHE
+2025-06-08T11:05:56.3726836Z > Task :WebradioApp:app:generateReleaseResources UP-TO-DATE
+2025-06-08T11:05:57.2697922Z > Task :WebradioApp:app:validateSigningDebug
+2025-06-08T11:05:57.3695947Z > Task :WebradioApp:app:packageReleaseResources
+2025-06-08T11:05:57.3699687Z > Task :WebradioApp:app:desugarDebugFileDependencies
+2025-06-08T11:05:57.3700855Z > Task :WebradioApp:app:parseReleaseLocalResources FROM-CACHE
+2025-06-08T11:05:57.7695135Z > Task :WebradioApp:app:mergeDebugResources
+2025-06-08T11:05:58.6694691Z > Task :WebradioApp:app:checkReleaseAarMetadata
+2025-06-08T11:06:26.3694751Z > Task :WebradioApp:app:mergeReleaseResources
+2025-06-08T11:06:27.3694803Z > Task :WebradioApp:app:mergeExtDexDebug
+2025-06-08T11:06:27.7698768Z > Task :WebradioApp:app:dataBindingGenBaseClassesDebug
+2025-06-08T11:06:28.6694923Z > Task :WebradioApp:app:processDebugResources
+2025-06-08T11:06:33.7698476Z > Task :WebradioApp:app:mapReleaseSourceSetPaths
+2025-06-08T11:06:33.7700007Z > Task :WebradioApp:app:createReleaseCompatibleScreenManifests
+2025-06-08T11:06:33.7701230Z > Task :WebradioApp:app:extractDeepLinksRelease FROM-CACHE
+2025-06-08T11:06:33.9695086Z > Task :WebradioApp:app:processReleaseMainManifest
+2025-06-08T11:06:33.9696155Z > Task :WebradioApp:app:processReleaseManifest
+2025-06-08T11:06:35.1700654Z > Task :WebradioApp:app:dataBindingGenBaseClassesRelease FROM-CACHE
+2025-06-08T11:06:35.1701904Z > Task :WebradioApp:app:javaPreCompileRelease FROM-CACHE
+2025-06-08T11:06:35.2705334Z > Task :WebradioApp:app:mergeReleaseJniLibFolders FROM-CACHE
+2025-06-08T11:06:35.2712548Z > Task :WebradioApp:app:mergeReleaseNativeLibs NO-SOURCE
+2025-06-08T11:06:35.2713805Z > Task :WebradioApp:app:stripReleaseDebugSymbols NO-SOURCE
+2025-06-08T11:06:35.2714865Z > Task :WebradioApp:app:extractReleaseNativeSymbolTables NO-SOURCE
+2025-06-08T11:06:35.2716094Z > Task :WebradioApp:app:mergeReleaseNativeDebugMetadata NO-SOURCE
+2025-06-08T11:06:35.2717160Z > Task :WebradioApp:app:processReleaseManifestForPackage
+2025-06-08T11:06:36.7699750Z > Task :WebradioApp:app:checkReleaseDuplicateClasses
+2025-06-08T11:06:36.7701102Z > Task :WebradioApp:app:desugarReleaseFileDependencies
+2025-06-08T11:06:45.7694723Z > Task :WebradioApp:app:processReleaseResources
+2025-06-08T11:07:05.7698382Z > Task :WebradioApp:app:kspDebugKotlin
+2025-06-08T11:07:06.7694596Z > Task :WebradioApp:app:mergeExtDexRelease
+2025-06-08T11:07:15.7694220Z > Task :WebradioApp:app:kspReleaseKotlin
+2025-06-08T11:07:17.7708830Z > Task :WebradioApp:app:mergeReleaseArtProfile
+2025-06-08T11:07:17.7778497Z > Task :WebradioApp:app:mergeReleaseShaders FROM-CACHE
+2025-06-08T11:07:17.7779222Z > Task :WebradioApp:app:compileReleaseShaders NO-SOURCE
+2025-06-08T11:07:17.7779857Z > Task :WebradioApp:app:generateReleaseAssets UP-TO-DATE
+2025-06-08T11:07:17.7780454Z > Task :WebradioApp:app:mergeReleaseAssets FROM-CACHE
+2025-06-08T11:07:17.7781001Z > Task :WebradioApp:app:compressReleaseAssets
+2025-06-08T11:07:22.1700209Z 
+2025-06-08T11:07:22.1701360Z > Task :WebradioApp:app:kspDebugKotlin
+2025-06-08T11:07:22.1723723Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:18: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1727448Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:22: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1730950Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:38: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1735201Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:38: Not sure how to convert a Cursor to this method's return type (kotlinx.coroutines.flow.Flow<java.util.List<com.example.webradioapp.model.RadioStation>>).
+2025-06-08T11:07:22.1739164Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:41: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1742524Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:41: Not sure how to convert a Cursor to this method's return type (java.lang.Boolean).
+2025-06-08T11:07:22.1764689Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:45: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1769842Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:45: Not sure how to convert a Cursor to this method's return type (kotlinx.coroutines.flow.Flow<com.example.webradioapp.model.RadioStation>).
+2025-06-08T11:07:22.1773173Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:22: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1776134Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:44: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1784174Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:44: Not sure how to convert a Cursor to this method's return type (com.example.webradioapp.model.RadioStation).
+2025-06-08T11:07:22.1787551Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:48: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1791262Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:48: Not sure how to convert a Cursor to this method's return type (kotlinx.coroutines.flow.Flow<java.util.List<com.example.webradioapp.model.RadioStation>>).
+2025-06-08T11:07:22.1794866Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:52: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.1796474Z e: Error occurred in KSP, check log for detail
+2025-06-08T11:07:22.1798357Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:1 Expecting a top level declaration
+2025-06-08T11:07:22.1800538Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:9 Expecting a top level declaration
+2025-06-08T11:07:22.1803241Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:12 Expecting a top level declaration
+2025-06-08T11:07:22.1805761Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:13 Expecting a top level declaration
+2025-06-08T11:07:22.1808508Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:20 Expecting a top level declaration
+2025-06-08T11:07:22.1811343Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:21 Expecting a top level declaration
+2025-06-08T11:07:22.1813822Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:32 Expecting a top level declaration
+2025-06-08T11:07:22.1816232Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:33 Expecting a top level declaration
+2025-06-08T11:07:22.1818999Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:35 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.1821413Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:1 Expecting a top level declaration
+2025-06-08T11:07:22.1823743Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:9 Expecting a top level declaration
+2025-06-08T11:07:22.1826273Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:12 Expecting a top level declaration
+2025-06-08T11:07:22.1828931Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:13 Expecting a top level declaration
+2025-06-08T11:07:22.1831392Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:20 Expecting a top level declaration
+2025-06-08T11:07:22.1833879Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:21 Expecting a top level declaration
+2025-06-08T11:07:22.1836353Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:32 Expecting a top level declaration
+2025-06-08T11:07:22.1839005Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:33 Expecting a top level declaration
+2025-06-08T11:07:22.1841623Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:35 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.1844221Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:1 Expecting a top level declaration
+2025-06-08T11:07:22.1846660Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:9 Expecting a top level declaration
+2025-06-08T11:07:22.1849238Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:12 Expecting a top level declaration
+2025-06-08T11:07:22.1851774Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:13 Expecting a top level declaration
+2025-06-08T11:07:22.1854269Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:20 Expecting a top level declaration
+2025-06-08T11:07:22.1857113Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:21 Expecting a top level declaration
+2025-06-08T11:07:22.1859806Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:32 Expecting a top level declaration
+2025-06-08T11:07:22.1862460Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:33 Expecting a top level declaration
+2025-06-08T11:07:22.1865542Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:35 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.1868437Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:1 Expecting a top level declaration
+2025-06-08T11:07:22.1870947Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:9 Expecting a top level declaration
+2025-06-08T11:07:22.1873374Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:12 Expecting a top level declaration
+2025-06-08T11:07:22.1875823Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:13 Expecting a top level declaration
+2025-06-08T11:07:22.1878422Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:20 Expecting a top level declaration
+2025-06-08T11:07:22.1880877Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:21 Expecting a top level declaration
+2025-06-08T11:07:22.1883426Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:32 Expecting a top level declaration
+2025-06-08T11:07:22.1885977Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:33 Expecting a top level declaration
+2025-06-08T11:07:22.1888761Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:38 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.1891523Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:1 Expecting a top level declaration
+2025-06-08T11:07:22.1894228Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:9 Expecting a top level declaration
+2025-06-08T11:07:22.1896961Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:12 Expecting a top level declaration
+2025-06-08T11:07:22.1899825Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:13 Expecting a top level declaration
+2025-06-08T11:07:22.1902540Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:20 Expecting a top level declaration
+2025-06-08T11:07:22.1905192Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:21 Expecting a top level declaration
+2025-06-08T11:07:22.1908083Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:32 Expecting a top level declaration
+2025-06-08T11:07:22.1911103Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:33 Expecting a top level declaration
+2025-06-08T11:07:22.1913977Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:40 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.2721805Z 
+2025-06-08T11:07:22.2722691Z > Task :WebradioApp:app:kspDebugKotlin FAILED
+2025-06-08T11:07:22.2723252Z 
+2025-06-08T11:07:22.2732340Z > Task :WebradioApp:app:kspReleaseKotlin FAILED
+2025-06-08T11:07:22.2736495Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:18: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2741540Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:22: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2745104Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:38: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2748866Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:38: Not sure how to convert a Cursor to this method's return type (kotlinx.coroutines.flow.Flow<java.util.List<com.example.webradioapp.model.RadioStation>>).
+2025-06-08T11:07:22.2752191Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:41: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2755210Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:41: Not sure how to convert a Cursor to this method's return type (java.lang.Boolean).
+2025-06-08T11:07:22.2758474Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:45: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2761971Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:45: Not sure how to convert a Cursor to this method's return type (kotlinx.coroutines.flow.Flow<com.example.webradioapp.model.RadioStation>).
+2025-06-08T11:07:22.2765418Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:22: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2768551Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:44: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2771512Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:44: Not sure how to convert a Cursor to this method's return type (com.example.webradioapp.model.RadioStation).
+2025-06-08T11:07:22.2774523Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:48: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2778041Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:48: Not sure how to convert a Cursor to this method's return type (kotlinx.coroutines.flow.Flow<java.util.List<com.example.webradioapp.model.RadioStation>>).
+2025-06-08T11:07:22.2781713Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:52: There is a problem with the query: [SQLITE_ERROR] SQL error or missing database (no such table: stations)
+2025-06-08T11:07:22.2818131Z e: Error occurred in KSP, check log for detail
+2025-06-08T11:07:22.2820864Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:1 Expecting a top level declaration
+2025-06-08T11:07:22.2833448Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:9 Expecting a top level declaration
+2025-06-08T11:07:22.2836311Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:12 Expecting a top level declaration
+2025-06-08T11:07:22.2839264Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:13 Expecting a top level declaration
+2025-06-08T11:07:22.2841975Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:20 Expecting a top level declaration
+2025-06-08T11:07:22.2844589Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:21 Expecting a top level declaration
+2025-06-08T11:07:22.2847369Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:32 Expecting a top level declaration
+2025-06-08T11:07:22.2850104Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:33 Expecting a top level declaration
+2025-06-08T11:07:22.2853296Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:35 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.2857153Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:1 Expecting a top level declaration
+2025-06-08T11:07:22.2859877Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:9 Expecting a top level declaration
+2025-06-08T11:07:22.2862442Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:12 Expecting a top level declaration
+2025-06-08T11:07:22.2865004Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:13 Expecting a top level declaration
+2025-06-08T11:07:22.2867704Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:20 Expecting a top level declaration
+2025-06-08T11:07:22.2870285Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:21 Expecting a top level declaration
+2025-06-08T11:07:22.2872759Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:32 Expecting a top level declaration
+2025-06-08T11:07:22.2875308Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:33 Expecting a top level declaration
+2025-06-08T11:07:22.2877920Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:35 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.2880372Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:1 Expecting a top level declaration
+2025-06-08T11:07:22.2883149Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:9 Expecting a top level declaration
+2025-06-08T11:07:22.2885614Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:12 Expecting a top level declaration
+2025-06-08T11:07:22.2888277Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:13 Expecting a top level declaration
+2025-06-08T11:07:22.2891109Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:20 Expecting a top level declaration
+2025-06-08T11:07:22.2893665Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:21 Expecting a top level declaration
+2025-06-08T11:07:22.2896195Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:32 Expecting a top level declaration
+2025-06-08T11:07:22.2899021Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:33 Expecting a top level declaration
+2025-06-08T11:07:22.2901588Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:35 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.2904164Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:1 Expecting a top level declaration
+2025-06-08T11:07:22.2906667Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:9 Expecting a top level declaration
+2025-06-08T11:07:22.2909215Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:12 Expecting a top level declaration
+2025-06-08T11:07:22.2911536Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:13 Expecting a top level declaration
+2025-06-08T11:07:22.2913812Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:20 Expecting a top level declaration
+2025-06-08T11:07:22.2916113Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:21 Expecting a top level declaration
+2025-06-08T11:07:22.2918553Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:32 Expecting a top level declaration
+2025-06-08T11:07:22.2920876Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:33 Expecting a top level declaration
+2025-06-08T11:07:22.2923269Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:38 imports are only allowed in the beginning of file
+2025-06-08T11:07:22.2925793Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:1 Expecting a top level declaration
+2025-06-08T11:07:22.2928581Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:9 Expecting a top level declaration
+2025-06-08T11:07:22.2931092Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:12 Expecting a top level declaration
+2025-06-08T11:07:22.2933605Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:13 Expecting a top level declaration
+2025-06-08T11:07:22.2936346Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:20 Expecting a top level declaration
+2025-06-08T11:07:22.2939071Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:21 Expecting a top level declaration
+2025-06-08T11:07:22.2941796Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:32 Expecting a top level declaration
+2025-06-08T11:07:22.2944674Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:33 Expecting a top level declaration
+2025-06-08T11:07:22.2947619Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:40 imports are only allowed in the beginning of file
+2025-06-08T11:07:23.1695539Z 
+2025-06-08T11:07:23.1697455Z > Task :WebradioApp:app:optimizeReleaseResources
+2025-06-08T11:07:24.9717070Z 
+2025-06-08T11:07:24.9720127Z FAILURE: Build completed with 2 failures.
+2025-06-08T11:07:24.9720810Z 
+2025-06-08T11:07:24.9735717Z 1: Task failed with an exception.
+2025-06-08T11:07:24.9736160Z -----------
+2025-06-08T11:07:24.9736502Z * What went wrong:
+2025-06-08T11:07:24.9737549Z Execution failed for task ':WebradioApp:app:kspReleaseKotlin'.
+2025-06-08T11:07:24.9739325Z > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2025-06-08T11:07:24.9740534Z    > Compilation error. See log for more details
+2025-06-08T11:07:24.9740863Z 
+2025-06-08T11:07:24.9740960Z * Try:
+2025-06-08T11:07:24.9741396Z > Run with --stacktrace option to get the stack trace.
+2025-06-08T11:07:24.9742063Z > Run with --info or --debug option to get more log output.
+2025-06-08T11:07:24.9742609Z > Run with --scan to get full insights.
+2025-06-08T11:07:24.9743131Z > Get more help at https://help.gradle.org.
+2025-06-08T11:07:24.9743699Z ==============================================================================
+2025-06-08T11:07:24.9743994Z 
+2025-06-08T11:07:24.9744198Z 2: Task failed with an exception.
+2025-06-08T11:07:24.9744538Z -----------
+2025-06-08T11:07:24.9744841Z * What went wrong:
+2025-06-08T11:07:24.9745386Z Execution failed for task ':WebradioApp:app:kspDebugKotlin'.
+2025-06-08T11:07:24.9746802Z > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2025-06-08T11:07:24.9748131Z    > Compilation error. See log for more details
+2025-06-08T11:07:24.9748483Z 
+2025-06-08T11:07:24.9748584Z * Try:
+2025-06-08T11:07:24.9749020Z > Run with --stacktrace option to get the stack trace.
+2025-06-08T11:07:24.9749647Z > Run with --info or --debug option to get more log output.
+2025-06-08T11:07:24.9803484Z 54 actionable tasks: 44 executed, 10 from cache
+2025-06-08T11:07:24.9804904Z > Run with --scan to get full insights.
+2025-06-08T11:07:24.9805459Z Configuration cache entry stored.
+2025-06-08T11:07:24.9806153Z > Get more help at https://help.gradle.org.
+2025-06-08T11:07:24.9806886Z ==============================================================================
+2025-06-08T11:07:24.9807593Z 
+2025-06-08T11:07:24.9807977Z BUILD FAILED in 3m 7s
+2025-06-08T11:07:25.4087743Z ##[error]Process completed with exit code 1.
