@@ -1,6 +1,10 @@
 [nix]
 channel = "stable-24_05"
 
+[env]
+JAVA_HOME = "/nix/store/zqg2asijmzil8gqmxabc6by1n2pbbiw6-openjdk-17.0.8+7/lib/openjdk"
+PATH = "/nix/store/zqg2asijmzil8gqmxabc6by1n2pbbiw6-openjdk-17.0.8+7/bin:$PATH"
+
 [workflows]
 runButton = "Build Android App"
 
