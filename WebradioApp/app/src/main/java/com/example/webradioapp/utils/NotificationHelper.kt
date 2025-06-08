@@ -108,3 +108,70 @@ object NotificationHelper {
         }
     }
 }
+package com.example.webradioapp.utils
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import com.example.webradioapp.R
+import com.example.webradioapp.activities.MainActivity
+
+object NotificationHelper {
+
+    const val CHANNEL_ID = "StreamingServiceChannel"
+    const val TEST_NOTIFICATION_ID = 999
+    private const val CHANNEL_NAME = "Radio Streaming"
+    private const val CHANNEL_DESCRIPTION = "Notifications for radio streaming service"
+
+    fun createNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_LOW
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
+                description = CHANNEL_DESCRIPTION
+                setSound(null, null)
+                enableVibration(false)
+            }
+
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    fun createNotification(
+        context: Context,
+        title: String,
+        content: String,
+        isPlaying: Boolean = false,
+        stationName: String? = null
+    ): android.app.Notification {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        return NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(content)
+            .setSmallIcon(R.drawable.ic_radio_placeholder)
+            .setContentIntent(pendingIntent)
+            .setOngoing(isPlaying)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .build()
+    }
+
+    fun showSimpleNotification(context: Context, title: String, content: String, notificationId: Int) {
+        val notification = createNotification(context, title, content)
+        with(NotificationManagerCompat.from(context)) {
+            notify(notificationId, notification)
+        }
+    }
+}

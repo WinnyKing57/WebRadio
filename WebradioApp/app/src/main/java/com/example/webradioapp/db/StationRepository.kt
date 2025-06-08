@@ -72,3 +72,52 @@ class StationRepository(
         }
     }
 }
+package com.example.webradioapp.db
+
+import com.example.webradioapp.model.RadioStation
+import kotlinx.coroutines.flow.Flow
+
+class StationRepository(
+    private val favoriteDao: FavoriteStationDao,
+    private val historyDao: HistoryStationDao
+) {
+
+    // Favorites
+    fun getAllFavorites(): Flow<List<RadioStation>> = favoriteDao.getAllFavorites()
+
+    suspend fun addToFavorites(station: RadioStation) {
+        favoriteDao.insertFavorite(station.copy(isFavorite = true))
+    }
+
+    suspend fun removeFromFavorites(station: RadioStation) {
+        favoriteDao.removeFavoriteById(station.id)
+    }
+
+    suspend fun isFavorite(stationId: String): Boolean = favoriteDao.isFavorite(stationId)
+
+    suspend fun toggleFavorite(station: RadioStation) {
+        val isFav = isFavorite(station.id)
+        if (isFav) {
+            removeFromFavorites(station)
+        } else {
+            addToFavorites(station)
+        }
+    }
+
+    // History
+    fun getRecentlyPlayed(): Flow<List<RadioStation>> = historyDao.getRecentlyPlayed()
+
+    suspend fun addToHistory(station: RadioStation) {
+        val timestamp = System.currentTimeMillis()
+        historyDao.insertToHistory(station.copy(playedAt = timestamp))
+    }
+
+    suspend fun clearOldHistory() {
+        val cutoffTime = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000) // 30 days
+        historyDao.deleteOldHistory(cutoffTime)
+    }
+
+    suspend fun clearAllHistory() {
+        historyDao.clearAllHistory()
+    }
+}

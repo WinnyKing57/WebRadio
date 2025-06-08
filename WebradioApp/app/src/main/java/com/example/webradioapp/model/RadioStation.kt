@@ -26,3 +26,32 @@ data class RadioStation(
     @ColumnInfo(name = "play_count", defaultValue = "0")
     var playCount: Int = 0
 ) : Parcelable
+package com.example.webradioapp.model
+
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+@Entity(tableName = "radio_stations")
+data class RadioStation(
+    @PrimaryKey
+    val id: String,
+    val name: String,
+    val streamUrl: String,
+    val genre: String = "",
+    val country: String = "",
+    val faviconUrl: String = "",
+    val language: String = "",
+    val bitrate: Int = 0,
+    val codec: String = "",
+    val homepage: String = "",
+    val tags: String = "",
+    val votes: Int = 0,
+    val clickcount: Int = 0,
+    val lastCheckOk: Boolean = true,
+    val lastCheckTime: String = "",
+    val isFavorite: Boolean = false,
+    val playedAt: Long = 0L // Timestamp for history
+) : Parcelable

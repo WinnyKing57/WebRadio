@@ -51,3 +51,27 @@ interface HistoryStationDao {
     @Query("UPDATE stations SET last_played_timestamp = 0, play_count = 0")
     suspend fun clearAllHistoryTimestamps()
 }
+package com.example.webradioapp.db
+
+import androidx.room.*
+import com.example.webradioapp.model.RadioStation
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface HistoryStationDao {
+
+    @Query("SELECT * FROM radio_stations WHERE playedAt > 0 ORDER BY playedAt DESC LIMIT 50")
+    fun getRecentlyPlayed(): Flow<List<RadioStation>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertToHistory(station: RadioStation)
+
+    @Query("UPDATE radio_stations SET playedAt = :timestamp WHERE id = :stationId")
+    suspend fun updatePlayedAt(stationId: String, timestamp: Long)
+
+    @Query("DELETE FROM radio_stations WHERE playedAt > 0 AND playedAt < :cutoffTime")
+    suspend fun deleteOldHistory(cutoffTime: Long)
+
+    @Query("DELETE FROM radio_stations WHERE playedAt > 0")
+    suspend fun clearAllHistory()
+}

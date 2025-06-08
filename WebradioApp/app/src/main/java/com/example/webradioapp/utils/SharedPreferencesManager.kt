@@ -77,3 +77,77 @@ class SharedPreferencesManager(context: Context) {
 
     // Removed Favorite and History methods as they are now handled by Room DB
 }
+package com.example.webradioapp.utils
+
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatDelegate
+
+class SharedPreferencesManager(context: Context) {
+
+    companion object {
+        private const val PREFS_NAME = "webradio_prefs"
+        private const val KEY_THEME_PREFERENCE = "theme_preference"
+        private const val KEY_ACCENT_COLOR_THEME = "accent_color_theme"
+        private const val KEY_LAST_PLAYED_STATION = "last_played_station"
+        private const val KEY_VOLUME_LEVEL = "volume_level"
+        private const val KEY_AUTO_PLAY_ON_CONNECT = "auto_play_on_connect"
+        private const val KEY_SLEEP_TIMER_DEFAULT = "sleep_timer_default"
+
+        const val ACCENT_THEME_DEFAULT = "Default"
+        const val ACCENT_THEME_BLUE = "AccentBlue"
+        const val ACCENT_THEME_GREEN = "AccentGreen"
+        const val ACCENT_THEME_RED = "AccentRed"
+        const val ACCENT_THEME_PURPLE = "AccentPurple"
+    }
+
+    private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    fun getThemePreference(): Int {
+        return prefs.getInt(KEY_THEME_PREFERENCE, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    }
+
+    fun setThemePreference(themeMode: Int) {
+        prefs.edit().putInt(KEY_THEME_PREFERENCE, themeMode).apply()
+    }
+
+    fun getAccentColorTheme(): String {
+        return prefs.getString(KEY_ACCENT_COLOR_THEME, ACCENT_THEME_DEFAULT) ?: ACCENT_THEME_DEFAULT
+    }
+
+    fun setAccentColorTheme(accentTheme: String) {
+        prefs.edit().putString(KEY_ACCENT_COLOR_THEME, accentTheme).apply()
+    }
+
+    fun getLastPlayedStation(): String? {
+        return prefs.getString(KEY_LAST_PLAYED_STATION, null)
+    }
+
+    fun setLastPlayedStation(stationJson: String) {
+        prefs.edit().putString(KEY_LAST_PLAYED_STATION, stationJson).apply()
+    }
+
+    fun getVolumeLevel(): Float {
+        return prefs.getFloat(KEY_VOLUME_LEVEL, 0.7f)
+    }
+
+    fun setVolumeLevel(volume: Float) {
+        prefs.edit().putFloat(KEY_VOLUME_LEVEL, volume).apply()
+    }
+
+    fun getAutoPlayOnConnect(): Boolean {
+        return prefs.getBoolean(KEY_AUTO_PLAY_ON_CONNECT, false)
+    }
+
+    fun setAutoPlayOnConnect(autoPlay: Boolean) {
+        prefs.edit().putBoolean(KEY_AUTO_PLAY_ON_CONNECT, autoPlay).apply()
+    }
+
+    fun getSleepTimerDefault(): Int {
+        return prefs.getInt(KEY_SLEEP_TIMER_DEFAULT, 30) // minutes
+    }
+
+    fun setSleepTimerDefault(minutes: Int) {
+        prefs.edit().putInt(KEY_SLEEP_TIMER_DEFAULT, minutes).apply()
+    }
+}

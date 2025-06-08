@@ -64,3 +64,58 @@ interface RadioBrowserApiService {
     @GET("json/stations/byuuid")
     suspend fun getStationByUuid(@Query("uuids") uuid: String): Response<List<ApiRadioStation>> // API returns a list even for single UUID
 }
+package com.example.webradioapp.network
+
+import com.example.webradioapp.model.RadioStation
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface RadioBrowserApiService {
+
+    @GET("json/stations/search")
+    suspend fun searchStations(
+        @Query("name") name: String? = null,
+        @Query("country") country: String? = null,
+        @Query("language") language: String? = null,
+        @Query("tag") tag: String? = null,
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int = 0,
+        @Query("hidebroken") hideBroken: Boolean = true,
+        @Query("order") order: String = "votes",
+        @Query("reverse") reverse: Boolean = true
+    ): Response<List<RadioStation>>
+
+    @GET("json/stations/byuuid")
+    suspend fun getStationById(@Query("uuids") uuid: String): Response<List<RadioStation>>
+
+    @GET("json/stations/topvote")
+    suspend fun getTopStations(@Query("limit") limit: Int = 50): Response<List<RadioStation>>
+
+    @GET("json/stations/topclick")
+    suspend fun getPopularStations(@Query("limit") limit: Int = 50): Response<List<RadioStation>>
+
+    @GET("json/countries")
+    suspend fun getCountries(): Response<List<Country>>
+
+    @GET("json/languages")
+    suspend fun getLanguages(): Response<List<Language>>
+
+    @GET("json/tags")
+    suspend fun getTags(@Query("limit") limit: Int = 100): Response<List<Tag>>
+}
+
+data class Country(
+    val name: String,
+    val stationcount: Int
+)
+
+data class Language(
+    val name: String,
+    val stationcount: Int
+)
+
+data class Tag(
+    val name: String,
+    val stationcount: Int
+)

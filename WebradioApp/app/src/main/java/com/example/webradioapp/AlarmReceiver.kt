@@ -21,6 +21,20 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent.action == ACTION_ALARM_TRIGGERED) {
             val stationJson = intent.getStringExtra(EXTRA_STATION_JSON)
             val station = stationJson?.let { Gson().fromJson(it, RadioStation::class.java) }
+            
+            if (station != null) {
+                Log.d("AlarmReceiver", "Starting streaming service for station: ${station.name}")
+                val serviceIntent = Intent(context, StreamingService::class.java).apply {
+                    action = StreamingService.ACTION_PLAY
+                    putExtra(StreamingService.EXTRA_STATION_OBJECT, station)
+                }
+                context.startForegroundService(serviceIntent)
+            } else {
+                Log.e("AlarmReceiver", "Station data is null, cannot start streaming")
+            }
+        }
+    }
+}
 
             if (station != null) {
                 Log.d("AlarmReceiver", "Starting StreamingService for station: ${station.name}")
