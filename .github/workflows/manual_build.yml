@@ -18,53 +18,43 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
 
-    - name: Show GITHUB_WORKSPACE structure
-      run: |
-        echo "GITHUB_WORKSPACE is: ${{ github.workspace }}"
-        ls -R ${{ github.workspace }}
-      shell: bash
-
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Download Android SDK Command Line Tools
+    - name: Install Android SDK Command Line Tools
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip wget
         wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
-        mkdir -p $HOME/Android/cmdline-tools
-        unzip cmdline-tools.zip -d $HOME/Android/cmdline-tools
-        mkdir -p $HOME/Android/sdk/cmdline-tools/latest
-        mv $HOME/Android/cmdline-tools/cmdline-tools/* $HOME/Android/sdk/cmdline-tools/latest/
-        echo "ANDROID_SDK_ROOT=$HOME/Android/sdk" >> $GITHUB_ENV
-        echo "ANDROID_HOME=" >> $GITHUB_ENV  # Neutraliser ANDROID_HOME
-        echo "$HOME/Android/sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        mkdir -p $HOME/android-sdk/cmdline-tools
+        unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
+        mkdir -p $HOME/android-sdk/cmdline-tools/latest
+        mv $HOME/android-sdk/cmdline-tools/cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
+        
+        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
       shell: bash
 
-    - name: Install SDK components
+    - name: Accept SDK Licenses and Install SDK Packages
       run: |
-        sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses || true
-        sdkmanager --sdk_root=$ANDROID_SDK_ROOT --update
-        sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platforms;android-33" "build-tools;33.0.2"
+        sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
+        sdkmanager --sdk_root=$ANDROID_HOME --update
+        sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-33" "build-tools;33.0.2" "platform-tools"
       shell: bash
 
-    - name: Delete local.properties files
+    - name: Clean local.properties
       run: |
         find . -name local.properties -print -delete
-        echo "Ensured no local.properties files exist."
       shell: bash
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         cache-disabled: true
-
-    - name: Show current directory before build
-      run: pwd
-      shell: bash
 
     - name: Build with Gradle
       run: ./gradlew :WebradioApp:app:clean :WebradioApp:app:assembleDebug --stacktrace --info
