@@ -30,7 +30,7 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Install Android SDK Command Line Tools and SDK 33
+    - name: Download Android SDK Command Line Tools
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip wget
@@ -39,16 +39,16 @@ jobs:
         unzip cmdline-tools.zip -d $HOME/Android/cmdline-tools
         mkdir -p $HOME/Android/sdk/cmdline-tools/latest
         mv $HOME/Android/cmdline-tools/cmdline-tools/* $HOME/Android/sdk/cmdline-tools/latest/
-
-        # Set environment variables correctly (resolve conflict)
         echo "ANDROID_SDK_ROOT=$HOME/Android/sdk" >> $GITHUB_ENV
-        echo "ANDROID_HOME=" >> $GITHUB_ENV  # Désactive la variable conflictuelle
+        echo "ANDROID_HOME=" >> $GITHUB_ENV  # Neutraliser ANDROID_HOME
         echo "$HOME/Android/sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+      shell: bash
 
-        # Install SDK components
-        yes | sdkmanager --licenses || true
-        sdkmanager --update
-        sdkmanager "platforms;android-33" "build-tools;33.0.2"
+    - name: Install SDK components
+      run: |
+        sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses || true
+        sdkmanager --sdk_root=$ANDROID_SDK_ROOT --update
+        sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platforms;android-33" "build-tools;33.0.2"
       shell: bash
 
     - name: Delete local.properties files
@@ -65,11 +65,6 @@ jobs:
     - name: Show current directory before build
       run: pwd
       shell: bash
-
-    - name: Debug environment variables
-      run: |
-        echo "ANDROID_HOME=$ANDROID_HOME"
-        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
 
     - name: Build with Gradle
       run: ./gradlew :WebradioApp:app:clean :WebradioApp:app:assembleDebug --stacktrace --info
