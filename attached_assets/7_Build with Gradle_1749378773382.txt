@@ -1,0 +1,296 @@
+﻿2025-06-08T10:25:20.3136175Z ##[group]Run ./gradlew build
+2025-06-08T10:25:20.3136419Z [36;1m./gradlew build[0m
+2025-06-08T10:25:20.3181960Z shell: /usr/bin/bash -e {0}
+2025-06-08T10:25:20.3182180Z env:
+2025-06-08T10:25:20.3182573Z   ANDROID_SDK_ROOT: /home/runner/work/WebRadio/WebRadio/android-sdk
+2025-06-08T10:25:20.3183027Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.15-6/x64
+2025-06-08T10:25:20.3183461Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.15-6/x64
+2025-06-08T10:25:20.3183871Z   ANDROID_HOME: /home/runner/work/WebRadio/WebRadio/android-sdk
+2025-06-08T10:25:20.3184168Z ##[endgroup]
+2025-06-08T10:25:20.4214023Z Downloading https://services.gradle.org/distributions/gradle-8.5-bin.zip
+2025-06-08T10:25:22.2351360Z ............10%.............20%............30%.............40%.............50%............60%.............70%.............80%............90%.............100%
+2025-06-08T10:25:23.3151959Z 
+2025-06-08T10:25:23.3154258Z Welcome to Gradle 8.5!
+2025-06-08T10:25:23.3154567Z 
+2025-06-08T10:25:23.3155556Z Here are the highlights of this release:
+2025-06-08T10:25:23.3156648Z  - Support for running on Java 21
+2025-06-08T10:25:23.3159294Z  - Faster first use with Kotlin DSL
+2025-06-08T10:25:23.3160066Z  - Improved error and warning messages
+2025-06-08T10:25:23.3160397Z 
+2025-06-08T10:25:23.3167475Z For more details see https://docs.gradle.org/8.5/release-notes.html
+2025-06-08T10:25:23.3168085Z 
+2025-06-08T10:25:23.5151689Z Starting a Gradle Daemon (subsequent builds will be faster)
+2025-06-08T10:25:26.0161295Z Calculating task graph as no cached configuration is available for tasks: build
+2025-06-08T10:26:47.1165384Z Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+2025-06-08T10:28:21.1201567Z > Task :WebradioApp:app:preBuild UP-TO-DATE
+2025-06-08T10:28:21.1202341Z > Task :WebradioApp:app:preReleaseBuild UP-TO-DATE
+2025-06-08T10:28:21.1231211Z > Task :WebradioApp:app:preDebugBuild UP-TO-DATE
+2025-06-08T10:28:21.1232646Z > Task :WebradioApp:app:mergeDebugNativeDebugMetadata NO-SOURCE
+2025-06-08T10:28:21.2146216Z > Task :WebradioApp:app:generateReleaseResValues
+2025-06-08T10:28:21.2154646Z > Task :WebradioApp:app:buildKotlinToolingMetadata
+2025-06-08T10:28:21.2185167Z > Task :WebradioApp:app:generateDebugResValues FROM-CACHE
+2025-06-08T10:28:21.2189346Z > Task :WebradioApp:app:generateDebugResources UP-TO-DATE
+2025-06-08T10:28:23.1147045Z > Task :WebradioApp:app:dataBindingMergeDependencyArtifactsDebug
+2025-06-08T10:28:23.1156696Z > Task :WebradioApp:app:dataBindingMergeDependencyArtifactsRelease
+2025-06-08T10:28:23.1157559Z > Task :WebradioApp:app:mapDebugSourceSetPaths
+2025-06-08T10:28:23.1158228Z > Task :WebradioApp:app:checkDebugAarMetadata
+2025-06-08T10:28:23.2184211Z > Task :WebradioApp:app:createDebugCompatibleScreenManifests
+2025-06-08T10:28:23.2224250Z > Task :WebradioApp:app:extractDeepLinksDebug
+2025-06-08T10:28:24.0146039Z > Task :WebradioApp:app:packageDebugResources
+2025-06-08T10:28:24.2149032Z > Task :WebradioApp:app:javaPreCompileDebug
+2025-06-08T10:28:24.2151664Z > Task :WebradioApp:app:processDebugMainManifest
+2025-06-08T10:28:24.2152315Z > Task :WebradioApp:app:mergeDebugShaders
+2025-06-08T10:28:24.2153106Z > Task :WebradioApp:app:compileDebugShaders NO-SOURCE
+2025-06-08T10:28:24.2153800Z > Task :WebradioApp:app:generateDebugAssets UP-TO-DATE
+2025-06-08T10:28:24.4167009Z > Task :WebradioApp:app:processDebugManifest
+2025-06-08T10:28:24.5147135Z > Task :WebradioApp:app:mergeDebugAssets FROM-CACHE
+2025-06-08T10:28:24.5147950Z > Task :WebradioApp:app:processDebugManifestForPackage
+2025-06-08T10:28:24.5148612Z > Task :WebradioApp:app:compressDebugAssets
+2025-06-08T10:28:26.3146071Z > Task :WebradioApp:app:parseDebugLocalResources
+2025-06-08T10:28:26.3154029Z > Task :WebradioApp:app:mergeDebugJniLibFolders FROM-CACHE
+2025-06-08T10:28:27.9173740Z > Task :WebradioApp:app:mergeDebugNativeLibs NO-SOURCE
+2025-06-08T10:28:27.9175455Z > Task :WebradioApp:app:stripDebugDebugSymbols NO-SOURCE
+2025-06-08T10:28:28.0166472Z > Task :WebradioApp:app:checkDebugDuplicateClasses
+2025-06-08T10:28:28.1145766Z > Task :WebradioApp:app:mergeLibDexDebug
+2025-06-08T10:28:28.1146698Z > Task :WebradioApp:app:writeDebugAppMetadata
+2025-06-08T10:28:28.1147829Z > Task :WebradioApp:app:writeDebugSigningConfigVersions
+2025-06-08T10:28:28.1148743Z > Task :WebradioApp:app:generateReleaseResources
+2025-06-08T10:28:29.4146176Z > Task :WebradioApp:app:validateSigningDebug
+2025-06-08T10:28:29.4147272Z > Task :WebradioApp:app:mergeDebugResources
+2025-06-08T10:28:29.5145682Z > Task :WebradioApp:app:packageReleaseResources
+2025-06-08T10:28:29.9145844Z > Task :WebradioApp:app:desugarDebugFileDependencies
+2025-06-08T10:28:34.1145498Z > Task :WebradioApp:app:mergeReleaseResources
+2025-06-08T10:28:34.1149364Z > Task :WebradioApp:app:parseReleaseLocalResources FROM-CACHE
+2025-06-08T10:28:34.7145743Z > Task :WebradioApp:app:dataBindingGenBaseClassesRelease
+2025-06-08T10:28:59.4145871Z > Task :WebradioApp:app:dataBindingGenBaseClassesDebug
+2025-06-08T10:28:59.5145769Z > Task :WebradioApp:app:processDebugResources
+2025-06-08T10:28:59.9166047Z > Task :WebradioApp:app:mergeExtDexDebug
+2025-06-08T10:29:04.7149531Z > Task :WebradioApp:app:checkReleaseAarMetadata
+2025-06-08T10:29:05.3174864Z > Task :WebradioApp:app:dataBindingGenBaseClassesDebug FROM-CACHE
+2025-06-08T10:29:05.3183471Z > Task :WebradioApp:app:mapReleaseSourceSetPaths
+2025-06-08T10:29:05.3184296Z > Task :WebradioApp:app:createReleaseCompatibleScreenManifests
+2025-06-08T10:29:05.3185083Z > Task :WebradioApp:app:extractDeepLinksRelease FROM-CACHE
+2025-06-08T10:29:05.4173999Z > Task :WebradioApp:app:processReleaseMainManifest
+2025-06-08T10:29:05.4174948Z > Task :WebradioApp:app:processReleaseManifest
+2025-06-08T10:29:05.5150601Z > Task :WebradioApp:app:javaPreCompileRelease FROM-CACHE
+2025-06-08T10:29:05.5161638Z > Task :WebradioApp:app:extractProguardFiles
+2025-06-08T10:29:05.5166151Z > Task :WebradioApp:app:mergeReleaseJniLibFolders FROM-CACHE
+2025-06-08T10:29:05.5170616Z > Task :WebradioApp:app:mergeReleaseNativeLibs NO-SOURCE
+2025-06-08T10:29:05.5208448Z > Task :WebradioApp:app:stripReleaseDebugSymbols NO-SOURCE
+2025-06-08T10:29:05.5209662Z > Task :WebradioApp:app:extractReleaseNativeSymbolTables NO-SOURCE
+2025-06-08T10:29:05.6146105Z > Task :WebradioApp:app:mergeReleaseNativeDebugMetadata NO-SOURCE
+2025-06-08T10:29:07.3149140Z > Task :WebradioApp:app:checkReleaseDuplicateClasses
+2025-06-08T10:29:07.3149912Z > Task :WebradioApp:app:desugarReleaseFileDependencies
+2025-06-08T10:29:35.4146090Z > Task :WebradioApp:app:processReleaseManifestForPackage
+2025-06-08T10:29:37.3204144Z > Task :WebradioApp:app:mergeExtDexRelease
+2025-06-08T10:29:39.9145980Z > Task :WebradioApp:app:processReleaseResources
+2025-06-08T10:29:46.6149691Z > Task :WebradioApp:app:mergeReleaseArtProfile
+2025-06-08T10:29:46.6150835Z > Task :WebradioApp:app:mergeReleaseShaders FROM-CACHE
+2025-06-08T10:29:46.6151820Z > Task :WebradioApp:app:compileReleaseShaders NO-SOURCE
+2025-06-08T10:29:46.6152871Z > Task :WebradioApp:app:generateReleaseAssets UP-TO-DATE
+2025-06-08T10:29:46.6153565Z > Task :WebradioApp:app:mergeReleaseAssets FROM-CACHE
+2025-06-08T10:29:46.6154176Z > Task :WebradioApp:app:compressReleaseAssets
+2025-06-08T10:29:47.7145883Z > Task :WebradioApp:app:optimizeReleaseResources
+2025-06-08T10:29:47.8145592Z > Task :WebradioApp:app:collectReleaseDependencies
+2025-06-08T10:29:48.0176668Z > Task :WebradioApp:app:sdkReleaseDependencyData
+2025-06-08T10:29:48.0177961Z > Task :WebradioApp:app:writeReleaseAppMetadata
+2025-06-08T10:29:48.0178743Z > Task :WebradioApp:app:writeReleaseSigningConfigVersions
+2025-06-08T10:29:48.1146422Z > Task :WebradioApp:app:preDebugAndroidTestBuild SKIPPED
+2025-06-08T10:29:48.1152790Z > Task :WebradioApp:app:generateDebugAndroidTestResValues FROM-CACHE
+2025-06-08T10:29:48.1158241Z > Task :WebradioApp:app:preDebugUnitTestBuild UP-TO-DATE
+2025-06-08T10:29:49.8146770Z > Task :WebradioApp:app:javaPreCompileDebugUnitTest
+2025-06-08T10:29:49.8148100Z > Task :WebradioApp:app:preReleaseUnitTestBuild UP-TO-DATE
+2025-06-08T10:29:49.8148921Z > Task :WebradioApp:app:javaPreCompileReleaseUnitTest FROM-CACHE
+2025-06-08T10:29:53.8163083Z 
+2025-06-08T10:29:53.8183052Z > Task :WebradioApp:app:kspReleaseKotlin FAILED
+2025-06-08T10:29:53.8200539Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt: (39, 34): Function declaration must have a name
+2025-06-08T10:29:53.8202060Z e: Error occurred in KSP, check log for detail
+2025-06-08T10:29:53.8204015Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:13 Expecting a top level declaration
+2025-06-08T10:29:53.8206529Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:16 Expecting a top level declaration
+2025-06-08T10:29:53.8209051Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:17 Expecting a top level declaration
+2025-06-08T10:29:53.8211625Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:25 Expecting a top level declaration
+2025-06-08T10:29:53.8214261Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:28 Expecting a top level declaration
+2025-06-08T10:29:53.8216738Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:32 Expecting a top level declaration
+2025-06-08T10:29:53.8219179Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:34 Expecting a top level declaration
+2025-06-08T10:29:53.8221679Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:54:15 Expecting a top level declaration
+2025-06-08T10:29:53.8271337Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:54:20 Expecting a top level declaration
+2025-06-08T10:29:53.8273656Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:75:9 Expecting a top level declaration
+2025-06-08T10:29:53.8275784Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:76:5 Expecting a top level declaration
+2025-06-08T10:29:53.8277908Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:77:1 Expecting a top level declaration
+2025-06-08T10:29:53.8280186Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:1 Expecting a top level declaration
+2025-06-08T10:29:53.8282406Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:9 Expecting a top level declaration
+2025-06-08T10:29:53.8285032Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:12 Expecting a top level declaration
+2025-06-08T10:29:53.8287567Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:13 Expecting a top level declaration
+2025-06-08T10:29:53.8290466Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:20 Expecting a top level declaration
+2025-06-08T10:29:53.8323249Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:21 Expecting a top level declaration
+2025-06-08T10:29:53.8325905Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:32 Expecting a top level declaration
+2025-06-08T10:29:53.8328728Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:33 Expecting a top level declaration
+2025-06-08T10:29:53.8331434Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:35 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8334244Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:1 Expecting a top level declaration
+2025-06-08T10:29:53.8336768Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:9 Expecting a top level declaration
+2025-06-08T10:29:53.8339298Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:12 Expecting a top level declaration
+2025-06-08T10:29:53.8341847Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:13 Expecting a top level declaration
+2025-06-08T10:29:53.8344516Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:20 Expecting a top level declaration
+2025-06-08T10:29:53.8347058Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:21 Expecting a top level declaration
+2025-06-08T10:29:53.8349583Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:32 Expecting a top level declaration
+2025-06-08T10:29:53.8352074Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:33 Expecting a top level declaration
+2025-06-08T10:29:53.8385017Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:35 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8387685Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:1 Expecting a top level declaration
+2025-06-08T10:29:53.8390225Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:9 Expecting a top level declaration
+2025-06-08T10:29:53.8392893Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:12 Expecting a top level declaration
+2025-06-08T10:29:53.8395402Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:13 Expecting a top level declaration
+2025-06-08T10:29:53.8397999Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:20 Expecting a top level declaration
+2025-06-08T10:29:53.8400614Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:21 Expecting a top level declaration
+2025-06-08T10:29:53.8403389Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:32 Expecting a top level declaration
+2025-06-08T10:29:53.8406399Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:33 Expecting a top level declaration
+2025-06-08T10:29:53.8409167Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:35 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8411815Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:1 Expecting a top level declaration
+2025-06-08T10:29:53.8437467Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:9 Expecting a top level declaration
+2025-06-08T10:29:53.8440058Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:12 Expecting a top level declaration
+2025-06-08T10:29:53.8442863Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:13 Expecting a top level declaration
+2025-06-08T10:29:53.8445430Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:20 Expecting a top level declaration
+2025-06-08T10:29:53.8448051Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:21 Expecting a top level declaration
+2025-06-08T10:29:53.8450622Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:32 Expecting a top level declaration
+2025-06-08T10:29:53.8453518Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:33 Expecting a top level declaration
+2025-06-08T10:29:53.8456242Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:38 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8459046Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:1 Expecting a top level declaration
+2025-06-08T10:29:53.8461841Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:9 Expecting a top level declaration
+2025-06-08T10:29:53.8504981Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:12 Expecting a top level declaration
+2025-06-08T10:29:53.8507790Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:13 Expecting a top level declaration
+2025-06-08T10:29:53.8510645Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:20 Expecting a top level declaration
+2025-06-08T10:29:53.8516216Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:21 Expecting a top level declaration
+2025-06-08T10:29:53.8519069Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:32 Expecting a top level declaration
+2025-06-08T10:29:53.8521868Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:33 Expecting a top level declaration
+2025-06-08T10:29:53.8524935Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:40 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8527736Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:1 Expecting a top level declaration
+2025-06-08T10:29:53.8530728Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:9 Expecting a top level declaration
+2025-06-08T10:29:53.8593751Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:12 Expecting a top level declaration
+2025-06-08T10:29:53.8596521Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:13 Expecting a top level declaration
+2025-06-08T10:29:53.8599456Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:20 Expecting a top level declaration
+2025-06-08T10:29:53.8602195Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:21 Expecting a top level declaration
+2025-06-08T10:29:53.8605209Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:32 Expecting a top level declaration
+2025-06-08T10:29:53.8607899Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:33 Expecting a top level declaration
+2025-06-08T10:29:53.8610751Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:38 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8613803Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:1 Expecting a top level declaration
+2025-06-08T10:29:53.8643831Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:9 Expecting a top level declaration
+2025-06-08T10:29:53.8646708Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:12 Expecting a top level declaration
+2025-06-08T10:29:53.8649506Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:13 Expecting a top level declaration
+2025-06-08T10:29:53.8652326Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:20 Expecting a top level declaration
+2025-06-08T10:29:53.8655365Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:21 Expecting a top level declaration
+2025-06-08T10:29:53.8658235Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:32 Expecting a top level declaration
+2025-06-08T10:29:53.8661109Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:33 Expecting a top level declaration
+2025-06-08T10:29:53.8664230Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:38 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8666932Z e: [ksp] /home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt: (39, 34): Function declaration must have a name
+2025-06-08T10:29:53.8668349Z e: Error occurred in KSP, check log for detail
+2025-06-08T10:29:53.8670065Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:13 Expecting a top level declaration
+2025-06-08T10:29:53.8716716Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:16 Expecting a top level declaration
+2025-06-08T10:29:53.8719597Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:17 Expecting a top level declaration
+2025-06-08T10:29:53.8722072Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:25 Expecting a top level declaration
+2025-06-08T10:29:53.8724660Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:28 Expecting a top level declaration
+2025-06-08T10:29:53.8727390Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:32 Expecting a top level declaration
+2025-06-08T10:29:53.8729865Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:39:34 Expecting a top level declaration
+2025-06-08T10:29:53.8732341Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:54:15 Expecting a top level declaration
+2025-06-08T10:29:53.8734939Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:54:20 Expecting a top level declaration
+2025-06-08T10:29:53.8737389Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:75:9 Expecting a top level declaration
+2025-06-08T10:29:53.8739866Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:76:5 Expecting a top level declaration
+2025-06-08T10:29:53.8742366Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/AlarmReceiver.kt:77:1 Expecting a top level declaration
+2025-06-08T10:29:53.8801694Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:1 Expecting a top level declaration
+2025-06-08T10:29:53.8804601Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:9 Expecting a top level declaration
+2025-06-08T10:29:53.8807284Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:12 Expecting a top level declaration
+2025-06-08T10:29:53.8809983Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:13 Expecting a top level declaration
+2025-06-08T10:29:53.8812698Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:20 Expecting a top level declaration
+2025-06-08T10:29:53.8815365Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:21 Expecting a top level declaration
+2025-06-08T10:29:53.8853823Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:32 Expecting a top level declaration
+2025-06-08T10:29:53.8855958Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:33 Expecting a top level declaration
+2025-06-08T10:29:53.8858099Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/FavoriteStationDao.kt:47:35 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8860201Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:1 Expecting a top level declaration
+2025-06-08T10:29:53.8862198Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:9 Expecting a top level declaration
+2025-06-08T10:29:53.8864712Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:12 Expecting a top level declaration
+2025-06-08T10:29:53.8866725Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:13 Expecting a top level declaration
+2025-06-08T10:29:53.8868720Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:20 Expecting a top level declaration
+2025-06-08T10:29:53.8870922Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:21 Expecting a top level declaration
+2025-06-08T10:29:53.8873207Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:32 Expecting a top level declaration
+2025-06-08T10:29:53.8875702Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:33 Expecting a top level declaration
+2025-06-08T10:29:53.8878091Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/HistoryStationDao.kt:54:35 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8880617Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:1 Expecting a top level declaration
+2025-06-08T10:29:53.8913406Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:9 Expecting a top level declaration
+2025-06-08T10:29:53.8915713Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:12 Expecting a top level declaration
+2025-06-08T10:29:53.8918048Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:13 Expecting a top level declaration
+2025-06-08T10:29:53.8920456Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:20 Expecting a top level declaration
+2025-06-08T10:29:53.8922936Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:21 Expecting a top level declaration
+2025-06-08T10:29:53.8925413Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:32 Expecting a top level declaration
+2025-06-08T10:29:53.8927838Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:33 Expecting a top level declaration
+2025-06-08T10:29:53.8930451Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/db/StationRepository.kt:75:35 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8933164Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:1 Expecting a top level declaration
+2025-06-08T10:29:53.8935626Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:9 Expecting a top level declaration
+2025-06-08T10:29:53.8938088Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:12 Expecting a top level declaration
+2025-06-08T10:29:53.8940577Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:13 Expecting a top level declaration
+2025-06-08T10:29:53.8973391Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:20 Expecting a top level declaration
+2025-06-08T10:29:53.8976418Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:21 Expecting a top level declaration
+2025-06-08T10:29:53.8978945Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:32 Expecting a top level declaration
+2025-06-08T10:29:53.8981517Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:33 Expecting a top level declaration
+2025-06-08T10:29:53.8984372Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/model/RadioStation.kt:29:38 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.8987166Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:1 Expecting a top level declaration
+2025-06-08T10:29:53.8989862Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:9 Expecting a top level declaration
+2025-06-08T10:29:53.8992805Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:12 Expecting a top level declaration
+2025-06-08T10:29:53.8995650Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:13 Expecting a top level declaration
+2025-06-08T10:29:53.8998405Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:20 Expecting a top level declaration
+2025-06-08T10:29:53.9001135Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:21 Expecting a top level declaration
+2025-06-08T10:29:53.9034274Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:32 Expecting a top level declaration
+2025-06-08T10:29:53.9037289Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:33 Expecting a top level declaration
+2025-06-08T10:29:53.9040430Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/network/RadioBrowserApiService.kt:67:40 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.9043667Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:1 Expecting a top level declaration
+2025-06-08T10:29:53.9046575Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:9 Expecting a top level declaration
+2025-06-08T10:29:53.9049496Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:12 Expecting a top level declaration
+2025-06-08T10:29:53.9052367Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:13 Expecting a top level declaration
+2025-06-08T10:29:53.9055430Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:20 Expecting a top level declaration
+2025-06-08T10:29:53.9058318Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:21 Expecting a top level declaration
+2025-06-08T10:29:53.9061212Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:32 Expecting a top level declaration
+2025-06-08T10:29:53.9094222Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:33 Expecting a top level declaration
+2025-06-08T10:29:53.9097330Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/NotificationHelper.kt:111:38 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.9100124Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:1 Expecting a top level declaration
+2025-06-08T10:29:53.9103103Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:9 Expecting a top level declaration
+2025-06-08T10:29:53.9106128Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:12 Expecting a top level declaration
+2025-06-08T10:29:53.9108941Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:13 Expecting a top level declaration
+2025-06-08T10:29:53.9111749Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:20 Expecting a top level declaration
+2025-06-08T10:29:53.9114822Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:21 Expecting a top level declaration
+2025-06-08T10:29:53.9117712Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:32 Expecting a top level declaration
+2025-06-08T10:29:53.9120661Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:33 Expecting a top level declaration
+2025-06-08T10:29:53.9153908Z e: file:///home/runner/work/WebRadio/WebRadio/WebradioApp/app/src/main/java/com/example/webradioapp/utils/SharedPreferencesManager.kt:80:38 imports are only allowed in the beginning of file
+2025-06-08T10:29:53.9155324Z 
+2025-06-08T10:29:53.9155670Z > Task :WebradioApp:app:kspDebugKotlin FAILED
+2025-06-08T10:29:53.9193007Z 
+2025-06-08T10:29:53.9193859Z FAILURE: Build completed with 2 failures.
+2025-06-08T10:29:53.9194365Z 
+2025-06-08T10:29:53.9244821Z 1: Task failed with an exception.
+2025-06-08T10:29:53.9245238Z -----------
+2025-06-08T10:29:53.9245585Z * What went wrong:
+2025-06-08T10:29:53.9246181Z Execution failed for task ':WebradioApp:app:kspReleaseKotlin'.
+2025-06-08T10:29:53.9247781Z > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2025-06-08T10:29:53.9248969Z    > Compilation error. See log for more details
+2025-06-08T10:29:53.9249291Z 
+2025-06-08T10:29:53.9249399Z * Try:
+2025-06-08T10:29:53.9249871Z > Run with --stacktrace option to get the stack trace.
+2025-06-08T10:29:53.9250555Z > Run with --info or --debug option to get more log output.
+2025-06-08T10:29:53.9251163Z > Run with --scan to get full insights.
+2025-06-08T10:29:53.9251715Z > Get more help at https://help.gradle.org.
+2025-06-08T10:29:53.9252314Z ==============================================================================
+2025-06-08T10:29:53.9262883Z 
+2025-06-08T10:29:53.9263164Z 2: Task failed with an exception.
+2025-06-08T10:29:53.9263555Z -----------
+2025-06-08T10:29:53.9263887Z * What went wrong:
+2025-06-08T10:29:53.9264462Z Execution failed for task ':WebradioApp:app:kspDebugKotlin'.
+2025-06-08T10:29:53.9265945Z > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2025-06-08T10:29:53.9267175Z    > Compilation error. See log for more details
+2025-06-08T10:29:53.9267507Z 
+2025-06-08T10:29:53.9267615Z * Try:
+2025-06-08T10:29:53.9268099Z > Run with --stacktrace option to get the stack trace.
+2025-06-08T10:29:53.9268839Z > Run with --info or --debug option to get more log output.
+2025-06-08T10:29:53.9269791Z > Run with --scan to get full insights.
+2025-06-08T10:29:53.9270350Z > Get more help at https://help.gradle.org.
+2025-06-08T10:29:53.9270974Z ==============================================================================
+2025-06-08T10:29:54.0175418Z 
+2025-06-08T10:29:54.0176329Z BUILD FAILED in 4m 33s
+2025-06-08T10:29:54.0176967Z 61 actionable tasks: 49 executed, 12 from cache
+2025-06-08T10:29:54.0181444Z Configuration cache entry stored.
+2025-06-08T10:29:54.5337485Z ##[error]Process completed with exit code 1.
