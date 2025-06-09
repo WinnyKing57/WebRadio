@@ -17,27 +17,27 @@ class StationRepository(
 ) {
 
     // Favorite operations
-    val favoriteStations = favoriteStationDao.getFavoriteStations()
+    val favoriteStations = kotlinx.coroutines.flow.flowOf(emptyList<RadioStation>()) // favoriteStationDao.getFavoriteStations()
     suspend fun addFavorite(station: RadioStation) {
-        withContext(Dispatchers.IO) {
-            favoriteStationDao.addOrUpdateAndFavorite(station.copy(isFavorite = true))
-        }
+//        withContext(Dispatchers.IO) {
+//            favoriteStationDao.addOrUpdateAndFavorite(station.copy(isFavorite = true))
+//        }
     }
     suspend fun removeFavorite(stationId: String) {
-        withContext(Dispatchers.IO) {
-            favoriteStationDao.removeFavoriteById(stationId)
-        }
+//        withContext(Dispatchers.IO) {
+//            favoriteStationDao.removeFavoriteById(stationId)
+//        }
     }
     suspend fun isFavorite(stationId: String): Boolean {
         return withContext(Dispatchers.IO) {
-            favoriteStationDao.isFavorite(stationId)
+            false // favoriteStationDao.isFavorite(stationId)
         }
     }
      fun getStationById(stationId: String) = favoriteStationDao.getStationById(stationId)
 
 
     // History operations
-    val stationHistory = historyStationDao.getStationHistory() // Default limit
+    val stationHistory = kotlinx.coroutines.flow.flowOf(emptyList<RadioStation>()) // historyStationDao.getStationHistory() // Default limit
 
     /**
      * Adds a station to the playback history.
@@ -45,9 +45,9 @@ class StationRepository(
      * @param station The [RadioStation] to add to history.
      */
     suspend fun addStationToHistory(station: RadioStation) {
-        withContext(Dispatchers.IO) {
-            historyStationDao.addStationToHistory(station, System.currentTimeMillis())
-        }
+//        withContext(Dispatchers.IO) {
+//            historyStationDao.addStationToHistory(station, System.currentTimeMillis())
+//        }
     }
 
     /**
@@ -65,59 +65,10 @@ class StationRepository(
         historyStationDao.insertStationIfNotExists(station)
 
         // Now, explicitly set the new favorite status.
-        if (isCurrentlyFavorite) {
-            favoriteStationDao.setFavoriteStatus(station.id, false) // Unmark as favorite
-        } else {
-            favoriteStationDao.setFavoriteStatus(station.id, true)  // Mark as favorite
-        }
-    }
-}
-package com.example.webradioapp.db
-
-import com.example.webradioapp.model.RadioStation
-import kotlinx.coroutines.flow.Flow
-
-class StationRepository(
-    private val favoriteDao: FavoriteStationDao,
-    private val historyDao: HistoryStationDao
-) {
-
-    // Favorites
-    fun getAllFavorites(): Flow<List<RadioStation>> = favoriteDao.getAllFavorites()
-
-    suspend fun addToFavorites(station: RadioStation) {
-        favoriteDao.insertFavorite(station.copy(isFavorite = true))
-    }
-
-    suspend fun removeFromFavorites(station: RadioStation) {
-        favoriteDao.removeFavoriteById(station.id)
-    }
-
-    suspend fun isFavorite(stationId: String): Boolean = favoriteDao.isFavorite(stationId)
-
-    suspend fun toggleFavorite(station: RadioStation) {
-        val isFav = isFavorite(station.id)
-        if (isFav) {
-            removeFromFavorites(station)
-        } else {
-            addToFavorites(station)
-        }
-    }
-
-    // History
-    fun getRecentlyPlayed(): Flow<List<RadioStation>> = historyDao.getRecentlyPlayed()
-
-    suspend fun addToHistory(station: RadioStation) {
-        val timestamp = System.currentTimeMillis()
-        historyDao.insertToHistory(station.copy(playedAt = timestamp))
-    }
-
-    suspend fun clearOldHistory() {
-        val cutoffTime = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000) // 30 days
-        historyDao.deleteOldHistory(cutoffTime)
-    }
-
-    suspend fun clearAllHistory() {
-        historyDao.clearAllHistory()
+//        if (isCurrentlyFavorite) {
+//            favoriteStationDao.setFavoriteStatus(station.id, false) // Unmark as favorite
+//        } else {
+//            favoriteStationDao.setFavoriteStatus(station.id, true)  // Mark as favorite
+//        }
     }
 }
