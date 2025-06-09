@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.widget.Toast // Added import
 import androidx.core.app.NotificationCompat
 import com.example.webradioapp.R
 import com.example.webradioapp.activities.MainActivity
@@ -351,6 +352,11 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                 }
             }
         }
+    }
+
+    private fun pausePlayback() {
+        activePlayer?.playWhenReady = false
+        // Log.d("StreamingService", "Playback paused via pausePlayback()") // Optional logging
     }
 
     // These methods are now effectively handled by activePlayer.play(), activePlayer.pause(), etc.
