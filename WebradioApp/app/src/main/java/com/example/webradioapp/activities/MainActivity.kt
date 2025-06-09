@@ -64,9 +64,9 @@ class MainActivity : AppCompatActivity() {
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
         // Load HomeFragment by default
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
-        }
+        // if (savedInstanceState == null) {
+        //     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
+        // }
 
         // Initialize CastContext
         // It's important that this is called, but it may throw an IllegalStateException
