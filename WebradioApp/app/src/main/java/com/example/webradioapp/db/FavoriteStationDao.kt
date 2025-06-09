@@ -44,30 +44,3 @@ interface FavoriteStationDao {
     @Query("SELECT * FROM stations WHERE id = :stationId")
     fun getStationById(stationId: String): Flow<RadioStation?>
 }
-package com.example.webradioapp.db
-
-import androidx.room.*
-import com.example.webradioapp.model.RadioStation
-import kotlinx.coroutines.flow.Flow
-
-@Dao
-interface FavoriteStationDao {
-
-    @Query("SELECT * FROM radio_stations WHERE isFavorite = 1 ORDER BY name ASC")
-    fun getAllFavorites(): Flow<List<RadioStation>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavorite(station: RadioStation)
-
-    @Delete
-    suspend fun deleteFavorite(station: RadioStation)
-
-    @Query("DELETE FROM radio_stations WHERE id = :stationId AND isFavorite = 1")
-    suspend fun removeFavoriteById(stationId: String)
-
-    @Query("SELECT EXISTS(SELECT 1 FROM radio_stations WHERE id = :stationId AND isFavorite = 1)")
-    suspend fun isFavorite(stationId: String): Boolean
-
-    @Query("UPDATE radio_stations SET isFavorite = :isFavorite WHERE id = :stationId")
-    suspend fun updateFavoriteStatus(stationId: String, isFavorite: Boolean)
-}
