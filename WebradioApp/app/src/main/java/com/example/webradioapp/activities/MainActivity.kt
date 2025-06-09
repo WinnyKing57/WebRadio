@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             // Log error or inform user that Cast is unavailable
             e.printStackTrace()
         }
+        // NAV_GRAPH_CACHE_BUST_001
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
