@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import com.example.webradioapp.AlarmReceiver
+import com.example.webradioapp.AlarmReceiver // Keep this if AlarmReceiver class is still used for Intent target
+import com.example.webradioapp.util.Constants.ACTION_ALARM_TRIGGERED
+import com.example.webradioapp.util.Constants.EXTRA_STATION_JSON
 import com.example.webradioapp.model.RadioStation
 import com.google.gson.Gson
 
@@ -33,10 +35,10 @@ object AlarmScheduler {
     fun scheduleAlarm(context: Context, timeInMillis: Long, stationToPlay: RadioStation?) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            action = AlarmReceiver.ACTION_ALARM_TRIGGERED
+        val intent = Intent(context, AlarmReceiver::class.java).apply { // AlarmReceiver class is the target for the intent
+            action = ACTION_ALARM_TRIGGERED // Use imported constant
             if (stationToPlay != null) {
-                putExtra(AlarmReceiver.EXTRA_STATION_JSON, Gson().toJson(stationToPlay))
+                putExtra(EXTRA_STATION_JSON, Gson().toJson(stationToPlay)) // Use imported constant
             }
         }
 
@@ -72,8 +74,8 @@ object AlarmScheduler {
 
     fun cancelAlarm(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            action = AlarmReceiver.ACTION_ALARM_TRIGGERED
+        val intent = Intent(context, AlarmReceiver::class.java).apply { // AlarmReceiver class is the target for the intent
+            action = ACTION_ALARM_TRIGGERED // Use imported constant
         }
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE

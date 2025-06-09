@@ -31,7 +31,7 @@ class StationAdapter(
     }
 
     override fun onBindViewHolder(holder: StationViewHolder, position: Int) {
-        val station = stations[position]
+        // val station = stations[position] // This line is incorrect and causes errors
         val station = getItem(position) // ListAdapter provides getItem()
         holder.bind(station)
     }

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.webradioapp.R
+import com.example.webradioapp.util.SettingsUtils // Added import
 import com.example.webradioapp.utils.NotificationHelper
 import com.example.webradioapp.utils.SharedPreferencesManager
 
@@ -124,12 +125,12 @@ class SettingsFragment : Fragment() {
 
 
     private fun loadNotificationPreferences() {
-        switchStationUpdatesNotifications.isChecked = sharedPrefsManager.isStationUpdatesNotificationEnabled()
+        switchStationUpdatesNotifications.isChecked = SettingsUtils.isStationUpdatesNotificationEnabled(requireContext())
     }
 
     private fun setupNotificationPreferenceListener() {
         switchStationUpdatesNotifications.setOnCheckedChangeListener { _, isChecked ->
-            sharedPrefsManager.setStationUpdatesNotificationEnabled(isChecked)
+            SettingsUtils.setStationUpdatesNotificationEnabled(requireContext(), isChecked)
             // Optionally, provide feedback like a Toast
             if (isChecked) {
                 Toast.makeText(context, "Station update notifications enabled.", Toast.LENGTH_SHORT).show()
@@ -229,30 +230,37 @@ class SettingsFragment : Fragment() {
     }
 
     private fun loadCurrentThemePreference() {
-        when (sharedPrefsManager.getThemePreference()) {
-            AppCompatDelegate.MODE_NIGHT_NO -> rbThemeLight.isChecked = true
-            AppCompatDelegate.MODE_NIGHT_YES -> rbThemeDark.isChecked = true
-            else -> rbThemeSystem.isChecked = true
+        when (SettingsUtils.getThemePreference(requireContext())) {
+            1 -> rbThemeLight.isChecked = true // Mapped to 1 for Light
+            2 -> rbThemeDark.isChecked = true  // Mapped to 2 for Dark
+            else -> rbThemeSystem.isChecked = true // Mapped to 0 for System (or any other value)
         }
     }
 
     private fun setupThemeSelectionListener() {
         rgThemeOptions.setOnCheckedChangeListener { _, checkedId ->
-            val selectedThemeMode = when (checkedId) {
-                R.id.rb_theme_light -> AppCompatDelegate.MODE_NIGHT_NO
-                R.id.rb_theme_dark -> AppCompatDelegate.MODE_NIGHT_YES
-                R.id.rb_theme_system -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            val newThemeValue = when (checkedId) { // This will be 0, 1, or 2
+                R.id.rb_theme_light -> 1
+                R.id.rb_theme_dark -> 2
+                R.id.rb_theme_system -> 0
                 else -> return@setOnCheckedChangeListener
             }
-            sharedPrefsManager.setThemePreference(selectedThemeMode)
-            AppCompatDelegate.setDefaultNightMode(selectedThemeMode)
+            SettingsUtils.setThemePreference(requireContext(), newThemeValue) // MODIFIED
+
+            // We still need to apply the theme using AppCompatDelegate
+            val appCompatMode = when (newThemeValue) {
+                1 -> AppCompatDelegate.MODE_NIGHT_NO
+                2 -> AppCompatDelegate.MODE_NIGHT_YES
+                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+            AppCompatDelegate.setDefaultNightMode(appCompatMode) // Apply the theme
         }
     }
 
     private fun setupTestNotificationButton() {
         btnShowTestNotification.setOnClickListener {
             // First, check our in-app preference
-            if (!sharedPrefsManager.isStationUpdatesNotificationEnabled()) {
+            if (!SettingsUtils.isStationUpdatesNotificationEnabled(requireContext())) { // MODIFIED
                 Toast.makeText(requireContext(), "Notifications are disabled in app settings.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
