@@ -18,12 +18,12 @@ import com.example.webradioapp.R
 import com.example.webradioapp.activities.MainActivity
 import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.utils.SharedPreferencesManager
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
+import androidx.media3.exoplayer.ExoPlayer // Changed
+import androidx.media3.common.MediaItem // Changed
+import androidx.media3.common.PlaybackException // Changed
+import androidx.media3.common.Player // Changed
+import androidx.media3.cast.CastPlayer // Changed
+import androidx.media3.cast.SessionAvailabilityListener // Changed
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManager
