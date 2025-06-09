@@ -42,9 +42,9 @@ import kotlinx.coroutines.launch
  */
 class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
-    private var localPlayer: ExoPlayer? = null // Renamed from player to localPlayer
-    private lateinit var castPlayer: CastPlayer
-    private lateinit var castContext: CastContext
+    private var localPlayer: ExoPlayer? = null
+    private var castPlayer: CastPlayer? = null // Made nullable
+    private lateinit var castContext: CastContext // Remains lateinit, initialized in onCreate
     private lateinit var sessionManager: SessionManager
     private var currentSession: CastSession? = null
 
@@ -140,13 +140,23 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                 addListener(playerListener)
             }
         }
+        // If not casting, set activePlayer to localPlayer initially
+        // The sessionManagerListener in onCreate will handle switches later
+        if (activePlayer == null && (castPlayer == null || castPlayer?.isCastSessionAvailable == false)) {
+            activePlayer = localPlayer
+        }
     }
 
     private fun initializeCastPlayer() {
-        castPlayer = CastPlayer(castContext).apply {
+        // castContext is initialized in onCreate. If getSharedInstance can fail, this might need more checks.
+        // For now, assuming castContext will be valid if this method is called after its init.
+        castPlayer = CastPlayer(this.castContext).apply {
             addListener(playerListener)
-            // setSessionAvailabilityListener(sessionAvailabilityListener) // if using this listener
+            // setSessionAvailabilityListener(sessionAvailabilityListener) // This is one way
+            // The existing sessionManagerListener also handles switching logic.
         }
+        // If a cast session is already available, make castPlayer active
+        // This is also handled by the logic in onCreate: activePlayer = if (currentSession != null) castPlayer else localPlayer
     }
 
     private val playerListener = object : Player.Listener {
@@ -372,9 +382,9 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         serviceScope.cancel() // Cancel all coroutines started by this service
         localPlayer?.release()
         localPlayer = null
-        castPlayer.release() // Release CastPlayer
+        castPlayer?.release() // Release CastPlayer, now nullable
         sessionManager.removeSessionManagerListener(sessionManagerListener, CastSession::class.java)
-        // castPlayer.setSessionAvailabilityListener(null) // if using this listener
+        // castPlayer?.setSessionAvailabilityListener(null) // if using this listener
         abandonAudioFocus()
     }
 
