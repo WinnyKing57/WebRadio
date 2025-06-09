@@ -17,9 +17,9 @@ data class RadioStation(
     @ColumnInfo(name = "language") val language: String? = null,
     @ColumnInfo(name = "favicon_url") val faviconUrl: String? = null,
 
-//    @ColumnInfo(name = "is_favorite", defaultValue = "0")
-//    var isFavorite: Boolean = false,
-//
+    @ColumnInfo(name = "is_favorite", defaultValue = "0")
+    var isFavorite: Boolean = false,
+
 //    @ColumnInfo(name = "last_played_timestamp", defaultValue = "0")
 //    var lastPlayedTimestamp: Long = 0,
 //

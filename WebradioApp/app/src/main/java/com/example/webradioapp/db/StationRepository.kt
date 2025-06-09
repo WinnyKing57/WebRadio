@@ -17,20 +17,20 @@ class StationRepository(
 ) {
 
     // Favorite operations
-    val favoriteStations = kotlinx.coroutines.flow.flowOf(emptyList<RadioStation>()) // favoriteStationDao.getFavoriteStations()
+    val favoriteStations = favoriteStationDao.getFavoriteStations()
     suspend fun addFavorite(station: RadioStation) {
-//        withContext(Dispatchers.IO) {
-//            favoriteStationDao.addOrUpdateAndFavorite(station.copy(isFavorite = true))
-//        }
+        withContext(Dispatchers.IO) {
+            favoriteStationDao.addOrUpdateAndFavorite(station.copy(isFavorite = true))
+        }
     }
     suspend fun removeFavorite(stationId: String) {
-//        withContext(Dispatchers.IO) {
-//            favoriteStationDao.removeFavoriteById(stationId)
-//        }
+        withContext(Dispatchers.IO) {
+            favoriteStationDao.removeFavoriteById(stationId)
+        }
     }
     suspend fun isFavorite(stationId: String): Boolean {
         return withContext(Dispatchers.IO) {
-            false // favoriteStationDao.isFavorite(stationId)
+            favoriteStationDao.isFavorite(stationId)
         }
     }
      fun getStationById(stationId: String) = favoriteStationDao.getStationById(stationId)
@@ -65,10 +65,10 @@ class StationRepository(
         historyStationDao.insertStationIfNotExists(station)
 
         // Now, explicitly set the new favorite status.
-//        if (isCurrentlyFavorite) {
-//            favoriteStationDao.setFavoriteStatus(station.id, false) // Unmark as favorite
-//        } else {
-//            favoriteStationDao.setFavoriteStatus(station.id, true)  // Mark as favorite
-//        }
+        if (isCurrentlyFavorite) {
+            favoriteStationDao.setFavoriteStatus(station.id, false) // Unmark as favorite
+        } else {
+            favoriteStationDao.setFavoriteStatus(station.id, true)  // Mark as favorite
+        }
     }
 }
