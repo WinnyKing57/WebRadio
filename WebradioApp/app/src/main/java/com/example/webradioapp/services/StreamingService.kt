@@ -355,8 +355,8 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     }
 
     private fun pausePlayback() {
+        // JULES_VERIFICATION_COMMENT_PAUSEPLAYBACK_FIX_ATTEMPT_2
         activePlayer?.playWhenReady = false
-        // Log.d("StreamingService", "Playback paused via pausePlayback()") // Optional logging
     }
 
     // These methods are now effectively handled by activePlayer.play(), activePlayer.pause(), etc.
