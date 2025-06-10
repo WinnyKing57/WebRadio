@@ -272,7 +272,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     }
 
     private fun switchToCastPlayer() {
-        if (activePlayer == castPlayer && castPlayer.isCastSessionAvailable) return
+        if (activePlayer == castPlayer && castPlayer?.isCastSessionAvailable == true) return
 
         val currentMediaItem = activePlayer?.currentMediaItem
         val currentPosition = activePlayer?.currentPosition ?: 0
@@ -282,10 +282,10 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         activePlayer = castPlayer
 
         currentMediaItem?.let {
-            castPlayer.setMediaItem(it, currentPosition)
-            castPlayer.playWhenReady = playWhenReady
-            castPlayer.prepare()
-            if(playWhenReady) castPlayer.play()
+            castPlayer?.setMediaItem(it, currentPosition)
+            castPlayer?.playWhenReady = playWhenReady
+            castPlayer?.prepare()
+            if(playWhenReady) castPlayer?.play()
         }
         // Update notification, UI, etc.
         startForeground(NOTIFICATION_ID, createNotification("Casting"))
@@ -298,7 +298,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         val currentPosition = activePlayer?.currentPosition ?: 0
         val playWhenReady = activePlayer?.playWhenReady ?: false
 
-        castPlayer.stop() // Stop cast playback
+        castPlayer?.stop() // Stop cast playback
         activePlayer = localPlayer
 
         currentMediaItem?.let {
