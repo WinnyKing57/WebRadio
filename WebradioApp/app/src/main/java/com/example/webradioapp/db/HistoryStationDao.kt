@@ -43,6 +43,9 @@ interface HistoryStationDao {
     @Query("SELECT * FROM stations WHERE id = :stationId LIMIT 1")
     suspend fun getStationById(stationId: String): RadioStation?
 
+    @Query("SELECT * FROM stations WHERE last_played_timestamp > 0 ORDER BY last_played_timestamp DESC LIMIT :limit")
+    fun getRecentlyPlayed(limit: Int): Flow<List<RadioStation>>
+
 
 //    @Query("SELECT * FROM stations WHERE last_played_timestamp > 0 ORDER BY last_played_timestamp DESC LIMIT :limit")
 //    fun getStationHistory(limit: Int = 20): Flow<List<RadioStation>>

@@ -39,6 +39,10 @@ class StationRepository(
     // History operations
     val stationHistory = kotlinx.coroutines.flow.flowOf(emptyList<RadioStation>()) // historyStationDao.getStationHistory() // Default limit
 
+    fun getRecentlyPlayedStations(limit: Int): Flow<List<RadioStation>> {
+        return historyStationDao.getRecentlyPlayed(limit)
+    }
+
     /**
      * Adds a station to the playback history.
      * Updates the last played timestamp and increments the play count.

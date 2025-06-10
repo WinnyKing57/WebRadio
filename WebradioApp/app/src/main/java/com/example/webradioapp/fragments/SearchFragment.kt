@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.textfield.TextInputEditText
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,9 +22,10 @@ import com.example.webradioapp.R
 import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.network.ApiClient
 import com.example.webradioapp.network.RadioBrowserApiService
+import com.example.webradioapp.network.model.Country // Assuming Country is in this package
+import com.example.webradioapp.network.model.Tag // Assuming Tag is in this package
 import com.example.webradioapp.network.model.toDomain
 import com.example.webradioapp.services.StreamingService
-// Removed: import com.example.webradioapp.utils.SampleData (no longer using sample data)
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,8 +38,18 @@ class SearchFragment : Fragment() {
     private lateinit var stationAdapter: StationAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var tvError: TextView
-    private lateinit var etSearchCountry: TextInputEditText
-    private lateinit var etSearchCategory: TextInputEditText
+    // Removed TextInputEditTexts
+    // private lateinit var etSearchCountry: TextInputEditText
+    // private lateinit var etSearchCategory: TextInputEditText
+
+    private lateinit var spinnerCountry: Spinner
+    private lateinit var spinnerCategory: Spinner
+    private lateinit var buttonClearFilters: Button
+
+    private var countriesList: List<Country> = emptyList()
+    private var tagsList: List<Tag> = emptyList()
+    private val anyCountryString = "Any Country"
+    private val anyCategoryString = "Any Category"
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
     private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels()
@@ -56,17 +69,76 @@ class SearchFragment : Fragment() {
         recyclerViewStations = view.findViewById(R.id.recycler_view_stations)
         progressBar = view.findViewById(R.id.progress_bar_search)
         tvError = view.findViewById(R.id.tv_search_error)
-        etSearchCountry = view.findViewById(R.id.et_search_country)
-        etSearchCategory = view.findViewById(R.id.et_search_category)
+
+        spinnerCountry = view.findViewById(R.id.spinner_search_country)
+        spinnerCategory = view.findViewById(R.id.spinner_search_category)
+        buttonClearFilters = view.findViewById(R.id.button_clear_search_filters)
+
+        // Initialize adapters with "Any" option
+        val countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf(anyCountryString))
+        countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCountry.adapter = countryAdapter
+
+        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf(anyCategoryString))
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCategory.adapter = categoryAdapter
+
+        buttonClearFilters.setOnClickListener {
+            spinnerCountry.setSelection(0)
+            spinnerCategory.setSelection(0)
+            // Trigger search with current SearchView text and now-cleared spinner selections
+            performSearch(searchView.query?.toString())
+        }
 
         setupRecyclerView()
-        setupSearchView()
+        setupSearchView() // setupSearchView might also trigger performSearch, ensure order is fine
         observeFavoriteChanges()
 
-
-        showEmptyState("Search for radio stations above.")
+        showEmptyState("Search for radio stations above.") // Initial state
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        loadSpinnerData() // Load data after view is created
+    }
+
+    private fun loadSpinnerData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val countriesResponse = apiService.getCountries()
+                if (countriesResponse.isSuccessful) {
+                    countriesList = countriesResponse.body() ?: emptyList()
+                    val displayCountries = mutableListOf(anyCountryString)
+                    displayCountries.addAll(countriesList.map { it.name }.sorted())
+                    val countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
+                    countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerCountry.adapter = countryAdapter
+                } else {
+                    Log.e("SearchFragment", "Failed to load countries: ${countriesResponse.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("SearchFragment", "Error loading countries", e)
+            }
+
+            try {
+                val tagsResponse = apiService.getTags(limit = 200, hideBroken = true, order = "stationcount", reverse = true) // Fetch more relevant tags
+                if (tagsResponse.isSuccessful) {
+                    tagsList = tagsResponse.body() ?: emptyList()
+                    val displayTags = mutableListOf(anyCategoryString)
+                    // Consider filtering or limiting tags if the list is too long
+                    displayTags.addAll(tagsList.map { it.name }.distinct().sorted())
+                    val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, displayTags)
+                    categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerCategory.adapter = categoryAdapter
+                } else {
+                    Log.e("SearchFragment", "Failed to load tags/categories: ${tagsResponse.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("SearchFragment", "Error loading tags/categories", e)
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -140,24 +212,26 @@ class SearchFragment : Fragment() {
         })
     }
 
-    private fun performSearch(query: String?) { // query is the text from the main SearchView
+    private fun performSearch(nameQueryFromSearchView: String?) {
         showLoading(true)
         tvError.visibility = View.GONE
 
-        // Get values from the new fields
-        val countryQuery = etSearchCountry.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
-        val categoryQuery = etSearchCategory.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
-        val nameQuery = query?.trim()?.takeIf { it.isNotEmpty() } // from existing search view
+        val selectedCountryName = spinnerCountry.selectedItem?.toString()
+        val countryQueryValue = if (selectedCountryName != null && selectedCountryName != anyCountryString) selectedCountryName else null
+
+        val selectedCategoryName = spinnerCategory.selectedItem?.toString()
+        val categoryQueryValue = if (selectedCategoryName != null && selectedCategoryName != anyCategoryString) selectedCategoryName else null
+
+        val nameQuery = nameQueryFromSearchView?.trim()?.takeIf { it.isNotEmpty() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                // Log the parameters being sent
-                Log.d("SearchFragment", "Performing search with Name: $nameQuery, Country: $countryQuery, Category: $categoryQuery")
+                Log.d("SearchFragment", "Performing search with Name: $nameQuery, Country: $countryQueryValue, Category: $categoryQueryValue")
 
                 val response = apiService.searchStations(
-                    name = nameQuery,       // Use the processed nameQuery
-                    country = countryQuery, // Pass the country query
-                    tag = categoryQuery,    // Pass the category query (tag)
+                    name = nameQuery,
+                    country = countryQueryValue,
+                    tag = categoryQueryValue,
                     limit = 50,
                     hideBroken = true // Keep filtering out broken stations
                 )
@@ -176,15 +250,16 @@ class SearchFragment : Fragment() {
                         tvError.visibility = View.GONE
                     } else {
                         stationAdapter.submitList(emptyList())
-                        // Construct a more informative message
-                        val searchTerms = listOfNotNull(nameQuery, countryQuery, categoryQuery).joinToString(", ")
-                        showError("No stations found for '$searchTerms'.")
+                        val activeFilters = mutableListOf<String>()
+                        if (nameQuery != null) activeFilters.add("Name: '$nameQuery'")
+                        if (countryQueryValue != null) activeFilters.add("Country: '$countryQueryValue'")
+                        if (categoryQueryValue != null) activeFilters.add("Category: '$categoryQueryValue'")
+                        val errorMsg = if (activeFilters.isNotEmpty()) "No stations found for ${activeFilters.joinToString()}" else "No stations found."
+                        showError(errorMsg)
                     }
                 } else {
                     Log.e("SearchFragment", "API Error: ${response.code()} - ${response.message()}")
-                    // Construct a more informative message
-                    val searchTerms = listOfNotNull(nameQuery, countryQuery, categoryQuery).joinToString(", ")
-                    showError("Error fetching stations for '$searchTerms': ${response.message()}")
+                    showError("Error fetching stations: ${response.message()}")
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "Network/Conversion Error: ${e.message}", e)

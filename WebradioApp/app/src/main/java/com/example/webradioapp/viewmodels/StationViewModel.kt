@@ -14,6 +14,10 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
 
     private val repository: StationRepository
 
+    // Flow for recently played stations
+    val recentlyPlayedStations: Flow<List<RadioStation>> = repository.getRecentlyPlayedStations(limit = 10) // Example limit
+
+
     // Removed: _currentStationFavoriteStatus and currentStationFavoriteStatus
     // UI should observe getStationFavoriteFlow or the main list from FavoritesViewModel
 

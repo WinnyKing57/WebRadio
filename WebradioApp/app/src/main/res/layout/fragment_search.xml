@@ -13,41 +13,30 @@
         android:iconifiedByDefault="false"
         android:queryHint="Search radio stations..." />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layout_search_country"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <Spinner
+        android:id="@+id/spinner_search_country"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginEnd="8dp" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_search_country"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Country code (e.g., US, FR)"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layout_search_category"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <Spinner
+        android:id="@+id/spinner_search_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginEnd="8dp" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_search_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Category/Tag (e.g., rock, pop)"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:id="@+id/button_clear_search_filters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Clear Filters" />
 
     <FrameLayout
         android:layout_width="match_parent"
