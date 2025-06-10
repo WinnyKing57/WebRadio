@@ -67,7 +67,6 @@ class SearchFragment : Fragment() {
     private fun setupRecyclerView() {
         stationAdapter = StationAdapter(
             requireContext(),
-            // emptyList() will be replaced by ListAdapter's submitList
             onPlayClicked = { station ->
                 val serviceIntent = Intent(activity, StreamingService::class.java).apply {
                     action = StreamingService.ACTION_PLAY

@@ -61,7 +61,7 @@ class FavoritesFragment : Fragment() {
             requireContext(),
             emptyList(),
             onPlayClicked = { station -> playStation(station) },
-            onFavoriteToggle = { station, _ -> // isFavorite state is now part of station object
+            onFavoriteToggle = { station ->
                 favoritesViewModel.removeFavorite(station) // Explicitly remove from favorites list
             }
         )
@@ -73,7 +73,7 @@ class FavoritesFragment : Fragment() {
             requireContext(),
             emptyList(),
             onPlayClicked = { station -> playStation(station) },
-            onFavoriteToggle = { station, _ ->
+            onFavoriteToggle = { station ->
                 // Use stationViewModel to toggle favorite status, which updates DB
                 // The station object from adapter already has its current isFavorite state
                 stationViewModel.toggleFavoriteStatus(station)
@@ -88,12 +88,12 @@ class FavoritesFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     favoritesViewModel.favoriteStations.collect { stations ->
-                        favoritesAdapter.updateStations(stations)
+                        favoritesAdapter.submitList(stations)
                     }
                 }
                 launch {
                     favoritesViewModel.stationHistory.collect { stations ->
-                        historyAdapter.updateStations(stations)
+                        historyAdapter.submitList(stations)
                     }
                 }
             }
