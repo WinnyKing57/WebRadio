@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.material.textfield.TextInputEditText
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -34,6 +35,8 @@ class SearchFragment : Fragment() {
     private lateinit var stationAdapter: StationAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var tvError: TextView
+    private lateinit var etSearchCountry: TextInputEditText
+    private lateinit var etSearchCategory: TextInputEditText
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
     private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels()
@@ -53,6 +56,8 @@ class SearchFragment : Fragment() {
         recyclerViewStations = view.findViewById(R.id.recycler_view_stations)
         progressBar = view.findViewById(R.id.progress_bar_search)
         tvError = view.findViewById(R.id.tv_search_error)
+        etSearchCountry = view.findViewById(R.id.et_search_country)
+        etSearchCategory = view.findViewById(R.id.et_search_category)
 
         setupRecyclerView()
         setupSearchView()
@@ -135,16 +140,26 @@ class SearchFragment : Fragment() {
         })
     }
 
-    private fun performSearch(query: String?) {
+    private fun performSearch(query: String?) { // query is the text from the main SearchView
         showLoading(true)
         tvError.visibility = View.GONE
-        // recyclerViewStations.visibility = View.GONE // Keep visible for smooth updates
+
+        // Get values from the new fields
+        val countryQuery = etSearchCountry.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
+        val categoryQuery = etSearchCategory.text?.toString()?.trim()?.takeIf { it.isNotEmpty() }
+        val nameQuery = query?.trim()?.takeIf { it.isNotEmpty() } // from existing search view
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                // Log the parameters being sent
+                Log.d("SearchFragment", "Performing search with Name: $nameQuery, Country: $countryQuery, Category: $categoryQuery")
+
                 val response = apiService.searchStations(
-                    name = if (query.isNullOrBlank()) null else query,
-                    limit = 50
+                    name = nameQuery,       // Use the processed nameQuery
+                    country = countryQuery, // Pass the country query
+                    tag = categoryQuery,    // Pass the category query (tag)
+                    limit = 50,
+                    hideBroken = true // Keep filtering out broken stations
                 )
                 if (response.isSuccessful) {
                     val apiStations = response.body() ?: emptyList()
@@ -161,11 +176,15 @@ class SearchFragment : Fragment() {
                         tvError.visibility = View.GONE
                     } else {
                         stationAdapter.submitList(emptyList())
-                        showError("No stations found for '$query'.")
+                        // Construct a more informative message
+                        val searchTerms = listOfNotNull(nameQuery, countryQuery, categoryQuery).joinToString(", ")
+                        showError("No stations found for '$searchTerms'.")
                     }
                 } else {
                     Log.e("SearchFragment", "API Error: ${response.code()} - ${response.message()}")
-                    showError("Error fetching stations: ${response.message()}")
+                    // Construct a more informative message
+                    val searchTerms = listOfNotNull(nameQuery, countryQuery, categoryQuery).joinToString(", ")
+                    showError("Error fetching stations for '$searchTerms': ${response.message()}")
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "Network/Conversion Error: ${e.message}", e)
