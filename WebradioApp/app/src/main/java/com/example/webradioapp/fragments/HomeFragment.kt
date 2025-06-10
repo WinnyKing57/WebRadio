@@ -177,11 +177,12 @@ class HomeFragment : Fragment() {
             try {
                 // Using getStationsByVotes for "popular" as direct "popular" endpoint might not exist or behave as expected.
                 // Alternatives: getStationsByClickCount, or a curated list if API doesn't provide a direct "popular" sort.
-                val response = apiService.getStationsByVotes(limit = 20, hideBroken = true)
+                // Changed to getTopStations as requested
+                val response = apiService.getTopStations(limit = 20)
                 if (response.isSuccessful) {
-                    val apiStations = response.body() ?: emptyList()
+                    val apiStations: List<com.example.webradioapp.network.model.ApiRadioStation> = response.body() ?: emptyList()
                     if (apiStations.isNotEmpty()) {
-                        currentPopularStations = apiStations.mapNotNull { it.toDomain() }.map { station ->
+                        currentPopularStations = apiStations.mapNotNull { it.toDomain() }.map { station: RadioStation ->
                             station.copy(isFavorite = currentFavoritesSet.contains(station.id))
                         }
                         popularStationsAdapter.submitList(currentPopularStations.toList())
@@ -210,8 +211,8 @@ class HomeFragment : Fragment() {
 
     private fun loadHistoryStations() {
         viewLifecycleOwner.lifecycleScope.launch {
-            stationViewModel.recentlyPlayedStations.collect { stations ->
-                currentHistoryStations = stations.map { station ->
+            stationViewModel.recentlyPlayedStations.collect { stations: List<RadioStation> ->
+                currentHistoryStations = stations.map { station: RadioStation ->
                     // Ensure favorite status is correctly mapped using the latest currentFavoritesSet
                     station.copy(isFavorite = currentFavoritesSet.contains(station.id))
                 }
