@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter // Changed to ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.webradioapp.R
 import com.example.webradioapp.model.RadioStation
 // Removed: import com.example.webradioapp.utils.SharedPreferencesManager
@@ -43,10 +45,17 @@ class StationAdapter(
         private val genreTextView: TextView = itemView.findViewById(R.id.tv_station_genre)
         private val playButton: Button = itemView.findViewById(R.id.btn_item_play)
         private val favoriteButton: ImageButton = itemView.findViewById(R.id.btn_favorite)
+        val imageViewStationIcon: ImageView = itemView.findViewById(R.id.image_view_station_icon)
 
         fun bind(station: RadioStation) {
             nameTextView.text = station.name
             genreTextView.text = station.genre ?: "Unknown Genre"
+
+            Glide.with(itemView.context)
+                .load(station.favicon)
+                .placeholder(R.drawable.ic_radio_placeholder)
+                .error(R.drawable.ic_radio_placeholder)
+                .into(imageViewStationIcon)
 
             playButton.setOnClickListener {
                 onPlayClicked(station)

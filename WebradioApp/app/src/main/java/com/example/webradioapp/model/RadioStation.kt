@@ -16,7 +16,7 @@ data class RadioStation(
     @ColumnInfo(name = "genre") val genre: String? = null,
     @ColumnInfo(name = "country") val country: String? = null,
     @ColumnInfo(name = "language") val language: String? = null,
-    @ColumnInfo(name = "favicon_url") val faviconUrl: String? = null,
+    @ColumnInfo(name = "favicon") val favicon: String = "",
 
     @ColumnInfo(name = "is_favorite", defaultValue = "0")
     var isFavorite: Boolean = false,
@@ -35,7 +35,7 @@ data class RadioStation(
         genre = null,
         country = null,
         language = null,
-        faviconUrl = null,
+        favicon = "",
         isFavorite = false,
         lastPlayedTimestamp = 0L,
         playCount = 0
