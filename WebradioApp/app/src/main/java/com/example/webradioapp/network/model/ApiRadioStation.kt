@@ -45,6 +45,6 @@ fun ApiRadioStation.toDomain(): RadioStation? {
         genre = genre,
         country = this.countryCode, // countryCode from API is usually short (e.g., "US", "GB")
         language = language,
-        faviconUrl = if (this.favicon?.isNotBlank() == true) this.favicon else null // Ensure favicon is not empty string
+        favicon = this.favicon ?: ""
     )
 }
