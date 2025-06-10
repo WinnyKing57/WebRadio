@@ -59,7 +59,6 @@ class FavoritesFragment : Fragment() {
         // Favorites Adapter
         favoritesAdapter = StationAdapter(
             requireContext(),
-            emptyList(),
             onPlayClicked = { station -> playStation(station) },
             onFavoriteToggle = { station ->
                 favoritesViewModel.removeFavorite(station) // Explicitly remove from favorites list
@@ -71,7 +70,6 @@ class FavoritesFragment : Fragment() {
         // History Adapter
         historyAdapter = StationAdapter(
             requireContext(),
-            emptyList(),
             onPlayClicked = { station -> playStation(station) },
             onFavoriteToggle = { station ->
                 // Use stationViewModel to toggle favorite status, which updates DB
