@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_favorites -> selectedFragment = FavoritesFragment()
             R.id.nav_settings -> selectedFragment = SettingsFragment()
         }
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, selectedFragment).commit()
         true
     }
 

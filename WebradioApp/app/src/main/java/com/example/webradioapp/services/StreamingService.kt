@@ -51,7 +51,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     private val binder = LocalBinder()
     private lateinit var audioManager: AudioManager
     private var audioFocusRequest: AudioFocusRequest? = null
-    private lateinit var sharedPrefsManager: SharedPreferencesManager // Still used for Theme
+    // private lateinit var sharedPrefsManager: SharedPreferencesManager // Still used for Theme
     private lateinit var stationRepository: com.example.webradioapp.db.StationRepository
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -115,7 +115,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     override fun onCreate() {
         super.onCreate()
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        sharedPrefsManager = SharedPreferencesManager(applicationContext) // For theme
+        // sharedPrefsManager = SharedPreferencesManager(applicationContext) // For theme
 
         val database = com.example.webradioapp.db.AppDatabase.getDatabase(applicationContext)
         stationRepository = com.example.webradioapp.db.StationRepository(database.favoriteStationDao(), database.historyStationDao())
