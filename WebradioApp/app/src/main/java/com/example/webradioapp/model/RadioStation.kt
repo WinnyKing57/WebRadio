@@ -3,6 +3,7 @@ package com.example.webradioapp.model
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
@@ -25,4 +26,18 @@ data class RadioStation(
 
     @ColumnInfo(name = "play_count", defaultValue = "0")
     var playCount: Int = 0
-) : Parcelable
+) : Parcelable {
+    @Ignore
+    constructor() : this(
+        id = "IGNORE_ID", // Valeur factice pour champ non-nullable
+        name = "IGNORE_NAME", // Valeur factice
+        streamUrl = "IGNORE_URL", // Valeur factice
+        genre = null,
+        country = null,
+        language = null,
+        faviconUrl = null,
+        isFavorite = false,
+        lastPlayedTimestamp = 0L,
+        playCount = 0
+    )
+}
