@@ -110,6 +110,20 @@ object ServerProvider {
     }
 
     @Synchronized
+    fun cycleServer(): String? {
+        Log.i(TAG, "Cycling server manually requested.")
+        if (activeServer != null) {
+            // Simuler un échec du serveur actif pour forcer la sélection d'un nouveau différent
+            // On l'ajoute aux échecs du cycle pour qu'il ne soit pas immédiatement repris par selectNextAvailableServer
+            // si la liste shuffledServerList est courte ou si c'est le seul restant non marqué comme failed.
+            currentCycleFailedServers.add(activeServer!!)
+            Log.d(TAG, "Marking current active server $activeServer as 'failed for this cycle' to ensure selection of a different one, if possible.")
+        }
+        // Forcer une nouvelle sélection. Si activeServer était le dernier valide du cycle, cela va trigger un reset.
+        return selectNextAvailableServer()
+    }
+
+    @Synchronized
     fun updateServerList(newServers: List<String>) {
         Log.i(TAG, "Attempting to update server list with ${newServers.size} new servers.")
         if (newServers.isNotEmpty()) {

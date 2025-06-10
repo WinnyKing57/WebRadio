@@ -142,6 +142,6 @@ object ApiClient {
         // Réinitialiser les instances pour forcer leur recréation avec la nouvelle URL de base
         retrofitInstance = null
         serviceInstance = null
-        // currentBaseUrl sera mis à jour lors de la prochaine getRetrofitInstance()
+        currentBaseUrl = null // Ajouter cette ligne
     }
 }
