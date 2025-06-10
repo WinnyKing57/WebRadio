@@ -126,10 +126,11 @@ class SearchFragment : Fragment() {
                 val tagsResponse = apiService.getTags(limit = 200, hideBroken = true, order = "stationcount", reverse = true) // Fetch more relevant tags
                 if (tagsResponse.isSuccessful) {
                     tagsList = tagsResponse.body() ?: emptyList()
-                    val displayTags = mutableListOf(anyCategoryString)
+                    val displayTags: MutableList<String> = mutableListOf(anyCategoryString)
                     // Consider filtering or limiting tags if the list is too long
-                    displayTags.addAll(tagsList.map { it.name }.distinct().sorted())
-                    val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, displayTags)
+                    val sortedTagNames: List<String> = tagsList.map { it.name }.distinct().sorted()
+                    displayTags.addAll(sortedTagNames)
+                    val categoryAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayTags)
                     categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinnerCategory.adapter = categoryAdapter
                 } else {
