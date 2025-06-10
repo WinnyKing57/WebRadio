@@ -14,8 +14,8 @@ interface HistoryStationDao {
     // Insert a station if it doesn't exist, or ignore if it does.
     // The isFavorite flag from the passed station object will be written if it's a new insert.
     // If the station exists, its existing isFavorite status is preserved.
-    // @Insert(onConflict = OnConflictStrategy.IGNORE)
-    // suspend fun insertStationIfNotExists(station: RadioStation): Long // returns rowId, -1 if ignored
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertStationIfNotExists(station: RadioStation): Long // returns rowId, -1 if ignored
 
 //    // Update history timestamp and play count for an existing station.
 //    @Query("UPDATE stations SET last_played_timestamp = :timestamp, play_count = play_count + 1 WHERE id = :stationId")
@@ -40,8 +40,8 @@ interface HistoryStationDao {
 //    }
 
     // Helper to get a station by ID, not exposed as Flow, for internal DAO use
-    // @Query("SELECT * FROM stations WHERE id = :stationId LIMIT 1")
-    // suspend fun getStationById(stationId: String): RadioStation?
+    @Query("SELECT * FROM stations WHERE id = :stationId LIMIT 1")
+    suspend fun getStationById(stationId: String): RadioStation?
 
 
 //    @Query("SELECT * FROM stations WHERE last_played_timestamp > 0 ORDER BY last_played_timestamp DESC LIMIT :limit")

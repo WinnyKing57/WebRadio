@@ -20,9 +20,9 @@ data class RadioStation(
     @ColumnInfo(name = "is_favorite", defaultValue = "0")
     var isFavorite: Boolean = false,
 
-//    @ColumnInfo(name = "last_played_timestamp", defaultValue = "0")
-//    var lastPlayedTimestamp: Long = 0,
-//
-//    @ColumnInfo(name = "play_count", defaultValue = "0")
-//    var playCount: Int = 0
+    @ColumnInfo(name = "last_played_timestamp", defaultValue = "0")
+    var lastPlayedTimestamp: Long = 0,
+
+    @ColumnInfo(name = "play_count", defaultValue = "0")
+    var playCount: Int = 0
 ) : Parcelable
