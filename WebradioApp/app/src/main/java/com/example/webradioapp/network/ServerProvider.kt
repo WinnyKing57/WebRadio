@@ -7,56 +7,91 @@ import java.util.LinkedList
 object ServerProvider {
     private val TAG = "ServerProvider"
 
-    // Liste de serveurs de base connus. En production, cela viendrait d'un DNS lookup.
-    val knownServers: LinkedList<String> = LinkedList(listOf( // Made public for ApiClient's maxTry
+    // Liste étendue de serveurs de base connus.
+    // Deviendra modifiable par updateServerList.
+    private var baseKnownServers: List<String> = listOf(
         "https://de1.api.radio-browser.info/",
         "https://fr1.api.radio-browser.info/",
         "https://nl1.api.radio-browser.info/",
-        "https://at1.api.radio-browser.info/"
-        // TODO: Ajouter d'autres serveurs si connus et fiables ou implémenter le DNS lookup
-    ))
+        "https://at1.api.radio-browser.info/",
+        "https://de2.api.radio-browser.info/",
+        "https://fi1.api.radio-browser.info/",
+        "https://us1.api.radio-browser.info/",
+        "https://us2.api.radio-browser.info/"
+    )
 
+    private var shuffledServerList: LinkedList<String> = LinkedList()
     private var activeServer: String? = null
-    private val failedServers = mutableSetOf<String>()
-    private var currentIndex = -1 // Pour une sélection cyclique simple en cas de fallback
+    private val currentCycleFailedServers = mutableSetOf<String>()
+
+    val knownServers: List<String> // Getter public pour la liste de base actuelle
+        @Synchronized get() = Collections.unmodifiableList(baseKnownServers.toList()) // Retourne une copie pour éviter modification externe non contrôlée
+
 
     init {
+        resetAndShuffleServers()
         selectNextAvailableServer()
     }
 
     @Synchronized
-    private fun selectNextAvailableServer(): String? {
-        val availableServers = LinkedList(knownServers)
-        availableServers.removeAll(failedServers)
+    private fun resetAndShuffleServers() {
+        shuffledServerList.clear()
+        // Utilise une copie de baseKnownServers pour s'assurer que si baseKnownServers est modifié par updateServerList,
+        // cette méthode utilise la version actuelle.
+        shuffledServerList.addAll(baseKnownServers.toList())
+        Collections.shuffle(shuffledServerList)
+        currentCycleFailedServers.clear()
+        Log.d(TAG, "Server list has been reset and shuffled. Total servers in shuffle list: ${shuffledServerList.size}. Base list size: ${baseKnownServers.size}")
+    }
 
-        if (availableServers.isEmpty()) {
-            if (failedServers.isNotEmpty()) { // Tous les serveurs connus ont échoué au moins une fois
-                Log.w(TAG, "All known servers have failed. Resetting failed list and attempting to cycle through known servers.")
-                failedServers.clear() // Réinitialiser la liste des échecs
-                // Essayer de parcourir la liste originale de manière cyclique
-                currentIndex = (currentIndex + 1) % knownServers.size
-                activeServer = knownServers[currentIndex]
-                Log.i(TAG, "Reset failed servers. New active server (cyclical): $activeServer")
-                return activeServer
-            } else { // knownServers est vide dès le départ
-                Log.e(TAG, "No known servers configured.")
-                activeServer = null
-                return null
+    @Synchronized
+    private fun selectNextAvailableServer(): String? {
+        if (shuffledServerList.isEmpty()) {
+            Log.w(TAG, "Shuffled server list is exhausted. Resetting for a new cycle based on current baseKnownServers.")
+            resetAndShuffleServers()
+            if (shuffledServerList.isEmpty()) {
+                 Log.e(TAG, "Base known server list is effectively empty. No server can be selected.")
+                 activeServer = null
+                 return null
             }
         }
 
-        // Randomiser les serveurs disponibles restants pour la sélection
-        Collections.shuffle(availableServers)
-        activeServer = availableServers.first
-        Log.i(TAG, "New active server selected: $activeServer")
+        var attemptsBeforeReset = shuffledServerList.size
+        var selectedThisTry: String? = null
+
+        for (i in 0 until attemptsBeforeReset) {
+            val potentialServer = shuffledServerList.removeFirst()
+            shuffledServerList.addLast(potentialServer) // Rotation: remettre à la fin
+
+            if (!currentCycleFailedServers.contains(potentialServer)) {
+                activeServer = potentialServer
+                Log.i(TAG, "New active server selected: $activeServer (out of ${baseKnownServers.size} base servers)")
+                return activeServer
+            }
+        }
+
+        // Si on arrive ici, tous les serveurs dans le shuffle actuel ont été marqués comme failed dans ce cycle.
+        // Forcer un reset complet et une nouvelle tentative.
+        Log.w(TAG, "All servers in the current shuffle cycle have failed. Forcing reset and new selection.")
+        resetAndShuffleServers() // Réinitialise currentCycleFailedServers aussi
+        if (shuffledServerList.isNotEmpty()) {
+            // Prend le premier de la nouvelle liste mélangée (qui ne devrait pas être dans currentCycleFailedServers)
+            activeServer = shuffledServerList.removeFirst()
+            shuffledServerList.addLast(activeServer!!)
+            Log.i(TAG, "New active server selected after forced reset: $activeServer")
+        } else {
+            Log.e(TAG, "No server available even after forced reset (baseKnownServers might be empty).")
+            activeServer = null
+        }
         return activeServer
     }
 
     @Synchronized
     fun getActiveServerUrl(): String? {
-        // Si aucun serveur actif, ou si le serveur actif est dans la liste des échecs (ce qui ne devrait pas arriver avec la logique actuelle mais par sécurité)
-        if (activeServer == null || failedServers.contains(activeServer)) {
-            return selectNextAvailableServer()
+        // Si le serveur actif est null ou a échoué entre-temps, en sélectionner un nouveau.
+        if (activeServer == null || currentCycleFailedServers.contains(activeServer)) {
+           Log.d(TAG, "Active server is null or has failed ($activeServer). Attempting to select a new one.")
+           return selectNextAvailableServer()
         }
         return activeServer
     }
@@ -64,23 +99,27 @@ object ServerProvider {
     @Synchronized
     fun reportFailedServer(serverUrl: String): String? {
         Log.w(TAG, "Server reported as failed: $serverUrl")
-        failedServers.add(serverUrl)
-        // Si le serveur qui a échoué est celui qu'on pensait actif, ou si on n'en avait pas, on en choisit un nouveau.
+        currentCycleFailedServers.add(serverUrl)
+
         if (serverUrl == activeServer || activeServer == null) {
+            Log.i(TAG, "Active server $serverUrl failed. Selecting next available server.")
             return selectNextAvailableServer()
         }
-        // Sinon, on garde l'actuel s'il n'a pas échoué.
+        Log.d(TAG, "Reported failed server $serverUrl was not the active one ($activeServer). Keeping current active server for now.")
         return activeServer
     }
 
-    // Méthode pour forcer un changement de serveur, utile pour les tests ou une action utilisateur
     @Synchronized
-    fun cycleServer(): String? {
-        Log.i(TAG, "Cycling server manually.")
-        // Simule un échec du serveur actif pour forcer la sélection d'un nouveau
-        if(activeServer != null) {
-            failedServers.add(activeServer!!)
+    fun updateServerList(newServers: List<String>) {
+        Log.i(TAG, "Attempting to update server list with ${newServers.size} new servers.")
+        if (newServers.isNotEmpty()) {
+            baseKnownServers = LinkedList(newServers) // Réassigner la liste de base
+            Log.i(TAG, "baseKnownServers updated. Size: ${baseKnownServers.size}")
+            resetAndShuffleServers()      // Réinitialiser les listes de travail et les états d'échec
+            selectNextAvailableServer()   // Sélectionner un nouveau serveur actif à partir de la nouvelle liste
+            Log.i(TAG, "Server list updated. New active server: $activeServer")
+        } else {
+            Log.w(TAG, "Attempted to update server list with an empty list. No changes made to baseKnownServers.")
         }
-        return selectNextAvailableServer()
     }
 }
