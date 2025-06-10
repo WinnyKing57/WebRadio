@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +40,7 @@ class SearchFragment : Fragment() {
     private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels() // To observe all favorites
     private var searchJob: Job? = null
     private var currentStationList: List<RadioStation> = emptyList()
+    private var currentFavoritesSet: Set<String> = emptySet()
 
 
     override fun onCreateView(
@@ -90,12 +92,18 @@ class SearchFragment : Fragment() {
     private fun observeFavoriteChanges() {
         viewLifecycleOwner.lifecycleScope.launch {
             favoritesViewModel.favoriteStations.collect { favoriteStations ->
-                // When the list of all favorites changes, update the displayed list's items
                 val favoriteIds = favoriteStations.map { it.id }.toSet()
+                currentFavoritesSet = favoriteIds // Ajouter cette ligne
+
+                // La logique suivante pour mettre à jour currentStationList et l'adapter est déjà là
+                // et devrait utiliser 'favoriteIds' (qui est la même chose que currentFavoritesSet à ce point)
+                // On peut la laisser telle quelle ou la faire utiliser currentFavoritesSet pour la cohérence
+                // Pour l'instant, laissons-la utiliser 'favoriteIds' car c'est local à ce scope.
+                // La principale utilité de currentFavoritesSet est pour performSearch.
                 currentStationList = currentStationList.map { station ->
                     station.copy(isFavorite = favoriteIds.contains(station.id))
                 }
-                stationAdapter.submitList(currentStationList.toList()) // toList to create a new list for diffing
+                stationAdapter.submitList(currentStationList.toList())
             }
         }
     }
@@ -142,10 +150,10 @@ class SearchFragment : Fragment() {
                 if (response.isSuccessful) {
                     val apiStations = response.body() ?: emptyList()
                     // Map to domain and then merge favorite status
-                    val favoriteIds = favoritesViewModel.favoriteStations.value.map { it.id }.toSet() // Get current favorites
+                    val favoriteIdsToUse = currentFavoritesSet
 
                     currentStationList = apiStations.mapNotNull { it.toDomain() }.map { station ->
-                        station.copy(isFavorite = favoriteIds.contains(station.id))
+                        station.copy(isFavorite = favoriteIdsToUse.contains(station.id))
                     }
 
                     if (currentStationList.isNotEmpty()) {
