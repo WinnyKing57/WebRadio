@@ -7,7 +7,7 @@ import com.google.android.gms.cast.framework.SessionProvider
 import com.google.android.gms.cast.framework.media.CastMediaOptions
 import com.google.android.gms.cast.framework.media.MediaIntentReceiver
 import com.google.android.gms.cast.framework.media.NotificationOptions
-import com.google.android.gms.cast.framework.media.CastMediaControlIntent
+import com.google.android.gms.cast.CastMediaControlIntent
 import com.example.webradioapp.activities.MainActivity // Assurez-vous que le chemin est correct
 
 class CastOptionsProvider : OptionsProvider {

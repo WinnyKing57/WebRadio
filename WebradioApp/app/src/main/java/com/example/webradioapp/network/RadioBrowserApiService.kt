@@ -21,19 +21,19 @@ interface RadioBrowserApiService {
         @Query("hidebroken") hideBroken: Boolean = true,
         @Query("order") order: String = "votes",
         @Query("reverse") reverse: Boolean = true
-    ): Response<List<RadioStation>>
+    ): Response<List<com.example.webradioapp.network.model.ApiRadioStation>>
 
     // 📻 Obtenir une station par UUID
     @GET("json/stations/byuuid")
-    suspend fun getStationById(@Query("uuids") uuid: String): Response<List<RadioStation>>
+    suspend fun getStationById(@Query("uuids") uuid: String): Response<List<com.example.webradioapp.network.model.ApiRadioStation>>
 
     // 🔝 Stations les plus votées
     @GET("json/stations/topvote")
-    suspend fun getTopStations(@Query("limit") limit: Int = 50): Response<List<RadioStation>>
+    suspend fun getTopStations(@Query("limit") limit: Int = 50): Response<List<com.example.webradioapp.network.model.ApiRadioStation>>
 
     // 🔥 Stations les plus écoutées
     @GET("json/stations/topclick")
-    suspend fun getPopularStations(@Query("limit") limit: Int = 50): Response<List<RadioStation>>
+    suspend fun getPopularStations(@Query("limit") limit: Int = 50): Response<List<com.example.webradioapp.network.model.ApiRadioStation>>
 
     // 🌍 Liste des pays
     @GET("json/countries")
@@ -50,17 +50,7 @@ interface RadioBrowserApiService {
 
 // --- DATA CLASSES ---
 
-data class RadioStation(
-    val name: String,
-    val url: String,
-    val favicon: String?,
-    val country: String,
-    val language: String,
-    val tags: String,
-    val codec: String,
-    val bitrate: Int,
-    val uuid: String
-)
+// Removed local RadioStation data class
 
 data class Country(
     val name: String,
