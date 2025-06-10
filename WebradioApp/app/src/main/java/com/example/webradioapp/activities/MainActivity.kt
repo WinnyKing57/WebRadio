@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Apply accent color theme from SharedPreferences BEFORE super.onCreate()
         // This ensures the theme is set before any views are inflated.
-        val prefs = SharedPreferencesManager(this) // Using explicit import if auto-import fails
-        val accentThemeName = prefs.getAccentColorTheme()
+        val accentThemeName = SharedPreferencesManager.getAccentColorTheme(this) // Ligne corrigée
+        // val accentThemeName = prefs.getAccentColorTheme() // Ligne supprimée
         if (accentThemeName != SharedPreferencesManager.ACCENT_THEME_DEFAULT) {
             try {
                 // The theme name in styles.xml is "Theme.WebradioApp.AccentBlue", etc.

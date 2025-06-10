@@ -40,7 +40,7 @@ class SettingsFragment : Fragment() {
     private lateinit var rbAccentBlue: RadioButton
     private lateinit var rbAccentGreen: RadioButton
     private lateinit var rbAccentOrange: RadioButton
-    private lateinit var sharedPrefsManager: SharedPreferencesManager
+    private val sharedPrefsManager = SharedPreferencesManager
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -63,7 +63,7 @@ class SettingsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
-        sharedPrefsManager = SharedPreferencesManager(requireContext())
+        // sharedPrefsManager = SharedPreferencesManager(requireContext()) // Removed
 
         rgThemeOptions = view.findViewById(R.id.rg_theme_options)
         rbThemeLight = view.findViewById(R.id.rb_theme_light)
@@ -99,7 +99,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun loadAccentColorPreference() {
-        when (sharedPrefsManager.getAccentColorTheme()) {
+        when (SharedPreferencesManager.getAccentColorTheme(requireContext())) {
             SharedPreferencesManager.ACCENT_THEME_BLUE -> rbAccentBlue.isChecked = true
             SharedPreferencesManager.ACCENT_THEME_GREEN -> rbAccentGreen.isChecked = true
             SharedPreferencesManager.ACCENT_THEME_ORANGE -> rbAccentOrange.isChecked = true
@@ -116,9 +116,9 @@ class SettingsFragment : Fragment() {
                 else -> SharedPreferencesManager.ACCENT_THEME_DEFAULT
             }
 
-            val currentThemeName = sharedPrefsManager.getAccentColorTheme()
+            val currentThemeName = SharedPreferencesManager.getAccentColorTheme(requireContext())
             if (currentThemeName != selectedThemeName) {
-                sharedPrefsManager.setAccentColorTheme(selectedThemeName)
+                SharedPreferencesManager.setAccentColorTheme(requireContext(), selectedThemeName)
                 requireActivity().recreate() // Recreate activity to apply new theme
             }
         }
@@ -171,7 +171,7 @@ class SettingsFragment : Fragment() {
                     }
 
                     // Station selection for alarm (using last played for now)
-                    val stationToPlay = sharedPrefsManager.getStationHistory().firstOrNull()
+                    val stationToPlay = SharedPreferencesManager.getStationHistory(requireContext()).firstOrNull()
                     if (stationToPlay == null) {
                         Toast.makeText(requireContext(), "No station in history to set for alarm. Play a station first.", Toast.LENGTH_LONG).show()
                         return@TimePickerDialog
