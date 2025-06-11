@@ -51,11 +51,11 @@ class SearchFragment : Fragment() {
     private lateinit var buttonApplyFilters: Button // Added
 
     private lateinit var etFilterCountry: EditText // Added
+    private val anyCountryString = "Any Country" // Moved up
+    private val anyCategoryString = "Any Category" // Moved up
     private var countriesList: List<Country> = emptyList()
-    private var allDisplayCountryNames: List<String> = listOf(anyCountryString) // Added
+    private var allDisplayCountryNames: List<String> = listOf(anyCountryString) // Should now be valid
     private var tagsList: List<Tag> = emptyList()
-    private val anyCountryString = "Any Country"
-    private val anyCategoryString = "Any Category"
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
     private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels()
