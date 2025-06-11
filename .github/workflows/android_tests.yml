@@ -33,6 +33,6 @@ jobs:
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
           api-level: 30 # Example API level, choose one relevant for your app
-          # target: default # default, google_apis, google_apis_playstore, aosp_atd, google_atd
-          # arch: x86_64 # x86, x86_64, arm64-v8a
+          target: google_apis # Ensure this line is present and set to google_apis
+          arch: x86 # Optional, but good to be explicit if x86 is intended
           script: ./gradlew :WebradioApp:app:connectedDebugAndroidTest
