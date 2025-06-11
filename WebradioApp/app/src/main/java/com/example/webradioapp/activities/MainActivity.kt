@@ -14,7 +14,14 @@ import com.example.webradioapp.fragments.FavoritesFragment
 import com.example.webradioapp.fragments.HomeFragment
 import com.example.webradioapp.fragments.SearchFragment
 import com.example.webradioapp.fragments.SettingsFragment
+import com.example.webradioapp.services.StreamingService
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.View
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
+import android.content.Intent
+import android.widget.Toast // Added
 
 /**
  * The main activity of the application.
@@ -22,6 +29,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
  * It also handles the application of the selected accent color theme and initializes the Google Cast context.
  */
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var miniPlayerContainer: View
+    private lateinit var ivMiniPlayerIcon: ImageView
+    private lateinit var tvMiniPlayerStationName: TextView
+    private lateinit var ibMiniPlayerPlayPause: ImageButton
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         var selectedFragment: Fragment = HomeFragment()
@@ -63,10 +75,52 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
-        // Load HomeFragment by default
-        // if (savedInstanceState == null) {
-        //     supportFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment()).commit()
-        // }
+        // Mini Player Setup
+        val includedMiniPlayerLayout = findViewById<View>(R.id.mini_player_layout_container)
+        miniPlayerContainer = includedMiniPlayerLayout.findViewById(R.id.mini_player_container)
+        ivMiniPlayerIcon = includedMiniPlayerLayout.findViewById(R.id.iv_mini_player_icon)
+        tvMiniPlayerStationName = includedMiniPlayerLayout.findViewById(R.id.tv_mini_player_station_name)
+        ibMiniPlayerPlayPause = includedMiniPlayerLayout.findViewById(R.id.ib_mini_player_play_pause)
+
+        StreamingService.isPlayingLiveData.observe(this) { isPlaying ->
+            // Visibility is primarily controlled by currentPlayingStationLiveData,
+            // but play/pause icon should update.
+            if (miniPlayerContainer.visibility == View.VISIBLE) { // Only update icon if visible
+                 ibMiniPlayerPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+            }
+        }
+
+        StreamingService.currentPlayingStationLiveData.observe(this) { station ->
+            if (station != null) {
+                tvMiniPlayerStationName.text = station.name
+                // TODO: Load station.favicon into ivMiniPlayerIcon (e.g., using Glide/Coil)
+                // For now, set a default or ensure placeholder is used.
+                // Example: ivMiniPlayerIcon.setImageResource(R.drawable.ic_radio_placeholder)
+
+                miniPlayerContainer.visibility = View.VISIBLE
+                // Update play/pause icon based on the current state when station appears
+                val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
+                ibMiniPlayerPlayPause.setImageResource(if (currentIsPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+            } else {
+                miniPlayerContainer.visibility = View.GONE
+            }
+        }
+
+        ibMiniPlayerPlayPause.setOnClickListener {
+            val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
+            val action = if (currentIsPlaying) StreamingService.ACTION_PAUSE else StreamingService.ACTION_PLAY
+            Intent(this, StreamingService::class.java).also { intent ->
+                intent.action = action
+                startService(intent)
+            }
+        }
+
+        StreamingService.playerErrorLiveData.observe(this) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+                // StreamingService.playerErrorLiveData.postValue(null) // Optional: clear error after showing
+            }
+        }
 
         // Initialize CastContext
         // It's important that this is called, but it may throw an IllegalStateException

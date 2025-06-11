@@ -171,9 +171,11 @@ class SearchFragment : Fragment() {
 
                 } else {
                     Log.e("SearchFragment", "Failed to load countries: ${countriesResponse.message()}")
+                    Toast.makeText(requireContext(), "Could not load country list. Search functionality may be limited.", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "Error loading countries", e)
+                Toast.makeText(requireContext(), "Error initializing country filter. Please try again.", Toast.LENGTH_LONG).show()
             }
 
             try {
@@ -189,9 +191,11 @@ class SearchFragment : Fragment() {
                     spinnerCategory.adapter = categoryAdapter
                 } else {
                     Log.e("SearchFragment", "Failed to load tags/categories: ${tagsResponse.message()}")
+                    Toast.makeText(requireContext(), "Could not load category list. Search functionality may be limited.", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "Error loading tags/categories", e)
+                Toast.makeText(requireContext(), "Error initializing category filter. Please try again.", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -313,12 +317,17 @@ class SearchFragment : Fragment() {
                         showError(errorMsg)
                     }
                 } else {
-                    Log.e("SearchFragment", "API Error: ${response.code()} - ${response.message()}")
-                    showError("Error fetching stations: ${response.message()}")
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("SearchFragment", "API Error: ${response.code()} - ${response.message()} - Body: $errorBody")
+                    when (response.code()) {
+                        404 -> showError("Could not find stations matching your request (Error 404).")
+                        500, 502, 503, 504 -> showError("The station server seems to be having trouble. Please try again later.")
+                        else -> showError("Could not fetch stations. Please try again. (Code: ${response.code()})")
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "Network/Conversion Error: ${e.message}", e)
-                showError("Network error: ${e.localizedMessage}")
+                showError("A network error occurred. Please check your connection and try again.")
             } finally {
                 showLoading(false)
             }

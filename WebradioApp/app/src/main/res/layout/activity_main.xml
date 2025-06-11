@@ -11,15 +11,26 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_navigation"
+        android:layout_above="@id/mini_player_layout_container"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
+
+    <include
+        android:id="@+id/mini_player_layout_container"
+        layout="@layout/mini_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_navigation"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp"
+        app:itemIconTint="@color/bottom_nav_item_tint"
+        app:itemTextColor="@color/bottom_nav_item_tint"
         app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>

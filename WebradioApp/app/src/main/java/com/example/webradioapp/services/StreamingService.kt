@@ -14,6 +14,8 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.widget.Toast // Added import
+import androidx.lifecycle.LiveData // Added
+import androidx.lifecycle.MutableLiveData // Added
 import androidx.core.app.NotificationCompat
 import com.example.webradioapp.R
 import com.example.webradioapp.activities.MainActivity
@@ -94,8 +96,20 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     private var sleepTimerRunnable: Runnable? = null
     private var sleepTimerEndTimeMillis: Long = 0L
 
+    // Instance LiveData
+    private val _isPlaying = MutableLiveData<Boolean>()
+    val isPlaying: LiveData<Boolean> = _isPlaying
+
+    private val _currentPlayingStation = MutableLiveData<RadioStation?>()
+    val currentPlayingStation: LiveData<RadioStation?> = _currentPlayingStation
+
 
     companion object {
+        // Static LiveData for MainActivity observation
+        val isPlayingLiveData = MutableLiveData<Boolean>()
+        val currentPlayingStationLiveData = MutableLiveData<RadioStation?>()
+        val playerErrorLiveData = MutableLiveData<String?>() // Added
+
         const val ACTION_PLAY = "com.example.webradioapp.ACTION_PLAY"
         const val ACTION_PAUSE = "com.example.webradioapp.ACTION_PAUSE"
         const val ACTION_STOP = "com.example.webradioapp.ACTION_STOP"
@@ -160,7 +174,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     }
 
     private val playerListener = object : Player.Listener {
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
+        override fun onIsPlayingChanged(isPlayingValue: Boolean) {
             // Update notification based on activePlayer.isPlaying
             if (activePlayer?.isPlaying == true) {
                 startForeground(NOTIFICATION_ID, createNotification(if (activePlayer is CastPlayer) "Casting" else "Playing"))
@@ -172,27 +186,35 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                     stopForeground(STOP_FOREGROUND_DETACH)
                 }
             }
+            _isPlaying.postValue(isPlayingValue)
+            isPlayingLiveData.postValue(isPlayingValue) // Update static LiveData
         }
 
         override fun onPlayerError(error: PlaybackException) {
             val playerName = if (activePlayer == localPlayer) "localPlayer" else if (activePlayer == castPlayer) "castPlayer" else "unknownPlayer"
             android.util.Log.e("StreamingService", "ExoPlayer Error from $playerName: ${error.errorCodeName} - ${error.localizedMessage}", error) // Enhanced log
-            // Optionally, send a broadcast or use a LiveData event to notify UI
-            // For now, at least log the error and stop playback of the current item.
+
             activePlayer?.stop()
-            activePlayer?.clearMediaItems() // Or just stop and allow retry with same player
-            // Consider updating notification to an error state
-            // stopSelf() // Avoid stopping the whole service immediately, to allow user to try another URL.
-            // Or, if we want to stop, ensure user gets feedback.
-            // For now, let's show a Toast message from the service.
-            handler.post { // Ensure Toast is shown on the main thread
-                Toast.makeText(applicationContext, "Error playing stream: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
-            }
-            // If not stopping self, ensure foreground notification is updated or stopped.
-            // If playback was active, it will stop, and onIsPlayingChanged should handle notification.
-            // If it was in prepare, onIsPlayingChanged might not trigger as expected.
-            // Let's ensure notification is cleared or shows error if we don't stopSelf()
-            stopForeground(STOP_FOREGROUND_DETACH) // Detach notification, service still runs
+            activePlayer?.clearMediaItems()
+
+            _isPlaying.postValue(false)
+            isPlayingLiveData.postValue(false)
+
+            // User-friendly message construction
+            val userFriendlyMessage = "Error playing stream: ${error.localizedMessage ?: "Unknown playback error"}"
+            playerErrorLiveData.postValue(userFriendlyMessage) // Post error message
+
+            // currentPlayingStationLiveData and _currentPlayingStation are kept as is for now per refined understanding,
+            // but if we want to clear it:
+            // _currentPlayingStation.postValue(null)
+            // currentPlayingStationLiveData.postValue(null)
+            // The original code already nulled them out, so let's keep that for consistency unless a change is desired.
+            // Re-adding the nulling based on original code's behavior seen in previous steps.
+            _currentPlayingStation.postValue(null)
+            currentPlayingStationLiveData.postValue(null)
+
+            // Toast removed, will be handled by observers
+            stopForeground(STOP_FOREGROUND_DETACH)
         }
 
         // We can also listen to onMediaItemTransition or onPlaybackStateChanged for history logging
@@ -234,32 +256,41 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
                         android.util.Log.d("StreamingService", "Setting MediaItem on activePlayer: ${mediaItemToPlay.mediaId}") // New Log
                         activePlayer?.setMediaItem(mediaItemToPlay)
+                        _currentPlayingStation.postValue(station) // Update current station
+                        currentPlayingStationLiveData.postValue(station) // Update static LiveData
                         activePlayer?.prepare()
                         android.util.Log.d("StreamingService", "Calling play on activePlayer.") // New Log
-                        activePlayer?.play()
+                        activePlayer?.play() // This should trigger onIsPlayingChanged(true) via listener
+                        // _isPlaying.postValue(true) // Set explicitly if listener is too slow or unreliable for immediate UI
+                        // isPlayingLiveData.postValue(true)
 
                         // Log to history using Repository and serviceScope
                         serviceScope.launch {
                             stationRepository.addStationToHistory(station)
                         }
-
-                        // Notification will be updated by playerListener.onIsPlayingChanged
                     }
                 } else if (activePlayer?.isPlaying == false && activePlayer?.mediaItemCount ?: 0 > 0) {
                     // Resume case
                     if (requestAudioFocus()) {
                         android.util.Log.d("StreamingService", "Resuming play on activePlayer.") // New Log
-                        activePlayer?.play()
+                        activePlayer?.play() // This should trigger onIsPlayingChanged(true)
+                        // _isPlaying.postValue(true)
+                        // isPlayingLiveData.postValue(true)
                     }
                 }
             }
             ACTION_PAUSE -> {
-                activePlayer?.pause()
-                // Notification updated by listener
+                activePlayer?.pause() // This should trigger onIsPlayingChanged(false)
+                // _isPlaying.postValue(false)
+                // isPlayingLiveData.postValue(false)
             }
             ACTION_STOP -> {
                 activePlayer?.stop()
                 activePlayer?.clearMediaItems()
+                _isPlaying.postValue(false)
+                isPlayingLiveData.postValue(false)
+                _currentPlayingStation.postValue(null)
+                currentPlayingStationLiveData.postValue(null)
                 abandonAudioFocus()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
