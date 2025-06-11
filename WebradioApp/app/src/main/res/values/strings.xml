@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WebradioApp</string>
+    <string name="app_name">WinRadio</string>
 
     <!-- Notification Channel Strings -->
     <string name="notification_channel_name_station_updates">Station Updates</string>

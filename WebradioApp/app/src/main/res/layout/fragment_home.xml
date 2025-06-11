@@ -9,43 +9,6 @@
     tools:context=".fragments.HomeFragment">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter Stream URL:"
-        android:textAppearance="?attr/textAppearanceSubtitle1"/>
-
-    <EditText
-        android:id="@+id/et_stream_url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="https://your-stream-url.com/stream"
-        android:inputType="textUri"
-        android:minHeight="48dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/btn_play"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Play"
-            android:layout_marginEnd="8dp"/>
-
-        <Button
-            android:id="@+id/btn_pause"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Pause"
-            android:layout_marginStart="8dp"/>
-    </LinearLayout>
-
-    <TextView
         android:id="@+id/tv_home_placeholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

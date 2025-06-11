@@ -53,6 +53,9 @@ class SearchFragment : Fragment() {
     private lateinit var etFilterCountry: EditText // Added
     private val anyCountryString = "Any Country" // Moved up
     private val anyCategoryString = "Any Category" // Moved up
+    private lateinit var countryAdapter: ArrayAdapter<String> // Added
+    private var filterCountryJob: Job? = null // Added for debouncing
+
     private var countriesList: List<Country> = emptyList()
     private var allDisplayCountryNames: List<String> = listOf(anyCountryString) // Should now be valid
     private var tagsList: List<Tag> = emptyList()
@@ -60,7 +63,7 @@ class SearchFragment : Fragment() {
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
     private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels()
     private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels() // To observe all favorites
-    private var searchJob: Job? = null
+    private var searchJob: Job? = null // This is for the main search, keep it separate
     private var currentStationList: List<RadioStation> = emptyList()
     private var currentFavoritesSet: Set<String> = emptySet()
 
@@ -83,9 +86,10 @@ class SearchFragment : Fragment() {
         buttonApplyFilters = view.findViewById(R.id.button_apply_filters_search) // Added
 
         // Initialize adapters with "Any" option
-        val countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf(anyCountryString))
-        countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerCountry.adapter = countryAdapter
+        // Initialize countryAdapter class member here
+        this.countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf(anyCountryString))
+        this.countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCountry.adapter = this.countryAdapter
 
         val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf(anyCategoryString))
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -118,17 +122,29 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         loadSpinnerData() // Load data after view is created
 
-        etFilterCountry.addTextChangedListener(object : TextWatcher { // Added
+        etFilterCountry.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterCountryJob?.cancel() // Cancel previous debouncing job
+            }
             override fun afterTextChanged(s: Editable?) {
-                val filterQuery = s.toString().lowercase(Locale.getDefault())
-                val filteredCountries = allDisplayCountryNames.filter {
-                    it == anyCountryString || it.lowercase(Locale.getDefault()).contains(filterQuery)
+                filterCountryJob = viewLifecycleOwner.lifecycleScope.launch {
+                    delay(300) // Debounce delay (300ms)
+                    val filterQuery = s.toString().lowercase(Locale.getDefault())
+                    val filteredCountries = allDisplayCountryNames.filter {
+                        it == anyCountryString || it.lowercase(Locale.getDefault()).contains(filterQuery)
+                    }
+
+                    // Update existing adapter instead of creating a new one
+                    if (::countryAdapter.isInitialized) { // Check if adapter is initialized
+                        countryAdapter.clear()
+                        countryAdapter.addAll(filteredCountries)
+                        countryAdapter.notifyDataSetChanged()
+                    } else {
+                        // Fallback or log error if adapter not initialized, though it should be.
+                        Log.e("SearchFragment", "countryAdapter not initialized in TextWatcher")
+                    }
                 }
-                val newAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, filteredCountries)
-                newAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerCountry.adapter = newAdapter
             }
         })
     }
@@ -141,10 +157,34 @@ class SearchFragment : Fragment() {
                     countriesList = countriesResponse.body() ?: emptyList()
                     val displayCountries = mutableListOf(anyCountryString)
                     displayCountries.addAll(countriesList.map { it.name }.sorted())
-                    allDisplayCountryNames = ArrayList(displayCountries) // Added population here
-                    val countryAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
-                    countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spinnerCountry.adapter = countryAdapter
+                    allDisplayCountryNames = ArrayList(displayCountries)
+                    // Update the class member adapter's data if already initialized, or create new and assign
+                    if (::countryAdapter.isInitialized) {
+                        countryAdapter.clear()
+                        countryAdapter.addAll(displayCountries)
+                        countryAdapter.notifyDataSetChanged()
+                    } else {
+                        // This case should ideally not happen if onCreateView runs first and initializes it.
+                        // But as a fallback, or if loadSpinnerData could be called before onCreateView completes its adapter setup.
+                        val newCountryAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
+                        newCountryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        spinnerCountry.adapter = newCountryAdapter
+                        this.countryAdapter = newCountryAdapter
+                    }
+                    // Ensure the class member is the one attached to the spinner if it was re-created.
+                    // If we modified it in place (clear/addAll), this is not strictly needed but doesn't hurt.
+                    // However, the most robust way is to ensure it's assigned after any potential re-creation.
+                    // The above 'else' block handles re-creation and assignment. If it was updated in place, it's already the right instance.
+                    // For clarity, let's make sure the spinner is using the member 'countryAdapter'
+                    // This line could be redundant if the adapter was updated in place, but safe.
+                    // spinnerCountry.adapter = this.countryAdapter;
+                    // The critical part is that `this.countryAdapter` must refer to the adapter instance
+                    // that the TextWatcher will modify.
+                    // Let's simplify: always create and assign in loadSpinnerData to ensure it has fresh context if needed.
+                    val newLoadedAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
+                    newLoadedAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerCountry.adapter = newLoadedAdapter
+                    this.countryAdapter = newLoadedAdapter // This is the key assignment for TextWatcher
                 } else {
                     Log.e("SearchFragment", "Failed to load countries: ${countriesResponse.message()}")
                 }

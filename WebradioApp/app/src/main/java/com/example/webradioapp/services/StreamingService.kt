@@ -175,7 +175,8 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            android.util.Log.e("StreamingService", "ExoPlayer Error: ", error)
+            val playerName = if (activePlayer == localPlayer) "localPlayer" else if (activePlayer == castPlayer) "castPlayer" else "unknownPlayer"
+            android.util.Log.e("StreamingService", "ExoPlayer Error from $playerName: ${error.errorCodeName} - ${error.localizedMessage}", error) // Enhanced log
             // Optionally, send a broadcast or use a LiveData event to notify UI
             // For now, at least log the error and stop playback of the current item.
             activePlayer?.stop()
@@ -213,14 +214,28 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
             ACTION_PLAY -> {
                 if (streamUrl != null && station != null) {
                     if (requestAudioFocus()) {
-                        val mediaItem = MediaItem.Builder()
-                            .setUri(streamUrl)
-                            .setMediaId(station.id)
-                            .setTag(station) // Keep station object for later
-                            .build()
+                        val mediaItemToPlay: MediaItem
+                        if (activePlayer == castPlayer) {
+                            android.util.Log.d("StreamingService", "Building MediaItem for CastPlayer (ACTION_PLAY). URI: $streamUrl") // New Log
+                            // Simplify MediaItem for Cast if activePlayer is CastPlayer
+                            mediaItemToPlay = MediaItem.Builder()
+                                .setUri(streamUrl)
+                                .setMediaId(station.id) // Keep station.id as it's simple
+                                // Avoid .setTag(station) for CastPlayer unless using a custom MediaItemConverter
+                                .build()
+                        } else {
+                            android.util.Log.d("StreamingService", "Building MediaItem for localPlayer (ACTION_PLAY). URI: $streamUrl") // New Log
+                            mediaItemToPlay = MediaItem.Builder()
+                                .setUri(streamUrl)
+                                .setMediaId(station.id)
+                                .setTag(station) // Keep for local player
+                                .build()
+                        }
 
-                        activePlayer?.setMediaItem(mediaItem)
+                        android.util.Log.d("StreamingService", "Setting MediaItem on activePlayer: ${mediaItemToPlay.mediaId}") // New Log
+                        activePlayer?.setMediaItem(mediaItemToPlay)
                         activePlayer?.prepare()
+                        android.util.Log.d("StreamingService", "Calling play on activePlayer.") // New Log
                         activePlayer?.play()
 
                         // Log to history using Repository and serviceScope
@@ -233,6 +248,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                 } else if (activePlayer?.isPlaying == false && activePlayer?.mediaItemCount ?: 0 > 0) {
                     // Resume case
                     if (requestAudioFocus()) {
+                        android.util.Log.d("StreamingService", "Resuming play on activePlayer.") // New Log
                         activePlayer?.play()
                     }
                 }
@@ -288,22 +304,46 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     }
 
     private fun switchToCastPlayer() {
-        if (activePlayer == castPlayer && castPlayer?.isCastSessionAvailable == true) return
+        android.util.Log.d("StreamingService", "Attempting to switch to CastPlayer.") // New Log
+        if (activePlayer == castPlayer && castPlayer?.isCastSessionAvailable == true) {
+            android.util.Log.d("StreamingService", "Already on CastPlayer and session available. No switch needed.") // New Log
+            return
+        }
 
-        val currentMediaItem = activePlayer?.currentMediaItem
+        val currentLocalMediaItem = activePlayer?.currentMediaItem // Could be from localPlayer
         val currentPosition = activePlayer?.currentPosition ?: 0
         val playWhenReady = activePlayer?.playWhenReady ?: false
 
-        localPlayer?.stop() // Stop local playback
+        android.util.Log.d("StreamingService", "Stopping localPlayer for cast switch.") // New Log
+        localPlayer?.stop()
         activePlayer = castPlayer
+        android.util.Log.d("StreamingService", "Active player is now castPlayer.") // New Log
 
-        currentMediaItem?.let {
-            castPlayer?.setMediaItem(it, currentPosition)
+        currentLocalMediaItem?.let { localItem ->
+            val castUri = localItem.requestMetadata.mediaUri
+            android.util.Log.d("StreamingService", "Building MediaItem for CastPlayer from localItem. URI: $castUri") // New Log
+            if (castUri == null) {
+                android.util.Log.e("StreamingService", "Cannot switch to cast: localItem mediaUri is null.")
+                return@let
+            }
+            // Simplify MediaItem for Cast: only URI, and potentially mediaId if simple.
+            // Avoid complex tags unless a custom MediaItemConverter is in place.
+            val castMediaItem = MediaItem.Builder()
+                .setUri(castUri)
+                .setMediaId(localItem.mediaId ?: castUri.toString()) // Use local mediaId or URI as backup
+                .build()
+
+            android.util.Log.d("StreamingService", "Setting MediaItem on CastPlayer: ${castMediaItem.mediaId}") // New Log
+            castPlayer?.setMediaItem(castMediaItem, currentPosition)
             castPlayer?.playWhenReady = playWhenReady
             castPlayer?.prepare()
-            if(playWhenReady) castPlayer?.play()
+            if (playWhenReady) {
+                android.util.Log.d("StreamingService", "Calling play on CastPlayer.") // New Log
+                castPlayer?.play()
+            }
+        } ?: run {
+            android.util.Log.d("StreamingService", "switchToCastPlayer: No current MediaItem to transfer.") // New Log
         }
-        // Update notification, UI, etc.
         startForeground(NOTIFICATION_ID, createNotification("Casting"))
     }
 

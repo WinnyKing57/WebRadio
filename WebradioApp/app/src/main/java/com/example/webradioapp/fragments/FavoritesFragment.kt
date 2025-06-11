@@ -17,19 +17,19 @@ import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.services.StreamingService
 // Removed: import com.example.webradioapp.utils.SharedPreferencesManager
 import com.example.webradioapp.viewmodels.FavoritesViewModel
-import com.example.webradioapp.viewmodels.StationViewModel // For toggling favorite from history list
+// Removed: import com.example.webradioapp.viewmodels.StationViewModel
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
 
     private lateinit var recyclerViewFavorites: RecyclerView
-    private lateinit var recyclerViewHistory: RecyclerView
+    // private lateinit var recyclerViewHistory: RecyclerView // Removed
     private lateinit var favoritesAdapter: StationAdapter
-    private lateinit var historyAdapter: StationAdapter
+    // private lateinit var historyAdapter: StationAdapter // Removed
     // private lateinit var sharedPrefsManager: SharedPreferencesManager // Removed
 
     private val favoritesViewModel: FavoritesViewModel by viewModels()
-    private val stationViewModel: StationViewModel by viewModels() // For interaction from history items
+    // private val stationViewModel: StationViewModel by viewModels() // Removed as it's no longer used
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +40,7 @@ class FavoritesFragment : Fragment() {
         // sharedPrefsManager = SharedPreferencesManager(requireContext()) // Removed
 
         recyclerViewFavorites = view.findViewById(R.id.recycler_view_favorites)
-        recyclerViewHistory = view.findViewById(R.id.recycler_view_history)
+        // recyclerViewHistory = view.findViewById(R.id.recycler_view_history) // Removed
 
         setupRecyclerViews()
         observeViewModelData()
@@ -67,18 +67,7 @@ class FavoritesFragment : Fragment() {
         recyclerViewFavorites.layoutManager = LinearLayoutManager(context)
         recyclerViewFavorites.adapter = favoritesAdapter
 
-        // History Adapter
-        historyAdapter = StationAdapter(
-            requireContext(),
-            onPlayClicked = { station -> playStation(station) },
-            onFavoriteToggle = { station ->
-                // Use stationViewModel to toggle favorite status, which updates DB
-                // The station object from adapter already has its current isFavorite state
-                stationViewModel.toggleFavoriteStatus(station)
-            }
-        )
-        recyclerViewHistory.layoutManager = LinearLayoutManager(context)
-        recyclerViewHistory.adapter = historyAdapter
+        // History Adapter section removed
     }
 
     private fun observeViewModelData() {
@@ -89,11 +78,7 @@ class FavoritesFragment : Fragment() {
                         favoritesAdapter.submitList(stations)
                     }
                 }
-                launch {
-                    favoritesViewModel.stationHistory.collect { stations ->
-                        historyAdapter.submitList(stations)
-                    }
-                }
+                // Launch block for stationHistory removed
             }
         }
     }

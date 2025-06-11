@@ -21,19 +21,4 @@
         android:layout_weight="1"
         tools:listitem="@layout/list_item_station"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Recently Played"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_history"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:listitem="@layout/list_item_station"/>
-
 </LinearLayout>

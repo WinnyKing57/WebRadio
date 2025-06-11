@@ -26,9 +26,6 @@ import android.util.Log
 
 class HomeFragment : Fragment() {
 
-    private lateinit var etStreamUrl: EditText
-    private lateinit var btnPlay: Button
-    private lateinit var btnPause: Button
     private lateinit var tvHomePlaceholder: TextView // Added for placeholder management
 
     // Popular Stations UI and data
@@ -48,18 +45,13 @@ class HomeFragment : Fragment() {
     private lateinit var tvHistoryStationsTitle: TextView
 
 
-    // A sample stream URL for quick testing
-    private val defaultStreamUrl = "https://stream.radioparadise.com/flac"
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("HomeFragment", "onCreateView called")
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        etStreamUrl = view.findViewById(R.id.et_stream_url)
-        btnPlay = view.findViewById(R.id.btn_play)
-        btnPause = view.findViewById(R.id.btn_pause)
         tvHomePlaceholder = view.findViewById(R.id.tv_home_placeholder) // Initialize placeholder
 
         // Initialize Popular Stations RecyclerView and Title
@@ -71,39 +63,11 @@ class HomeFragment : Fragment() {
         tvHistoryStationsTitle = view.findViewById(R.id.tv_history_stations_title)
         tvHistoryStationsTitle.visibility = View.GONE // Initially hide
 
-        etStreamUrl.setText(defaultStreamUrl)
-
-        btnPlay.setOnClickListener {
-            val streamUrl = etStreamUrl.text.toString()
-            if (streamUrl.isNotEmpty()) {
-                // Create a temporary RadioStation object
-                val tempStation = RadioStation(id = streamUrl, name = "Direct Stream", streamUrl = streamUrl)
-
-                // For direct URL play, we don't have a full RadioStation object.
-                val serviceIntent = Intent(activity, StreamingService::class.java).apply {
-                    action = StreamingService.ACTION_PLAY
-                    putExtra(StreamingService.EXTRA_STREAM_URL, streamUrl)
-                    putExtra(StreamingService.EXTRA_STATION_OBJECT, tempStation)
-                }
-                Log.d("HomeFragment", "Attempting to play custom URL: $streamUrl")
-                activity?.startService(serviceIntent)
-
-                // Add the temporary station to history via ViewModel
-                stationViewModel.addStationToHistory(tempStation)
-            }
-        }
-
-        btnPause.setOnClickListener {
-            val serviceIntent = Intent(activity, StreamingService::class.java).apply {
-                action = StreamingService.ACTION_PAUSE
-            }
-            activity?.startService(serviceIntent)
-        }
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d("HomeFragment", "onViewCreated called")
         super.onViewCreated(view, savedInstanceState)
         setupPopularStationsRecyclerView()
         setupHistoryStationsRecyclerView() // New setup call
@@ -112,6 +76,19 @@ class HomeFragment : Fragment() {
 
         loadPopularStations()
         loadHistoryStations() // New data loading call
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("HomeFragment", "onResume called")
+        // Consider if a manual refresh trigger here would be a temporary workaround,
+        // but the goal is to understand why initial load fails.
+        // For now, just log.
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("HomeFragment", "onPause called")
     }
 
     private fun setupPopularStationsRecyclerView() {
@@ -156,8 +133,11 @@ class HomeFragment : Fragment() {
 
     // Combined observer for favorite changes
     private fun observeFavoriteChanges() {
+        Log.d("HomeFragment", "observeFavoriteChanges() called")
         viewLifecycleOwner.lifecycleScope.launch {
+            Log.d("HomeFragment", "observeFavoriteChanges - coroutine started, collecting flow")
             favoritesViewModel.favoriteStations.collect { favoriteStations ->
+                Log.d("HomeFragment", "observeFavoriteChanges - collected favorites, size: ${favoriteStations.size}")
                 currentFavoritesSet = favoriteStations.map { it.id }.toSet()
 
                 // Update popular stations
@@ -176,19 +156,23 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadPopularStations() {
+        Log.d("HomeFragment", "loadPopularStations() called")
         // Optional: Show loading indicator here
         viewLifecycleOwner.lifecycleScope.launch {
+            Log.d("HomeFragment", "loadPopularStations - coroutine started")
             try {
                 // Using getStationsByVotes for "popular" as direct "popular" endpoint might not exist or behave as expected.
                 // Alternatives: getStationsByClickCount, or a curated list if API doesn't provide a direct "popular" sort.
                 // Changed to getTopStations as requested
                 val response = apiService.getTopStations(limit = 20)
                 if (response.isSuccessful) {
+                    Log.d("HomeFragment", "loadPopularStations - API call successful, body size: ${response.body()?.size}")
                     val apiStations: List<com.example.webradioapp.network.model.ApiRadioStation> = response.body() ?: emptyList()
                     if (apiStations.isNotEmpty()) {
                         currentPopularStations = apiStations.mapNotNull { it.toDomain() }.map { station: RadioStation ->
                             station.copy(isFavorite = currentFavoritesSet.contains(station.id))
                         }
+                        Log.d("HomeFragment", "loadPopularStations - submitting list to adapter, size: ${currentPopularStations.size}")
                         popularStationsAdapter.submitList(currentPopularStations.toList())
                         rvPopularStations.visibility = View.VISIBLE // Ensure RV is visible
                         tvPopularStationsTitle.visibility = View.VISIBLE // Ensure title is visible
@@ -201,7 +185,7 @@ class HomeFragment : Fragment() {
                         tvHomePlaceholder.visibility = View.VISIBLE
                     }
                 } else {
-                    Log.e("HomeFragment", "Failed to load popular stations: ${response.message()}")
+                    Log.e("HomeFragment", "loadPopularStations - API call failed: ${response.message()}")
                     // Optional: Show error message here
                     rvPopularStations.visibility = View.GONE // Hide RV on error
                     tvPopularStationsTitle.visibility = View.GONE // Hide title on error
@@ -209,7 +193,7 @@ class HomeFragment : Fragment() {
                     tvHomePlaceholder.visibility = View.VISIBLE
                 }
             } catch (e: Exception) {
-                Log.e("HomeFragment", "Error loading popular stations", e)
+                Log.e("HomeFragment", "loadPopularStations - Exception: ${e.message}", e)
                 // Optional: Show error message here
                 rvPopularStations.visibility = View.GONE // Hide RV on exception
                 tvPopularStationsTitle.visibility = View.GONE // Hide title on exception
@@ -222,12 +206,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadHistoryStations() {
+        Log.d("HomeFragment", "loadHistoryStations() called")
         viewLifecycleOwner.lifecycleScope.launch {
+            Log.d("HomeFragment", "loadHistoryStations - coroutine started, collecting flow")
             stationViewModel.recentlyPlayedStations.collect { stations: List<RadioStation> ->
+                Log.d("HomeFragment", "loadHistoryStations - collected history, size: ${stations.size}")
                 currentHistoryStations = stations.map { station: RadioStation ->
                     // Ensure favorite status is correctly mapped using the latest currentFavoritesSet
                     station.copy(isFavorite = currentFavoritesSet.contains(station.id))
                 }
+                Log.d("HomeFragment", "loadHistoryStations - submitting list to adapter, size: ${currentHistoryStations.size}")
                 historyStationsAdapter.submitList(currentHistoryStations.toList())
 
                 if (currentHistoryStations.isNotEmpty()) {
