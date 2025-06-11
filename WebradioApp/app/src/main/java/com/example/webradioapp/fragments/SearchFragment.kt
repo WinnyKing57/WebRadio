@@ -123,7 +123,7 @@ class SearchFragment : Fragment() {
             }
 
             try {
-                val tagsResponse = apiService.getTags(limit = 200, hideBroken = true, order = "stationcount", reverse = true) // Fetch more relevant tags
+                val tagsResponse = apiService.getTags(limit = 200) // Fetch more relevant tags
                 if (tagsResponse.isSuccessful) {
                     tagsList = tagsResponse.body() ?: emptyList()
                     val displayTags: MutableList<String> = mutableListOf(anyCategoryString)
