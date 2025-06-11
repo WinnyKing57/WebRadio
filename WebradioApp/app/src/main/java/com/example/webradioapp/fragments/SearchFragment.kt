@@ -22,8 +22,8 @@ import com.example.webradioapp.R
 import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.network.ApiClient
 import com.example.webradioapp.network.RadioBrowserApiService
-import com.example.webradioapp.network.model.Country // Assuming Country is in this package
-import com.example.webradioapp.network.model.Tag // Assuming Tag is in this package
+import com.example.webradioapp.network.Country // Assuming Country is in this package
+import com.example.webradioapp.network.Tag // Assuming Tag is in this package
 import com.example.webradioapp.network.model.toDomain
 import com.example.webradioapp.services.StreamingService
 import kotlinx.coroutines.Job
@@ -112,7 +112,7 @@ class SearchFragment : Fragment() {
                     countriesList = countriesResponse.body() ?: emptyList()
                     val displayCountries = mutableListOf(anyCountryString)
                     displayCountries.addAll(countriesList.map { it.name }.sorted())
-                    val countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
+                    val countryAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
                     countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinnerCountry.adapter = countryAdapter
                 } else {
