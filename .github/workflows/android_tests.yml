@@ -34,7 +34,10 @@ jobs:
           api-level: 30
           target: google_apis
           arch: x86
+          profile: Nexus 6
           cold-boot: false
           disable-animations: true
           emulator-options: -no-window -no-audio -memory 4096
+          emulator-timeout: 600 # Attend jusqu'à 10 minutes pour le démarrage
+          wait-for-emulator: true
           script: ./gradlew :WebradioApp:app:connectedDebugAndroidTest
