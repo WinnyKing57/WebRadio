@@ -32,3 +32,9 @@ replay_pid*
 
 # Ignore Gradle build output directory
 build
+WebradioApp/app/src/main/res/mipmap-xxxhdpi/Thumbs.db
+WebradioApp/app/src/main/res/mipmap-xxhdpi/Thumbs.db
+WebradioApp/app/src/main/res/mipmap-xhdpi/Thumbs.db
+WebradioApp/app/src/main/res/mipmap-mdpi/Thumbs.db
+WebradioApp/app/src/main/res/mipmap-ldpi/Thumbs.db
+WebradioApp/app/src/main/res/mipmap-hdpi/Thumbs.db
