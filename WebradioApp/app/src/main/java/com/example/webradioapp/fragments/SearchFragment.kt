@@ -157,34 +157,16 @@ class SearchFragment : Fragment() {
                     countriesList = countriesResponse.body() ?: emptyList()
                     val displayCountries = mutableListOf(anyCountryString)
                     displayCountries.addAll(countriesList.map { it.name }.sorted())
-                    allDisplayCountryNames = ArrayList(displayCountries)
-                    // Update the class member adapter's data if already initialized, or create new and assign
-                    if (::countryAdapter.isInitialized) {
-                        countryAdapter.clear()
-                        countryAdapter.addAll(displayCountries)
-                        countryAdapter.notifyDataSetChanged()
-                    } else {
-                        // This case should ideally not happen if onCreateView runs first and initializes it.
-                        // But as a fallback, or if loadSpinnerData could be called before onCreateView completes its adapter setup.
-                        val newCountryAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
-                        newCountryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        spinnerCountry.adapter = newCountryAdapter
-                        this.countryAdapter = newCountryAdapter
-                    }
-                    // Ensure the class member is the one attached to the spinner if it was re-created.
-                    // If we modified it in place (clear/addAll), this is not strictly needed but doesn't hurt.
-                    // However, the most robust way is to ensure it's assigned after any potential re-creation.
-                    // The above 'else' block handles re-creation and assignment. If it was updated in place, it's already the right instance.
-                    // For clarity, let's make sure the spinner is using the member 'countryAdapter'
-                    // This line could be redundant if the adapter was updated in place, but safe.
-                    // spinnerCountry.adapter = this.countryAdapter;
-                    // The critical part is that `this.countryAdapter` must refer to the adapter instance
-                    // that the TextWatcher will modify.
-                    // Let's simplify: always create and assign in loadSpinnerData to ensure it has fresh context if needed.
+
+                    // Ensure allDisplayCountryNames is updated with the full list
+                    // This assignment is fine as displayCountries is the complete new list.
+                    this.allDisplayCountryNames = ArrayList(displayCountries)
+
+                    // Create the new adapter with the full data
                     val newLoadedAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
                     newLoadedAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spinnerCountry.adapter = newLoadedAdapter
-                    this.countryAdapter = newLoadedAdapter // This is the key assignment for TextWatcher
+                    spinnerCountry.adapter = newLoadedAdapter // Set the spinner to use this new adapter
+                    this.countryAdapter = newLoadedAdapter // IMPORTANT: Update the class member to point to this new, active adapter
                 } else {
                     Log.e("SearchFragment", "Failed to load countries: ${countriesResponse.message()}")
                 }
