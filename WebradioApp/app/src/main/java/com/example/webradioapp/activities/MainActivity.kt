@@ -75,51 +75,66 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
-        // Mini Player Setup
-        val includedMiniPlayerLayout = findViewById<View>(R.id.mini_player_layout_container)
-        miniPlayerContainer = includedMiniPlayerLayout.findViewById(R.id.mini_player_container)
-        ivMiniPlayerIcon = includedMiniPlayerLayout.findViewById(R.id.iv_mini_player_icon)
-        tvMiniPlayerStationName = includedMiniPlayerLayout.findViewById(R.id.tv_mini_player_station_name)
-        ibMiniPlayerPlayPause = includedMiniPlayerLayout.findViewById(R.id.ib_mini_player_play_pause)
+        try {
+            Log.d("MainActivity", "Attempting Mini-Player setup and LiveData observation...")
 
-        StreamingService.isPlayingLiveData.observe(this) { isPlaying ->
-            // Visibility is primarily controlled by currentPlayingStationLiveData,
-            // but play/pause icon should update.
-            if (miniPlayerContainer.visibility == View.VISIBLE) { // Only update icon if visible
-                 ibMiniPlayerPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+            val includedMiniPlayerLayout = findViewById<View>(R.id.mini_player_layout_container)
+            if (includedMiniPlayerLayout == null) {
+                Log.e("MainActivity", "CRITICAL ERROR: mini_player_layout_container (the include tag itself) not found in activity_main.xml! Cannot proceed with mini-player setup.")
+                throw IllegalStateException("Required view 'mini_player_layout_container' not found. Mini-player cannot be initialized.")
             }
-        }
 
-        StreamingService.currentPlayingStationLiveData.observe(this) { station ->
-            if (station != null) {
-                tvMiniPlayerStationName.text = station.name
-                // TODO: Load station.favicon into ivMiniPlayerIcon (e.g., using Glide/Coil)
-                // For now, set a default or ensure placeholder is used.
-                // Example: ivMiniPlayerIcon.setImageResource(R.drawable.ic_radio_placeholder)
+            miniPlayerContainer = includedMiniPlayerLayout.findViewById(R.id.mini_player_container)
+            ivMiniPlayerIcon = includedMiniPlayerLayout.findViewById(R.id.iv_mini_player_icon)
+            tvMiniPlayerStationName = includedMiniPlayerLayout.findViewById(R.id.tv_mini_player_station_name)
+            ibMiniPlayerPlayPause = includedMiniPlayerLayout.findViewById(R.id.ib_mini_player_play_pause)
 
-                miniPlayerContainer.visibility = View.VISIBLE
-                // Update play/pause icon based on the current state when station appears
+            // Explicitly check if any of the essential views inside the mini-player are null
+            if (miniPlayerContainer == null) Log.e("MainActivity", "Error: miniPlayerContainer is null after findViewById.")
+            if (ivMiniPlayerIcon == null) Log.e("MainActivity", "Error: ivMiniPlayerIcon is null after findViewById.")
+            if (tvMiniPlayerStationName == null) Log.e("MainActivity", "Error: tvMiniPlayerStationName is null after findViewById.")
+            if (ibMiniPlayerPlayPause == null) Log.e("MainActivity", "Error: ibMiniPlayerPlayPause is null after findViewById.")
+
+            // Throw if any crucial view is null to make the error obvious in logs if caught by outer try-catch
+            if (miniPlayerContainer == null || ivMiniPlayerIcon == null || tvMiniPlayerStationName == null || ibMiniPlayerPlayPause == null) {
+                throw IllegalStateException("One or more internal views of the mini-player are null after findViewById. Check IDs in mini_player.xml.")
+            }
+
+            StreamingService.isPlayingLiveData.observe(this) { isPlaying ->
+                if (miniPlayerContainer.visibility == View.VISIBLE) {
+                     ibMiniPlayerPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+                }
+            }
+
+            StreamingService.currentPlayingStationLiveData.observe(this) { station ->
+                if (station != null) {
+                    tvMiniPlayerStationName.text = station.name
+                    miniPlayerContainer.visibility = View.VISIBLE
+                    val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
+                    ibMiniPlayerPlayPause.setImageResource(if (currentIsPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
+                } else {
+                    miniPlayerContainer.visibility = View.GONE
+                }
+            }
+
+            ibMiniPlayerPlayPause.setOnClickListener {
                 val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
-                ibMiniPlayerPlayPause.setImageResource(if (currentIsPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
-            } else {
-                miniPlayerContainer.visibility = View.GONE
+                val action = if (currentIsPlaying) StreamingService.ACTION_PAUSE else StreamingService.ACTION_PLAY
+                Intent(this, StreamingService::class.java).also { intentValue -> // Renamed to avoid conflict
+                    intentValue.action = action
+                    startService(intentValue)
+                }
             }
-        }
 
-        ibMiniPlayerPlayPause.setOnClickListener {
-            val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
-            val action = if (currentIsPlaying) StreamingService.ACTION_PAUSE else StreamingService.ACTION_PLAY
-            Intent(this, StreamingService::class.java).also { intent ->
-                intent.action = action
-                startService(intent)
+            StreamingService.playerErrorLiveData.observe(this) { errorMessage ->
+                errorMessage?.let {
+                    Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+                }
             }
-        }
+            Log.d("MainActivity", "Mini-Player setup and LiveData observation part seems complete.")
 
-        StreamingService.playerErrorLiveData.observe(this) { errorMessage ->
-            errorMessage?.let {
-                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-                // StreamingService.playerErrorLiveData.postValue(null) // Optional: clear error after showing
-            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "CRITICAL ERROR DURING MINI-PLAYER SETUP or LiveData Observation in MainActivity.onCreate:", e)
         }
 
         // Initialize CastContext
