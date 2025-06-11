@@ -138,15 +138,14 @@ class SearchFragment : Fragment() {
                     val filterQuery = s.toString().lowercase(Locale.getDefault())
 
                     // Filter the up-to-date 'allDisplayCountryNames'
-                    val filteredCountries = this@SearchFragment.allDisplayCountryNames.filter {
-                        // Ensure 'this.anyCountryString' is used if it's a class member, or 'anyCountryString' if local to SearchFragment
-                        it == this@SearchFragment.anyCountryString || it.lowercase(Locale.getDefault()).contains(filterQuery)
+                    val filteredCountries = allDisplayCountryNames.filter { // Direct access
+                        it == anyCountryString || it.lowercase(Locale.getDefault()).contains(filterQuery) // Direct access
                     }
 
                     // Update the existing countryAdapter instance directly
-                    this@SearchFragment.countryAdapter.clear()
-                    this@SearchFragment.countryAdapter.addAll(filteredCountries)
-                    this@SearchFragment.countryAdapter.notifyDataSetChanged()
+                    countryAdapter.clear() // Direct access
+                    countryAdapter.addAll(filteredCountries) // Direct access
+                    countryAdapter.notifyDataSetChanged() // Direct access
                 }
             }
         })
@@ -166,9 +165,9 @@ class SearchFragment : Fragment() {
 
                     // Update the existing countryAdapter instance in place
                     // Assumes countryAdapter is always initialized by onCreateView.
-                    this.countryAdapter.clear()
-                    this.countryAdapter.addAll(newFullCountryList)
-                    this.countryAdapter.notifyDataSetChanged()
+                    countryAdapter.clear() // Direct access
+                    countryAdapter.addAll(newFullCountryList) // Direct access
+                    countryAdapter.notifyDataSetChanged() // Direct access
 
                 } else {
                     Log.e("SearchFragment", "Failed to load countries: ${countriesResponse.message()}")
