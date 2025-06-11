@@ -50,9 +50,9 @@ class StationRepository(
      * @param station The [RadioStation] to add to history.
      */
     suspend fun addStationToHistory(station: RadioStation) {
-//        withContext(Dispatchers.IO) {
-//            historyStationDao.addStationToHistory(station, System.currentTimeMillis())
-//        }
+        withContext(Dispatchers.IO) {
+            historyStationDao.addStationToHistory(station, System.currentTimeMillis())
+        }
     }
 
     /**

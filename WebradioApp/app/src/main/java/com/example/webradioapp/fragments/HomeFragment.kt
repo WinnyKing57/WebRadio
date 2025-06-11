@@ -32,6 +32,7 @@ class HomeFragment : Fragment() {
     private lateinit var tvHomePlaceholder: TextView // Added for placeholder management
 
     // Popular Stations UI and data
+    private lateinit var tvPopularStationsTitle: TextView // Added
     private lateinit var rvPopularStations: RecyclerView
     private lateinit var popularStationsAdapter: StationAdapter
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
@@ -61,7 +62,8 @@ class HomeFragment : Fragment() {
         btnPause = view.findViewById(R.id.btn_pause)
         tvHomePlaceholder = view.findViewById(R.id.tv_home_placeholder) // Initialize placeholder
 
-        // Initialize Popular Stations RecyclerView
+        // Initialize Popular Stations RecyclerView and Title
+        tvPopularStationsTitle = view.findViewById(R.id.tv_popular_stations_title) // Added
         rvPopularStations = view.findViewById(R.id.recycler_view_popular_stations)
 
         // Initialize History Stations RecyclerView and Title
@@ -83,9 +85,10 @@ class HomeFragment : Fragment() {
                     val tempStation = RadioStation(id = streamUrl, name = "Direct Stream", streamUrl = streamUrl)
                     putExtra(StreamingService.EXTRA_STATION_OBJECT, tempStation)
                 }
+                Log.d("HomeFragment", "Attempting to play custom URL: $streamUrl")
                 activity?.startService(serviceIntent)
                 // If you want to add direct streams to history via ViewModel, do it here
-                // stationViewModel.addStationToHistory(RadioStation(id = streamUrl, name = "Direct Stream", streamUrl = streamUrl))
+                stationViewModel.addStationToHistory(tempStation)
             }
         }
 
@@ -186,21 +189,29 @@ class HomeFragment : Fragment() {
                             station.copy(isFavorite = currentFavoritesSet.contains(station.id))
                         }
                         popularStationsAdapter.submitList(currentPopularStations.toList())
+                        rvPopularStations.visibility = View.VISIBLE // Ensure RV is visible
+                        tvPopularStationsTitle.visibility = View.VISIBLE // Ensure title is visible
                         tvHomePlaceholder.visibility = View.GONE // Hide placeholder if stations are loaded
                     } else {
                         // Handle empty list if needed, maybe show a specific message or keep placeholder
-                         tvHomePlaceholder.text = "No popular stations available at the moment."
-                         tvHomePlaceholder.visibility = View.VISIBLE
+                        rvPopularStations.visibility = View.GONE // Hide RV if no stations
+                        tvPopularStationsTitle.visibility = View.GONE // Hide title if no stations
+                        tvHomePlaceholder.text = "No popular stations available at the moment."
+                        tvHomePlaceholder.visibility = View.VISIBLE
                     }
                 } else {
                     Log.e("HomeFragment", "Failed to load popular stations: ${response.message()}")
                     // Optional: Show error message here
-                     tvHomePlaceholder.text = "Could not load popular stations."
-                     tvHomePlaceholder.visibility = View.VISIBLE
+                    rvPopularStations.visibility = View.GONE // Hide RV on error
+                    tvPopularStationsTitle.visibility = View.GONE // Hide title on error
+                    tvHomePlaceholder.text = "Could not load popular stations."
+                    tvHomePlaceholder.visibility = View.VISIBLE
                 }
             } catch (e: Exception) {
                 Log.e("HomeFragment", "Error loading popular stations", e)
                 // Optional: Show error message here
+                rvPopularStations.visibility = View.GONE // Hide RV on exception
+                tvPopularStationsTitle.visibility = View.GONE // Hide title on exception
                 tvHomePlaceholder.text = "Error loading popular stations."
                 tvHomePlaceholder.visibility = View.VISIBLE
             } finally {

@@ -175,7 +175,23 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            stopSelf()
+            android.util.Log.e("StreamingService", "ExoPlayer Error: ", error)
+            // Optionally, send a broadcast or use a LiveData event to notify UI
+            // For now, at least log the error and stop playback of the current item.
+            activePlayer?.stop()
+            activePlayer?.clearMediaItems() // Or just stop and allow retry with same player
+            // Consider updating notification to an error state
+            // stopSelf() // Avoid stopping the whole service immediately, to allow user to try another URL.
+            // Or, if we want to stop, ensure user gets feedback.
+            // For now, let's show a Toast message from the service.
+            handler.post { // Ensure Toast is shown on the main thread
+                Toast.makeText(applicationContext, "Error playing stream: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+            // If not stopping self, ensure foreground notification is updated or stopped.
+            // If playback was active, it will stop, and onIsPlayingChanged should handle notification.
+            // If it was in prepare, onIsPlayingChanged might not trigger as expected.
+            // Let's ensure notification is cleared or shows error if we don't stopSelf()
+            stopForeground(STOP_FOREGROUND_DETACH) // Detach notification, service still runs
         }
 
         // We can also listen to onMediaItemTransition or onPlaybackStateChanged for history logging

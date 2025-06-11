@@ -4,10 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText // Added
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
@@ -45,8 +48,11 @@ class SearchFragment : Fragment() {
     private lateinit var spinnerCountry: Spinner
     private lateinit var spinnerCategory: Spinner
     private lateinit var buttonClearFilters: Button
+    private lateinit var buttonApplyFilters: Button // Added
 
+    private lateinit var etFilterCountry: EditText // Added
     private var countriesList: List<Country> = emptyList()
+    private var allDisplayCountryNames: List<String> = listOf(anyCountryString) // Added
     private var tagsList: List<Tag> = emptyList()
     private val anyCountryString = "Any Country"
     private val anyCategoryString = "Any Category"
@@ -70,9 +76,11 @@ class SearchFragment : Fragment() {
         progressBar = view.findViewById(R.id.progress_bar_search)
         tvError = view.findViewById(R.id.tv_search_error)
 
+        etFilterCountry = view.findViewById(R.id.et_filter_country) // Added
         spinnerCountry = view.findViewById(R.id.spinner_search_country)
         spinnerCategory = view.findViewById(R.id.spinner_search_category)
         buttonClearFilters = view.findViewById(R.id.button_clear_search_filters)
+        buttonApplyFilters = view.findViewById(R.id.button_apply_filters_search) // Added
 
         // Initialize adapters with "Any" option
         val countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf(anyCountryString))
@@ -90,6 +98,13 @@ class SearchFragment : Fragment() {
             performSearch(searchView.query?.toString())
         }
 
+        buttonApplyFilters.setOnClickListener { // Added
+            // Clear focus from SearchView to hide keyboard, if it has focus
+            searchView.clearFocus()
+            // Perform search using the current text in SearchView and selected spinner values
+            performSearch(searchView.query?.toString())
+        }
+
         setupRecyclerView()
         setupSearchView() // setupSearchView might also trigger performSearch, ensure order is fine
         observeFavoriteChanges()
@@ -102,6 +117,20 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadSpinnerData() // Load data after view is created
+
+        etFilterCountry.addTextChangedListener(object : TextWatcher { // Added
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val filterQuery = s.toString().lowercase(Locale.getDefault())
+                val filteredCountries = allDisplayCountryNames.filter {
+                    it == anyCountryString || it.lowercase(Locale.getDefault()).contains(filterQuery)
+                }
+                val newAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, filteredCountries)
+                newAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerCountry.adapter = newAdapter
+            }
+        })
     }
 
     private fun loadSpinnerData() {
@@ -112,6 +141,7 @@ class SearchFragment : Fragment() {
                     countriesList = countriesResponse.body() ?: emptyList()
                     val displayCountries = mutableListOf(anyCountryString)
                     displayCountries.addAll(countriesList.map { it.name }.sorted())
+                    allDisplayCountryNames = ArrayList(displayCountries) // Added population here
                     val countryAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
                     countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     spinnerCountry.adapter = countryAdapter
