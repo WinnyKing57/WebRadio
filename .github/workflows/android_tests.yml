@@ -2,9 +2,9 @@ name: Android CI & Startup Test
 
 on:
   push:
-    branches: [ main, master ] # Adjust to your main branch name(s)
+    branches: [ main, master ]
   pull_request:
-    branches: [ main, master ] # Adjust to your main branch name(s)
+    branches: [ main, master ]
 
 jobs:
   test:
@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' # Ensure this matches your project's JDK requirement
+          java-version: '17'
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -27,18 +27,29 @@ jobs:
 
       - name: Run unit tests
         run: ./gradlew :WebradioApp:app:testDebugUnitTest
-        # continue-on-error: true # Optional: set to true if you want to proceed to UI tests even if unit tests fail
 
       - name: Run Android Instrumented Tests (includes app launch)
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 30 # Example API level, choose one relevant for your app
-          target: google_apis # Ensure this line is present and set to google_apis
-          arch: x86 # Optional, but good to be explicit if x86 is intended
+          api-level: 30
+          target: google_apis
+          arch: x86
           cold-boot: false
+          disable-animations: true
+          emulator-options: -no-window -no-audio -memory 4096
           script: |
             adb wait-for-device
+            adb devices
             echo "Emulator device found."
-            adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+            # Attendre que le boot soit fini
+            boot_completed=""
+            until [ "$boot_completed" = "1" ]; do
+              boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+              echo "Waiting for boot to complete... ($boot_completed)"
+              sleep 2
+            done
             echo "Emulator boot completed."
+            # Petit délai supplémentaire par sécurité
+            sleep 10
+            adb shell input keyevent 82
             ./gradlew :WebradioApp:app:connectedDebugAndroidTest
