@@ -76,18 +76,19 @@ class HomeFragment : Fragment() {
         btnPlay.setOnClickListener {
             val streamUrl = etStreamUrl.text.toString()
             if (streamUrl.isNotEmpty()) {
+                // Create a temporary RadioStation object
+                val tempStation = RadioStation(id = streamUrl, name = "Direct Stream", streamUrl = streamUrl)
+
                 // For direct URL play, we don't have a full RadioStation object.
-                // Consider creating a temporary one or enhancing StreamingService.
                 val serviceIntent = Intent(activity, StreamingService::class.java).apply {
                     action = StreamingService.ACTION_PLAY
                     putExtra(StreamingService.EXTRA_STREAM_URL, streamUrl)
-                    // Optionally, pass a basic RadioStation object if needed by the service for history/now playing
-                    val tempStation = RadioStation(id = streamUrl, name = "Direct Stream", streamUrl = streamUrl)
                     putExtra(StreamingService.EXTRA_STATION_OBJECT, tempStation)
                 }
                 Log.d("HomeFragment", "Attempting to play custom URL: $streamUrl")
                 activity?.startService(serviceIntent)
-                // If you want to add direct streams to history via ViewModel, do it here
+
+                // Add the temporary station to history via ViewModel
                 stationViewModel.addStationToHistory(tempStation)
             }
         }
