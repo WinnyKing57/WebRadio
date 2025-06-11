@@ -57,7 +57,7 @@ class SearchFragment : Fragment() {
     private var filterCountryJob: Job? = null // Added for debouncing
 
     private var countriesList: List<Country> = emptyList()
-    private var allDisplayCountryNames: List<String> = listOf(anyCountryString) // Should now be valid
+    private var allDisplayCountryNames: MutableList<String> = mutableListOf(anyCountryString) // Changed to MutableList
     private var tagsList: List<Tag> = emptyList()
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
@@ -155,18 +155,25 @@ class SearchFragment : Fragment() {
                 val countriesResponse = apiService.getCountries()
                 if (countriesResponse.isSuccessful) {
                     countriesList = countriesResponse.body() ?: emptyList()
-                    val displayCountries = mutableListOf(anyCountryString)
-                    displayCountries.addAll(countriesList.map { it.name }.sorted())
+                    val newFullCountryList = mutableListOf(anyCountryString)
+                    newFullCountryList.addAll(countriesList.map { it.name }.sorted())
 
-                    // Ensure allDisplayCountryNames is updated with the full list
-                    // This assignment is fine as displayCountries is the complete new list.
-                    this.allDisplayCountryNames = ArrayList(displayCountries)
+                    allDisplayCountryNames.clear()
+                    allDisplayCountryNames.addAll(newFullCountryList)
 
-                    // Create the new adapter with the full data
-                    val newLoadedAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayCountries)
-                    newLoadedAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spinnerCountry.adapter = newLoadedAdapter // Set the spinner to use this new adapter
-                    this.countryAdapter = newLoadedAdapter // IMPORTANT: Update the class member to point to this new, active adapter
+                    if (::countryAdapter.isInitialized) {
+                        countryAdapter.clear()
+                        countryAdapter.addAll(newFullCountryList)
+                        countryAdapter.notifyDataSetChanged()
+                    } else {
+                        Log.e("SearchFragment", "loadSpinnerData: countryAdapter was not initialized prior to updating!")
+                        // Fallback: Initialize and set it. This path should ideally not be taken.
+                        // This might happen if loadSpinnerData is called before onCreateView fully completes adapter setup.
+                        // However, given typical fragment lifecycle, onCreateView should complete first.
+                        this.countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, newFullCountryList)
+                        this.countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        spinnerCountry.adapter = this.countryAdapter
+                    }
                 } else {
                     Log.e("SearchFragment", "Failed to load countries: ${countriesResponse.message()}")
                 }
