@@ -35,4 +35,10 @@ jobs:
           api-level: 30 # Example API level, choose one relevant for your app
           target: google_apis # Ensure this line is present and set to google_apis
           arch: x86 # Optional, but good to be explicit if x86 is intended
-          script: ./gradlew :WebradioApp:app:connectedDebugAndroidTest
+          cold-boot: false
+          script: |
+            adb wait-for-device
+            echo "Emulator device found."
+            adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done; input keyevent 82'
+            echo "Emulator boot completed."
+            ./gradlew :WebradioApp:app:connectedDebugAndroidTest
