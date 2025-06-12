@@ -1,16 +1,19 @@
 pluginManagement {
     repositories {
+        // Ordre recommandé : google, mavenCentral, puis gradlePluginPortal
         google()
-        mavenCentral() // Avant gradlePluginPortal, pour éviter les erreurs de dépendances Kotlin/KSP
+        mavenCentral()
         gradlePluginPortal()
+        // Ajout de repo supplémentaire si nécessaire
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
 }
 
 dependencyResolutionManagement {
-    // repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS) // désactivation temporaire afin de tester la résolution des dépendances sans blocage
+    // Utilisez FAIL_ON_PROJECT_REPOS uniquement si vous êtes sûr que tous les dépôts sont ici.
+    // repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS) // ligne ajoutée pour tester en priorité les dépôts définis ici
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS) // Priorise les dépôts définis ici
 
     repositories {
         google()
@@ -21,4 +24,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "WebRadio"
-include(":WebradioApp:app") // chemin correct pour la structure du projet
+include(":WebradioApp:app")
