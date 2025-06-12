@@ -89,7 +89,7 @@ class AddEditAlarmFragment : Fragment() {
             id = alarm.stationId,
             name = alarm.stationName,
             streamUrl = "", // Not strictly needed for this screen, but part of RadioStation
-            iconUrl = alarm.stationIconUrl,
+            favicon = alarm.stationIconUrl ?: "", // Changed line
             isFavorite = false // Not relevant here
         )
     }
@@ -135,7 +135,7 @@ class AddEditAlarmFragment : Fragment() {
             minute = minute,
             stationId = selectedStation!!.id,
             stationName = selectedStation!!.name,
-            stationIconUrl = selectedStation!!.iconUrl,
+            stationIconUrl = selectedStation!!.favicon, // Changed line
             isEnabled = isEnabled
         )
 
