@@ -7,9 +7,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <!-- For older APIs or if setExact needed -->
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-    <!-- For Android 13+ if using exact alarms -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- For older APIs or if setExact needed - USE_EXACT_ALARM is deprecated / not standard -->
+    <!-- <uses-permission android:name="android.permission.USE_EXACT_ALARM" /> -->
 
     <application
         android:name=".WebradioApplication"
@@ -33,12 +33,21 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
-        <!-- For newer Android versions, you might need to specify foregroundServiceType -->
-        <!-- android:foregroundServiceType="mediaPlayback" -->
 
-        <receiver android:name=".AlarmReceiver"
+        <!-- Alarm Receivers -->
+        <receiver
+            android:name=".receivers.AlarmReceiver"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <receiver
+            android:name=".receivers.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"

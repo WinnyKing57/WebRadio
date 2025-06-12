@@ -39,4 +39,12 @@
         android:src="@drawable/ic_play_arrow"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Play/Pause"/>
+
+    <ImageButton
+        android:id="@+id/ib_mini_player_sleep_timer"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_settings"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Set Sleep Timer"/>
 </LinearLayout>
