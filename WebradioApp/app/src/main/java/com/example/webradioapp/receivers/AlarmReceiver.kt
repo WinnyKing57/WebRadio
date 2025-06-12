@@ -8,6 +8,7 @@ import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.services.StreamingService
 import com.example.webradioapp.db.AppDatabase
 import com.example.webradioapp.utils.AlarmManagerHelper
+import kotlinx.coroutines.flow.firstOrNull // Added for Flow.firstOrNull()
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,9 +43,15 @@ class AlarmReceiver : BroadcastReceiver() {
             // A more robust solution would be to ensure the station details for alarms are always available,
             // perhaps by querying a specific "all stations" table or API.
             // For now, let's try to find it in favorites or history.
-            var station = database.favoriteStationDao().getFavoriteStationById(stationId)
+            var station: RadioStation? = null
+            // Try fetching from FavoriteStationDao first
+            database.favoriteStationDao().getStationById(stationId).firstOrNull()?.let {
+                station = it
+            }
+
+            // If not found in favorites, try fetching from HistoryStationDao
             if (station == null) {
-                station = database.historyStationDao().getHistoryStationById(stationId)
+                station = database.historyStationDao().getStationById(stationId)
             }
             // If still null, it means the station is not in local DB tables accessible this way.
             // This highlights the need for a reliable way to get station stream URLs for alarms.
@@ -58,7 +65,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
             val serviceIntent = Intent(context, StreamingService::class.java).apply {
                 action = StreamingService.ACTION_PLAY
-                putExtra(StreamingService.EXTRA_STATION_OBJECT, station)
+                putExtra(StreamingService.EXTRA_STATION_OBJECT, station as android.os.Parcelable)
                 // The stream URL is part of the RadioStation object now
             }
             context.startService(serviceIntent)
