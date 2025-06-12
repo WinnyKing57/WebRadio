@@ -3,6 +3,7 @@ package com.example.webradioapp.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData // Added import
 import androidx.lifecycle.viewModelScope
 import com.example.webradioapp.db.AppDatabase
 import com.example.webradioapp.db.FavoriteStationDao
@@ -33,7 +34,8 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
 
         // Example: Populate allStations with favorites for now.
         // This should be replaced with a more robust way of getting selectable stations.
-        allStations = favoriteStationDao.getAllFavoriteStations()
+        // allStations = favoriteStationDao.getAllFavoriteStations() // Old line
+        allStations = favoriteStationDao.getFavoriteStations().asLiveData() // New line
 
 
         // --- Example of combining favorites and history ---
