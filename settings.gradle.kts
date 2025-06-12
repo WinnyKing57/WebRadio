@@ -11,6 +11,7 @@ pluginManagement {
         google()
         gradlePluginPortal()
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") // Added for KSP or related JetBrains plugins
     }
 }
 
