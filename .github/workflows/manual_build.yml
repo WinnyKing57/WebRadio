@@ -56,8 +56,6 @@ jobs:
 
     - name: Network Connectivity Diagnostics
       run: |
-        echo "--- Testing connectivity to Google Maven (Base URL) ---"
-        curl -I --fail-with-body --connect-timeout 10 https://dl.google.com/dl/android/maven2/ || echo "Failed to connect to Google Maven base URL"
         echo "--- Testing connectivity to Gradle Plugin Portal (Base URL) ---"
         curl -I --fail-with-body --connect-timeout 10 https://plugins.gradle.org/m2/ || echo "Failed to connect to Gradle Plugin Portal base URL"
         echo "--- Testing connectivity to Maven Central (Base URL) ---"
@@ -67,8 +65,6 @@ jobs:
         curl -I --fail-with-body --connect-timeout 10 https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.2.2/gradle-8.2.2.pom || echo "Failed to connect to AGP POM"
         echo "--- Testing connectivity to Kotlin Gradle Plugin POM ---"
         curl -I --fail-with-body --connect-timeout 10 https://plugins.gradle.org/m2/org/jetbrains/kotlin/kotlin-gradle-plugin/1.9.0/kotlin-gradle-plugin-1.9.0.pom || echo "Failed to connect to Kotlin Gradle Plugin POM"
-        echo "--- Testing connectivity to KSP Plugin POM ---"
-        curl -I --fail-with-body --connect-timeout 10 https://dl.google.com/dl/android/maven2/com/google/devtools/ksp/com.google.devtools.ksp.gradle.plugin/1.9.0-1.0.13/com.google.devtools.ksp.gradle.plugin-1.9.0-1.0.13.pom || echo "Failed to connect to KSP Plugin POM"
         echo "--- Testing connectivity to SafeArgs Plugin POM ---"
         curl -I --fail-with-body --connect-timeout 10 https://dl.google.com/dl/android/maven2/androidx/navigation/navigation-safe-args-gradle-plugin/2.5.3/navigation-safe-args-gradle-plugin-2.5.3.pom || echo "Failed to connect to SafeArgs Plugin POM"
         echo "--- Network diagnostics complete ---"
