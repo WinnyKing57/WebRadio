@@ -9,9 +9,9 @@
 pluginManagement {
     repositories {
         google()
+        mavenCentral() // Moved before gradlePluginPortal
         gradlePluginPortal()
-        mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") // Added for KSP or related JetBrains plugins
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
 }
 
@@ -23,5 +23,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal() // Added
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") // Added
     }
 }
