@@ -69,15 +69,14 @@ jobs:
       continue-on-error: true
 
     - name: Build APK (debug)
-      run: ./gradlew clean :WebradioApp:app:assembleDebug --stacktrace --info --no-daemon --refresh-dependencies > build_output.log 2>&1
-
-    - name: Upload build log
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: build-log.txt
-        path: build_output.log
-        retention-days: 7
+      run: |
+        set -o pipefail
+        ./gradlew clean :WebradioApp:app:assembleDebug --stacktrace --info --no-daemon --refresh-dependencies 2>&1 | tee build_output.log
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
+          echo "::error::Gradle build failed. Attempting to highlight error messages from log:"
+          grep -C 5 -i -E "ERROR:|FAILURE:|What went wrong:|Execution failed for task" build_output.log || echo "No specific error keywords found by grep, but build failed."
+          # exit 1 # Explicitly fail the step if not already handled by pipefail - pipefail should handle it.
+        fi
 
     - name: Capture Kotlin compile logs if build fails
       if: failure()
