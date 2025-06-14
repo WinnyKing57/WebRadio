@@ -57,7 +57,9 @@ class AlarmReceiver : BroadcastReceiver() {
             // This highlights the need for a reliable way to get station stream URLs for alarms.
             // For this example, we'll proceed if found, log error if not.
 
-            if (station == null || station.streamUrl.isNullOrEmpty()) {
+            val currentStation = station // Smart cast fix: Create a local immutable variable
+
+            if (currentStation == null || currentStation.streamUrl.isNullOrEmpty()) {
                 Log.e("AlarmReceiver", "Station details or stream URL for ID $stationId not found. Cannot start playback.")
                 // Optionally, show a notification to the user about the failure.
                 return@launch
@@ -65,11 +67,11 @@ class AlarmReceiver : BroadcastReceiver() {
 
             val serviceIntent = Intent(context, StreamingService::class.java).apply {
                 action = StreamingService.ACTION_PLAY
-                putExtra(StreamingService.EXTRA_STATION_OBJECT, station as android.os.Parcelable)
+                putExtra(StreamingService.EXTRA_STATION_OBJECT, currentStation as android.os.Parcelable)
                 // The stream URL is part of the RadioStation object now
             }
             context.startService(serviceIntent)
-            Log.d("AlarmReceiver", "Started StreamingService for station: ${station.name}")
+            Log.d("AlarmReceiver", "Started StreamingService for station: ${currentStation.name}")
 
             // Reschedule for next day (for repeating alarms) or mark as complete.
             // For non-repeating alarms, we might disable it.
