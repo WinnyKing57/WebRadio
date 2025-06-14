@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import com.example.webradioapp.AlarmReceiver // Keep this if AlarmReceiver class is still used for Intent target
+import com.example.webradioapp.receivers.AlarmReceiver // Keep this if AlarmReceiver class is still used for Intent target
 import com.example.webradioapp.util.Constants.ACTION_ALARM_TRIGGERED
 import com.example.webradioapp.util.Constants.EXTRA_STATION_JSON
 import com.example.webradioapp.model.RadioStation
