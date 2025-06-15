@@ -9,10 +9,11 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView // Added
 import android.widget.Button
-import android.widget.EditText // Added
+// import android.widget.EditText // Removed
 import android.widget.ProgressBar
-import android.widget.Spinner
+// import android.widget.Spinner // Removed
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -41,23 +42,23 @@ class SearchFragment : Fragment() {
     private lateinit var stationAdapter: StationAdapter
     private lateinit var progressBar: ProgressBar
     private lateinit var tvError: TextView
-    // Removed TextInputEditTexts
-    // private lateinit var etSearchCountry: TextInputEditText
-    // private lateinit var etSearchCategory: TextInputEditText
 
-    private lateinit var spinnerCountry: Spinner
-    private lateinit var spinnerCategory: Spinner
+    // New AutoCompleteTextViews
+    private lateinit var actvCountryDropdown: AutoCompleteTextView
+    private lateinit var actvCategoryDropdown: AutoCompleteTextView
+
     private lateinit var buttonClearFilters: Button
-    private lateinit var buttonApplyFilters: Button // Added
+    private lateinit var buttonApplyFilters: Button
 
-    private lateinit var etFilterCountry: EditText // Added
-    private val anyCountryString = "Any Country" // Moved up
-    private val anyCategoryString = "Any Category" // Moved up
-    private lateinit var countryAdapter: ArrayAdapter<String> // Added
-    private var filterCountryJob: Job? = null // Added for debouncing
+    private val anyCountryString = "Any Country"
+    private val anyCategoryString = "Any Category"
+    private lateinit var countryAdapter: ArrayAdapter<String>
+    private lateinit var categoryAdapter: ArrayAdapter<String> // Added for categories
+
+    // private var filterCountryJob: Job? = null // Removed
 
     private var countriesList: List<Country> = emptyList()
-    private var allDisplayCountryNames: MutableList<String> = mutableListOf(anyCountryString) // Changed to MutableList
+    private var allDisplayCountryNames: MutableList<String> = mutableListOf(anyCountryString)
     private var tagsList: List<Tag> = emptyList()
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
@@ -84,25 +85,22 @@ class SearchFragment : Fragment() {
         recyclerViewStations = view.findViewById(R.id.recycler_view_stations)
         progressBar = view.findViewById(R.id.progress_bar_search)
         tvError = view.findViewById(R.id.tv_search_error)
-        etFilterCountry = view.findViewById(R.id.et_filter_country)
         buttonClearFilters = view.findViewById(R.id.button_clear_search_filters)
         buttonApplyFilters = view.findViewById(R.id.button_apply_filters_search)
 
-        spinnerCountry = view.findViewById(R.id.spinner_search_country)
-        spinnerCountry.adapter = this.countryAdapter // Set the initialized class member adapter
+        actvCountryDropdown = view.findViewById(R.id.actv_country_dropdown)
+        actvCategoryDropdown = view.findViewById(R.id.actv_category_dropdown)
 
-        spinnerCategory = view.findViewById(R.id.spinner_search_category)
-        // Initialize categoryAdapter similarly if it's also a class member,
-        // or as a local var if it's not managed at class level yet.
-        // For now, we only ensure countryAdapter is handled as per user feedback.
-        // Example for categoryAdapter if it were local (based on previous known state):
-        val localCategoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf(this.anyCategoryString))
-        localCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerCategory.adapter = localCategoryAdapter
+        // Set adapters
+        actvCountryDropdown.setAdapter(this.countryAdapter)
+        // Initialize categoryAdapter and set it
+        this.categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, mutableListOf(this.anyCategoryString))
+        actvCategoryDropdown.setAdapter(this.categoryAdapter)
+
 
         buttonClearFilters.setOnClickListener {
-            spinnerCountry.setSelection(0)
-            spinnerCategory.setSelection(0)
+            actvCountryDropdown.setText(anyCountryString, false)
+            actvCategoryDropdown.setText(anyCategoryString, false)
             // Trigger search with current SearchView text and now-cleared spinner selections
             performSearch(searchView.query?.toString())
         }
@@ -127,28 +125,7 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         loadSpinnerData() // Load data after view is created
 
-        etFilterCountry.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterCountryJob?.cancel() // Cancel previous debouncing job
-            }
-            override fun afterTextChanged(s: Editable?) {
-                filterCountryJob = viewLifecycleOwner.lifecycleScope.launch {
-                    delay(300) // Debounce delay (300ms)
-                    val filterQuery = s.toString().lowercase(Locale.getDefault())
-
-                    // Filter the up-to-date 'allDisplayCountryNames'
-                    val filteredCountries = allDisplayCountryNames.filter { // Direct access
-                        it == anyCountryString || it.lowercase(Locale.getDefault()).contains(filterQuery) // Direct access
-                    }
-
-                    // Update the existing countryAdapter instance directly
-                    countryAdapter.clear() // Direct access
-                    countryAdapter.addAll(filteredCountries) // Direct access
-                    countryAdapter.notifyDataSetChanged() // Direct access
-                }
-            }
-        })
+        // Removed TextWatcher for etFilterCountry
     }
 
     private fun loadSpinnerData() {
@@ -164,10 +141,10 @@ class SearchFragment : Fragment() {
                     allDisplayCountryNames.addAll(newFullCountryList)
 
                     // Update the existing countryAdapter instance in place
-                    // Assumes countryAdapter is always initialized by onCreateView.
-                    countryAdapter.clear() // Direct access
-                    countryAdapter.addAll(newFullCountryList) // Direct access
-                    countryAdapter.notifyDataSetChanged() // Direct access
+                    countryAdapter.clear()
+                    countryAdapter.addAll(newFullCountryList)
+                    countryAdapter.notifyDataSetChanged()
+                    actvCountryDropdown.setText(anyCountryString, false) // Set initial text without filtering
 
                 } else {
                     Log.e("SearchFragment", "Failed to load countries: ${countriesResponse.message()}")
@@ -183,12 +160,14 @@ class SearchFragment : Fragment() {
                 if (tagsResponse.isSuccessful) {
                     tagsList = tagsResponse.body() ?: emptyList()
                     val displayTags: MutableList<String> = mutableListOf(anyCategoryString)
-                    // Consider filtering or limiting tags if the list is too long
                     val sortedTagNames: List<String> = tagsList.map { it.name }.distinct().sorted()
                     displayTags.addAll(sortedTagNames)
-                    val categoryAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, displayTags)
-                    categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spinnerCategory.adapter = categoryAdapter
+
+                    // Update the existing categoryAdapter instance
+                    categoryAdapter.clear()
+                    categoryAdapter.addAll(displayTags)
+                    categoryAdapter.notifyDataSetChanged()
+                    actvCategoryDropdown.setText(anyCategoryString, false) // Set initial text without filtering
                 } else {
                     Log.e("SearchFragment", "Failed to load tags/categories: ${tagsResponse.message()}")
                     Toast.makeText(requireContext(), "Could not load category list. Search functionality may be limited.", Toast.LENGTH_LONG).show()
@@ -275,11 +254,11 @@ class SearchFragment : Fragment() {
         showLoading(true)
         tvError.visibility = View.GONE
 
-        val selectedCountryName = spinnerCountry.selectedItem?.toString()
-        val countryQueryValue = if (selectedCountryName != null && selectedCountryName != anyCountryString) selectedCountryName else null
+        val selectedCountryName = actvCountryDropdown.text.toString()
+        val countryQueryValue = if (selectedCountryName.isNotBlank() && selectedCountryName != anyCountryString) selectedCountryName else null
 
-        val selectedCategoryName = spinnerCategory.selectedItem?.toString()
-        val categoryQueryValue = if (selectedCategoryName != null && selectedCategoryName != anyCategoryString) selectedCategoryName else null
+        val selectedCategoryName = actvCategoryDropdown.text.toString()
+        val categoryQueryValue = if (selectedCategoryName.isNotBlank() && selectedCategoryName != anyCategoryString) selectedCategoryName else null
 
         val nameQuery = nameQueryFromSearchView?.trim()?.takeIf { it.isNotEmpty() }
 
