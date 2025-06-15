@@ -32,6 +32,7 @@ import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.viewmodels.StationViewModel // Added
 import com.example.webradioapp.viewmodels.FavoritesViewModel // Added
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.lifecycle.Observer // Added for explicit Observer
 
 /**
  * The main activity of the application.
@@ -288,15 +289,16 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
     }
 
     private fun observeFavoriteChanges() {
-        favoritesViewModel.favoriteStations.observe(this) { favoritesList ->
+        favoritesViewModel.favoriteStations.observe(this, Observer { favoritesList ->
             val currentStation = StreamingService.currentPlayingStationLiveData.value
             currentStation?.let { station ->
-                val isFavorite = favoritesList.any { it.id == station.id }
+                // Ensure favoritesList is not null, though LiveData from asLiveData on a non-nullable Flow usually is.
+                val isFavorite = favoritesList?.any { favStation -> favStation.id == station.id } ?: false
                 ibFullPlayerFavorite.setImageResource(
                     if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
                 )
             }
-        }
+        })
     }
 
     private fun setupVolumeControls() {

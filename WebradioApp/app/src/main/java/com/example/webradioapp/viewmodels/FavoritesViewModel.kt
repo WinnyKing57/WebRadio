@@ -2,13 +2,15 @@ package com.example.webradioapp.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData // Added
+import androidx.lifecycle.asLiveData // Added
 import androidx.lifecycle.viewModelScope
 import com.example.webradioapp.db.AppDatabase
 import com.example.webradioapp.db.StationRepository // Import Repository
 import com.example.webradioapp.model.RadioStation
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn // Import for stateIn
+// import kotlinx.coroutines.flow.SharingStarted // Removed
+// import kotlinx.coroutines.flow.stateIn // Removed
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,10 +22,8 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         repository = StationRepository(database.favoriteStationDao(), database.historyStationDao())
     }
 
-    val favoriteStations: Flow<List<RadioStation>> = repository.favoriteStations
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList()) // Convert to StateFlow or share
-    val stationHistory: Flow<List<RadioStation>> = repository.stationHistory
-        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+    val favoriteStations: LiveData<List<RadioStation>> = repository.favoriteStations.asLiveData()
+    val stationHistory: LiveData<List<RadioStation>> = repository.stationHistory.asLiveData()
 
     // Combined toggle logic using repository
     fun toggleFavorite(station: RadioStation) {
