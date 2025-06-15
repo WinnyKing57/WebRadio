@@ -1,36 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <!-- Main content area -->
+    <FrameLayout
+        android:id="@+id/main_content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/mini_player_layout_container"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph" />
+        android:layout_marginBottom="?attr/actionBarSize"> <!-- Space for BottomNavigationView -->
 
-    <include
-        android:id="@+id/mini_player_layout_container"
-        layout="@layout/mini_player"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph" />
+    </FrameLayout>
+
+    <!-- Mini Player (visible when something is playing and bottom sheet is collapsed) -->
+    <!-- Positioned above the BottomNavigationView -->
+    <FrameLayout
+        android:id="@+id/mini_player_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bottom_navigation"/>
+        app:layout_anchor="@id/bottom_navigation"
+        app:layout_anchorGravity="top"
+        android:visibility="gone"
+        tools:visibility="visible">
+        <include layout="@layout/layout_bottom_mini_player" />
+    </FrameLayout>
 
+    <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
         android:background="?attr/colorSurface"
-        android:elevation="4dp"
         app:itemIconTint="@color/bottom_nav_item_tint"
         app:itemTextColor="@color/bottom_nav_item_tint"
         app:menu="@menu/bottom_nav_menu" />
 
-</RelativeLayout>
+    <!-- Full Player Content (The Bottom Sheet itself) -->
+    <FrameLayout
+        android:id="@+id/full_player_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        android:clickable="true"
+        android:focusable="true">
+        <include layout="@layout/layout_full_player_bottom_sheet"/>
+    </FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
