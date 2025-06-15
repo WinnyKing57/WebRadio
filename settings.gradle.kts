@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
         // Ordre recommandé : google, mavenCentral, puis gradlePluginPortal
-        google()
         mavenCentral()
+        google()
         gradlePluginPortal()
         // Ajout de repo supplémentaire si nécessaire
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
@@ -16,8 +16,8 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS) // Priorise les dépôts définis ici
 
     repositories {
-        google()
         mavenCentral()
+        google()
         gradlePluginPortal()
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
