@@ -21,6 +21,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer // Added
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -216,22 +217,33 @@ class SearchFragment : Fragment() {
     }
 
     private fun observeFavoriteChanges() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            favoritesViewModel.favoriteStations.collect { favoriteStations ->
-                val favoriteIds = favoriteStations.map { it.id }.toSet()
-                currentFavoritesSet = favoriteIds // Ajouter cette ligne
+        favoritesViewModel.favoriteStations.observe(viewLifecycleOwner, Observer { favs ->
+            val favoriteStationsList = favs ?: emptyList()
+            currentFavoritesSet = favoriteStationsList.map { station -> station.id }.toSet()
 
-                // La logique suivante pour mettre à jour currentStationList et l'adapter est déjà là
-                // et devrait utiliser 'favoriteIds' (qui est la même chose que currentFavoritesSet à ce point)
-                // On peut la laisser telle quelle ou la faire utiliser currentFavoritesSet pour la cohérence
-                // Pour l'instant, laissons-la utiliser 'favoriteIds' car c'est local à ce scope.
-                // La principale utilité de currentFavoritesSet est pour performSearch.
-                currentStationList = currentStationList.map { station ->
-                    station.copy(isFavorite = favoriteIds.contains(station.id))
-                }
-                stationAdapter.submitList(currentStationList.toList())
+            // Update the isFavorite flag for stations currently in the adapter's list
+            val listCurrentlyInAdapter = stationAdapter.currentList
+            val updatedListForAdapter = listCurrentlyInAdapter.map { stationInAdapter ->
+                stationInAdapter.copy(isFavorite = currentFavoritesSet.contains(stationInAdapter.id))
             }
-        }
+
+            // Only submit if there's an actual change in favorite status for displayed items
+            // or if the list sizes differ (e.g. initial load)
+            var changed = false
+            if (listCurrentlyInAdapter.size != updatedListForAdapter.size) {
+                changed = true
+            } else {
+                for(i in listCurrentlyInAdapter.indices){
+                    if(listCurrentlyInAdapter[i].isFavorite != updatedListForAdapter[i].isFavorite){
+                        changed = true
+                        break
+                    }
+                }
+            }
+            if(changed) {
+                 stationAdapter.submitList(updatedListForAdapter)
+            }
+        })
     }
 
     private fun setupSearchView() {
