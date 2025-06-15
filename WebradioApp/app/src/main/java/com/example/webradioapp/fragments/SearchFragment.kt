@@ -9,8 +9,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView // Added
+import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.ImageView // Added
+import android.widget.LinearLayout // Added
 // import android.widget.EditText // Removed
 import android.widget.ProgressBar
 // import android.widget.Spinner // Removed
@@ -41,7 +43,12 @@ class SearchFragment : Fragment() {
     private lateinit var recyclerViewStations: RecyclerView
     private lateinit var stationAdapter: StationAdapter
     private lateinit var progressBar: ProgressBar
-    private lateinit var tvError: TextView
+    // private lateinit var tvError: TextView // Removed
+
+    // New state views
+    private lateinit var layoutSearchMessageState: LinearLayout
+    private lateinit var ivSearchMessageIcon: ImageView
+    private lateinit var tvSearchMessageText: TextView
 
     // New AutoCompleteTextViews
     private lateinit var actvCountryDropdown: AutoCompleteTextView
@@ -84,7 +91,12 @@ class SearchFragment : Fragment() {
         searchView = view.findViewById(R.id.search_view)
         recyclerViewStations = view.findViewById(R.id.recycler_view_stations)
         progressBar = view.findViewById(R.id.progress_bar_search)
-        tvError = view.findViewById(R.id.tv_search_error)
+        // tvError = view.findViewById(R.id.tv_search_error) // Removed
+
+        layoutSearchMessageState = view.findViewById(R.id.layout_search_message_state)
+        ivSearchMessageIcon = view.findViewById(R.id.iv_search_message_icon)
+        tvSearchMessageText = view.findViewById(R.id.tv_search_message_text)
+
         buttonClearFilters = view.findViewById(R.id.button_clear_search_filters)
         buttonApplyFilters = view.findViewById(R.id.button_apply_filters_search)
 
@@ -116,7 +128,7 @@ class SearchFragment : Fragment() {
         setupSearchView() // setupSearchView might also trigger performSearch, ensure order is fine
         observeFavoriteChanges()
 
-        showEmptyState("Search for radio stations above.") // Initial state
+        showSearchMessageState("Search for radio stations above.", R.drawable.ic_search) // Initial state
 
         return view
     }
@@ -243,7 +255,7 @@ class SearchFragment : Fragment() {
                     // Clear results if search text is empty
                      stationAdapter.submitList(emptyList())
                      currentStationList = emptyList()
-                     showEmptyState("Search for radio stations above.")
+                     showSearchMessageState("Search for radio stations above.", R.drawable.ic_search)
                 }
                 return true
             }
@@ -252,7 +264,7 @@ class SearchFragment : Fragment() {
 
     private fun performSearch(nameQueryFromSearchView: String?) {
         showLoading(true)
-        tvError.visibility = View.GONE
+        // tvError.visibility = View.GONE // Handled by showLoading
 
         val selectedCountryName = actvCountryDropdown.text.toString()
         val countryQueryValue = if (selectedCountryName.isNotBlank() && selectedCountryName != anyCountryString) selectedCountryName else null
@@ -285,7 +297,7 @@ class SearchFragment : Fragment() {
                     if (currentStationList.isNotEmpty()) {
                         stationAdapter.submitList(currentStationList.toList()) // Submit new list
                         recyclerViewStations.visibility = View.VISIBLE
-                        tvError.visibility = View.GONE
+                        layoutSearchMessageState.visibility = View.GONE // Hide message state
                     } else {
                         stationAdapter.submitList(emptyList())
                         val activeFilters = mutableListOf<String>()
@@ -293,20 +305,21 @@ class SearchFragment : Fragment() {
                         if (countryQueryValue != null) activeFilters.add("Country: '$countryQueryValue'")
                         if (categoryQueryValue != null) activeFilters.add("Category: '$categoryQueryValue'")
                         val errorMsg = if (activeFilters.isNotEmpty()) "No stations found for ${activeFilters.joinToString()}" else "No stations found."
-                        showError(errorMsg)
+                        showSearchMessageState(errorMsg, R.drawable.ic_radio_placeholder) // Or ic_no_results
                     }
                 } else {
                     val errorBody = response.errorBody()?.string()
                     Log.e("SearchFragment", "API Error: ${response.code()} - ${response.message()} - Body: $errorBody")
-                    when (response.code()) {
-                        404 -> showError("Could not find stations matching your request (Error 404).")
-                        500, 502, 503, 504 -> showError("The station server seems to be having trouble. Please try again later.")
-                        else -> showError("Could not fetch stations. Please try again. (Code: ${response.code()})")
+                    val errorMsg = when (response.code()) {
+                        404 -> "Could not find stations matching your request (Error 404)."
+                        500, 502, 503, 504 -> "The station server seems to be having trouble. Please try again later."
+                        else -> "Could not fetch stations. Please try again. (Code: ${response.code()})"
                     }
+                    showSearchMessageState(errorMsg, R.drawable.ic_error_outline) // Or a generic error icon
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "Network/Conversion Error: ${e.message}", e)
-                showError("A network error occurred. Please check your connection and try again.")
+                showSearchMessageState("A network error occurred. Please check your connection and try again.", R.drawable.ic_error_outline)
             } finally {
                 showLoading(false)
             }
@@ -315,22 +328,26 @@ class SearchFragment : Fragment() {
 
     private fun showLoading(isLoading: Boolean) {
         progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        if (isLoading) {
+            layoutSearchMessageState.visibility = View.GONE
+            recyclerViewStations.visibility = View.GONE
+        }
     }
 
-    private fun showError(message: String) {
+    private fun showSearchMessageState(message: String, iconResId: Int? = null) {
         showLoading(false)
         recyclerViewStations.visibility = View.GONE
-        tvError.visibility = View.VISIBLE
-        tvError.text = message
-        // Toast.makeText(context, message, Toast.LENGTH_LONG).show() // Alternative or additional feedback
+        layoutSearchMessageState.visibility = View.VISIBLE
+        tvSearchMessageText.text = message
+        if (iconResId != null) {
+            ivSearchMessageIcon.setImageResource(iconResId)
+            ivSearchMessageIcon.visibility = View.VISIBLE
+        } else {
+            ivSearchMessageIcon.visibility = View.GONE // Or set a default
+        }
     }
 
-    private fun showEmptyState(message: String) {
-        showLoading(false)
-        recyclerViewStations.visibility = View.GONE
-        tvError.visibility = View.VISIBLE
-        tvError.text = message
-    }
+    // Removed showEmptyState as it's merged into showSearchMessageState
 
     override fun onDestroyView() {
         searchJob?.cancel() // Cancel any running search when view is destroyed

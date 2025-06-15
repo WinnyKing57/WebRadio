@@ -43,7 +43,7 @@ class StationAdapter(
     inner class StationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTextView: TextView = itemView.findViewById(R.id.tv_station_name)
         private val genreTextView: TextView = itemView.findViewById(R.id.tv_station_genre)
-        private val playButton: Button = itemView.findViewById(R.id.btn_item_play)
+        private val playButton: ImageButton = itemView.findViewById(R.id.btn_item_play) // Changed Button to ImageButton
         private val favoriteButton: ImageButton = itemView.findViewById(R.id.btn_favorite)
         val imageViewStationIcon: ImageView = itemView.findViewById(R.id.image_view_station_icon)
 
