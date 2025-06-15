@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+// Fragment import might not be needed if not directly used after removing the listener.
+// import androidx.fragment.app.Fragment
 // Explicit import for SharedPreferencesManager
 import com.example.webradioapp.utils.SharedPreferencesManager
+import androidx.navigation.fragment.NavHostFragment // Added for NavHostFragment
+import androidx.navigation.ui.setupWithNavController // Added for setupWithNavController
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.example.webradioapp.R
@@ -40,18 +43,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
 
     private var sleepTimer: CountDownTimer? = null
 
-    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        var selectedFragment: Fragment = HomeFragment()
-        when (item.itemId) {
-            R.id.nav_home -> selectedFragment = HomeFragment()
-            R.id.nav_search -> selectedFragment = SearchFragment()
-            R.id.nav_favorites -> selectedFragment = FavoritesFragment()
-            R.id.nav_alarms -> selectedFragment = com.example.webradioapp.fragments.AlarmsFragment() // Added
-            R.id.nav_settings -> selectedFragment = SettingsFragment()
-        }
-        supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, selectedFragment).commit()
-        true
-    }
+    // Removed onNavigationItemSelectedListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Apply accent color theme from SharedPreferences BEFORE super.onCreate()
@@ -79,7 +71,12 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         setContentView(R.layout.activity_main)
 
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+        // navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener) // Removed
+
+        // Setup BottomNavigationView with NavController
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        navView.setupWithNavController(navController)
 
         try {
             Log.d("MainActivity", "Attempting Mini-Player setup and LiveData observation...")
