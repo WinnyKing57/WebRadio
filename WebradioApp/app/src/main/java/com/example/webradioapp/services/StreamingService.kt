@@ -229,26 +229,26 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val action = intent?.action
-        val streamUrl = intent?.getStringExtra(EXTRA_STREAM_URL)
+        // val streamUrl = intent?.getStringExtra(EXTRA_STREAM_URL) // No longer needed from intent directly
         val station = intent?.getParcelableExtra<RadioStation>(EXTRA_STATION_OBJECT)
 
         when (action) {
             ACTION_PLAY -> {
-                if (streamUrl != null && station != null) {
+                if (station != null && station.streamUrl.isNotBlank()) { // Changed condition
                     if (requestAudioFocus()) {
                         val mediaItemToPlay: MediaItem
                         if (activePlayer == castPlayer) {
-                            android.util.Log.d("StreamingService", "Building MediaItem for CastPlayer (ACTION_PLAY). URI: $streamUrl") // New Log
+                            android.util.Log.d("StreamingService", "Building MediaItem for CastPlayer (ACTION_PLAY). URI: ${station.streamUrl}") // New Log
                             // Simplify MediaItem for Cast if activePlayer is CastPlayer
                             mediaItemToPlay = MediaItem.Builder()
-                                .setUri(streamUrl)
+                                .setUri(station.streamUrl) // Use station.streamUrl
                                 .setMediaId(station.id) // Keep station.id as it's simple
                                 // Avoid .setTag(station) for CastPlayer unless using a custom MediaItemConverter
                                 .build()
                         } else {
-                            android.util.Log.d("StreamingService", "Building MediaItem for localPlayer (ACTION_PLAY). URI: $streamUrl") // New Log
+                            android.util.Log.d("StreamingService", "Building MediaItem for localPlayer (ACTION_PLAY). URI: ${station.streamUrl}") // New Log
                             mediaItemToPlay = MediaItem.Builder()
-                                .setUri(streamUrl)
+                                .setUri(station.streamUrl) // Use station.streamUrl
                                 .setMediaId(station.id)
                                 .setTag(station) // Keep for local player
                                 .build()

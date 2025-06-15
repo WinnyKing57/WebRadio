@@ -37,8 +37,10 @@ object AlarmScheduler {
 
         val intent = Intent(context, AlarmReceiver::class.java).apply { // AlarmReceiver class is the target for the intent
             action = ACTION_ALARM_TRIGGERED // Use imported constant
+            // Pass only the station ID. The receiver will fetch the station details.
+            // This is more robust as station details (like stream URL) might change.
             if (stationToPlay != null) {
-                putExtra(EXTRA_STATION_JSON, Gson().toJson(stationToPlay)) // Use imported constant
+                putExtra(com.example.webradioapp.receivers.AlarmReceiver.EXTRA_STATION_ID, stationToPlay.id)
             }
         }
 
