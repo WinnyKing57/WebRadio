@@ -315,11 +315,13 @@ class SearchFragment : Fragment() {
                         500, 502, 503, 504 -> "The station server seems to be having trouble. Please try again later."
                         else -> "Could not fetch stations. Please try again. (Code: ${response.code()})"
                     }
-                    showSearchMessageState(errorMsg, R.drawable.ic_error_outline) // Or a generic error icon
+                    // TODO: Replace with a dedicated error icon like R.drawable.ic_error_outline (needs to be added to drawables)
+                    showSearchMessageState(errorMsg, R.drawable.ic_radio_placeholder)
                 }
             } catch (e: Exception) {
                 Log.e("SearchFragment", "Network/Conversion Error: ${e.message}", e)
-                showSearchMessageState("A network error occurred. Please check your connection and try again.", R.drawable.ic_error_outline)
+                // TODO: Replace with a dedicated error icon like R.drawable.ic_error_outline (needs to be added to drawables)
+                showSearchMessageState("A network error occurred. Please check your connection and try again.", R.drawable.ic_radio_placeholder)
             } finally {
                 showLoading(false)
             }
