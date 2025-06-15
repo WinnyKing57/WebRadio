@@ -17,6 +17,7 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
 
     private val favoriteStationDao: FavoriteStationDao
     private val historyStationDao: HistoryStationDao
+    private val stationRepository: com.example.webradioapp.db.StationRepository // Added
     // For simplicity, let's assume "allStations" for selection could come from favorites or history.
     // A more robust app would have a clearer source for "all selectable stations".
     val allStations: LiveData<List<RadioStation>> // This will be a combination or a specific source
@@ -31,11 +32,12 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
         val database = AppDatabase.getDatabase(application)
         favoriteStationDao = database.favoriteStationDao()
         historyStationDao = database.historyStationDao()
+        stationRepository = com.example.webradioapp.db.StationRepository(favoriteStationDao, historyStationDao) // Added
 
         // Example: Populate allStations with favorites for now.
         // This should be replaced with a more robust way of getting selectable stations.
         // allStations = favoriteStationDao.getAllFavoriteStations() // Old line
-        allStations = favoriteStationDao.getFavoriteStations().asLiveData() // New line
+        allStations = stationRepository.allPersistedStations.asLiveData() // Changed to use repository
 
 
         // --- Example of combining favorites and history ---

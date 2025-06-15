@@ -43,4 +43,7 @@ interface FavoriteStationDao {
     // Get a single station to check its status (useful for UI updates)
     @Query("SELECT * FROM stations WHERE id = :stationId")
     fun getStationById(stationId: String): Flow<RadioStation?>
+
+    @Query("SELECT * FROM stations ORDER BY name ASC")
+    fun getAllStations(): kotlinx.coroutines.flow.Flow<List<com.example.webradioapp.model.RadioStation>>
 }

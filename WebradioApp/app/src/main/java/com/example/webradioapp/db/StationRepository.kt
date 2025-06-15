@@ -19,6 +19,7 @@ class StationRepository(
 
     // Favorite operations
     val favoriteStations = favoriteStationDao.getFavoriteStations()
+    val allPersistedStations: kotlinx.coroutines.flow.Flow<List<com.example.webradioapp.model.RadioStation>> = favoriteStationDao.getAllStations() // Added
     suspend fun addFavorite(station: RadioStation) {
         withContext(Dispatchers.IO) {
             favoriteStationDao.addOrUpdateAndFavorite(station.copy(isFavorite = true))
