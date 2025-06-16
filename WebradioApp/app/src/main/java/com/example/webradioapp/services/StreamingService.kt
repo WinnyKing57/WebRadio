@@ -334,7 +334,6 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                         activePlayer?.play() // This should trigger onIsPlayingChanged(true) via listener
                         _isPlaying.postValue(true) // Set explicitly after play()
                         isPlayingLiveData.postValue(true)  // Set explicitly after play()
-                        mediaSession?.isActive = true
 
 
                         // Log to history using Repository and serviceScope
@@ -365,7 +364,6 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                 _currentPlayingStation.postValue(null)
                 currentPlayingStationLiveData.postValue(null)
                 abandonAudioFocus()
-                mediaSession?.isActive = false
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
             }
