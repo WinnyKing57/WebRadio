@@ -238,13 +238,6 @@ class HomeFragment : Fragment() {
                     tvHistoryStationsTitle.visibility = View.VISIBLE
                     // Optionally hide main placeholder if other content is now visible
                     // This logic might need refinement based on overall content strategy
-                    if (tvHomePlaceholder.visibility == View.VISIBLE && currentPopularStations.isNotEmpty()) {
-                         // If popular stations are also loaded, main placeholder can definitely go.
-                         // Or if history alone is enough to hide the main "Welcome" type message.
-                        // For now, let's assume loading any list section is enough to hide the main placeholder.
-                        // This was already done in loadPopularStations, so it might be redundant here
-                        // unless popular stations failed but history succeeded.
-                    }
                 } else {
                     tvHistoryStationsTitle.visibility = View.GONE
                 }
