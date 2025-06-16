@@ -8,14 +8,23 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.webradioapp.model.Alarm
 import com.example.webradioapp.model.RadioStation
+import com.example.webradioapp.db.entities.CountryEntity
+import com.example.webradioapp.db.entities.GenreEntity
+import com.example.webradioapp.db.entities.LanguageEntity
+import com.example.webradioapp.db.dao.CountryDao
+import com.example.webradioapp.db.dao.GenreDao
+import com.example.webradioapp.db.dao.LanguageDao
 
 // Incremented version to 3
-@Database(entities = [RadioStation::class, Alarm::class], version = 3, exportSchema = false)
+@Database(entities = [RadioStation::class, Alarm::class, CountryEntity::class, GenreEntity::class, LanguageEntity::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun favoriteStationDao(): FavoriteStationDao
     abstract fun historyStationDao(): HistoryStationDao
     abstract fun alarmDao(): AlarmDao // Added AlarmDao
+    abstract fun countryDao(): CountryDao
+    abstract fun genreDao(): GenreDao
+    abstract fun languageDao(): LanguageDao
 
     companion object {
         @Volatile
