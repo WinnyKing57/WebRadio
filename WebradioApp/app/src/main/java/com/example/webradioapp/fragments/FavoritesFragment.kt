@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels // Import for by viewModels()
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.Observer // Added
+// import androidx.lifecycle.Lifecycle // Removed if repeatOnLifecycle is removed
+// import androidx.lifecycle.lifecycleScope // Removed if launch is removed
+// import androidx.lifecycle.repeatOnLifecycle // Removed
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.webradioapp.R
@@ -18,7 +19,7 @@ import com.example.webradioapp.services.StreamingService
 // Removed: import com.example.webradioapp.utils.SharedPreferencesManager
 import com.example.webradioapp.viewmodels.FavoritesViewModel
 // Removed: import com.example.webradioapp.viewmodels.StationViewModel
-import kotlinx.coroutines.launch
+// import kotlinx.coroutines.launch // Removed if not used elsewhere
 
 class FavoritesFragment : Fragment() {
 
@@ -71,16 +72,14 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun observeViewModelData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    favoritesViewModel.favoriteStations.collect { stations ->
-                        favoritesAdapter.submitList(stations)
-                    }
-                }
-                // Launch block for stationHistory removed
-            }
-        }
+        favoritesViewModel.favoriteStations.observe(viewLifecycleOwner, Observer { favoriteStations ->
+            // The 'favoriteStations' here is List<RadioStation> from LiveData
+            favoritesAdapter.submitList(favoriteStations ?: emptyList()) // Handle potential null from LiveData
+        })
+        // Observation for stationHistory (if it were LiveData) would be similar:
+        // favoritesViewModel.stationHistory.observe(viewLifecycleOwner, Observer { historyStations ->
+        //     historyAdapter.submitList(historyStations ?: emptyList())
+        // })
     }
 
     // private fun loadFavorites() { ... } // Removed, handled by Flow
