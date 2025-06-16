@@ -177,11 +177,11 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         override fun onIsPlayingChanged(isPlayingValue: Boolean) {
             // Update notification based on activePlayer.isPlaying
             if (activePlayer?.isPlaying == true) {
-                startForeground(NOTIFICATION_ID, createNotification(if (activePlayer is CastPlayer) "Casting" else "Playing"))
+                startForeground(NOTIFICATION_ID, createNotification(currentPlayingStationLiveData.value, if (activePlayer is CastPlayer) "Casting" else "Playing"))
             } else {
                  // Update notification to paused state or stop foreground if not playing
                 if (activePlayer?.playbackState != Player.STATE_IDLE && activePlayer?.playbackState != Player.STATE_ENDED) {
-                     startForeground(NOTIFICATION_ID, createNotification(if (activePlayer is CastPlayer) "Casting Paused" else "Paused"))
+                     startForeground(NOTIFICATION_ID, createNotification(currentPlayingStationLiveData.value, if (activePlayer is CastPlayer) "Casting Paused" else "Paused"))
                 } else {
                     stopForeground(STOP_FOREGROUND_DETACH)
                 }
@@ -407,7 +407,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         } ?: run {
             android.util.Log.d("StreamingService", "switchToCastPlayer: No current MediaItem to transfer.") // New Log
         }
-        startForeground(NOTIFICATION_ID, createNotification("Casting"))
+        startForeground(NOTIFICATION_ID, createNotification(currentPlayingStationLiveData.value, "Casting"))
     }
 
     private fun switchToLocalPlayer() {
@@ -428,7 +428,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         }
          // Update notification, UI, etc.
         if (localPlayer?.isPlaying == true) {
-            startForeground(NOTIFICATION_ID, createNotification("Playing"))
+            startForeground(NOTIFICATION_ID, createNotification(currentPlayingStationLiveData.value, "Playing"))
         } else {
             stopForeground(STOP_FOREGROUND_DETACH) // Or update to paused
         }
@@ -523,7 +523,13 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         }
     }
 
-    private fun createNotification(contentText: String): Notification {
+    private fun createNotification(station: RadioStation?, contentTextHint: String): Notification {
+        val title = station?.name ?: "Web Radio"
+        // val text = contentTextHint // Original suggestion
+        // Let's use station genre if available, otherwise the hint.
+        val text = station?.genre?.takeIf { it.isNotBlank() } ?: contentTextHint
+
+
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -543,9 +549,10 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("Webradio Playing")
-            .setContentText(contentText)
+            .setContentTitle(title)
+            .setContentText(text)
             .setSmallIcon(R.drawable.ic_radio_placeholder) // Replace with actual icon
+            // TODO: Consider using station?.favicon for .setLargeIcon() if available and loaded as Bitmap
             .setContentIntent(pendingIntent)
             .addAction(R.drawable.ic_play_arrow, "Play", playPendingIntent) // Replace with actual icon
             .addAction(R.drawable.ic_pause, "Pause", pausePendingIntent) // Replace with actual icon
