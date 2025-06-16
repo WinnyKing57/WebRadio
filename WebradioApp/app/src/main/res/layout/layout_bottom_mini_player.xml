@@ -5,7 +5,7 @@
     android:id="@+id/mini_player_root"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorSurfaceContainerHigh"
+    android:background="?attr/colorSurface"
     android:clickable="true"
     android:focusable="true"
     android:paddingStart="12dp"
