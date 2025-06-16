@@ -23,6 +23,7 @@ import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.utils.SharedPreferencesManager
 import androidx.media3.exoplayer.ExoPlayer // Changed
 import androidx.media3.common.MediaItem // Changed
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException // Changed
 import androidx.media3.common.Player // Changed
 import androidx.media3.cast.CastPlayer // Changed
@@ -270,17 +271,34 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                         if (activePlayer == castPlayer) {
                             android.util.Log.d("StreamingService", "Building MediaItem for CastPlayer (ACTION_PLAY). URI: ${station.streamUrl}") // New Log
                             // Simplify MediaItem for Cast if activePlayer is CastPlayer
+                            val appName = getString(R.string.app_name) // Ensure appName is available or re-fetch
+                            val castMediaMetadata = MediaMetadata.Builder()
+                                .setTitle(station.name)
+                                .setArtist(appName)
+                                .setAlbumTitle(station.genre ?: "")
+                                // .setArtworkUri(Uri.parse(station.favicon)) // Artwork for cast might need specific handling
+                                .build()
                             mediaItemToPlay = MediaItem.Builder()
                                 .setUri(station.streamUrl) // Use station.streamUrl
                                 .setMediaId(station.id) // Keep station.id as it's simple
                                 // Avoid .setTag(station) for CastPlayer unless using a custom MediaItemConverter
+                                .setMediaMetadata(castMediaMetadata) // Add this line
                                 .build()
                         } else {
                             android.util.Log.d("StreamingService", "Building MediaItem for localPlayer (ACTION_PLAY). URI: ${station.streamUrl}") // New Log
+                            val appName = getString(R.string.app_name)
+                            val mediaMetadata = MediaMetadata.Builder()
+                                .setTitle(station.name)
+                                .setArtist(appName)
+                                .setAlbumTitle(station.genre ?: "") // Use genre for album title
+                                // You could add artworkUri here if you have a URI for the station icon/favicon
+                                // .setArtworkUri(Uri.parse(station.favicon))
+                                .build()
                             mediaItemToPlay = MediaItem.Builder()
                                 .setUri(station.streamUrl) // Use station.streamUrl
                                 .setMediaId(station.id)
                                 .setTag(station) // Keep for local player
+                                .setMediaMetadata(mediaMetadata) // Add this line
                                 .build()
                         }
 
@@ -392,9 +410,25 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
             }
             // Simplify MediaItem for Cast: only URI, and potentially mediaId if simple.
             // Avoid complex tags unless a custom MediaItemConverter is in place.
+            val currentStation = currentPlayingStationLiveData.value // Get current station
+            val appName = getString(R.string.app_name)
+            var castMediaMetadataBuilder = MediaMetadata.Builder()
+                .setArtist(appName) // App name is always known
+
+            currentStation?.let {
+                castMediaMetadataBuilder = castMediaMetadataBuilder
+                    .setTitle(it.name)
+                    .setAlbumTitle(it.genre ?: "")
+                    // .setArtworkUri(Uri.parse(it.favicon))
+            }
+            // If currentStation is null, title and album might be missing, but artist (app name) will be set.
+            // Alternatively, extract title/album from localItem.mediaMetadata if it was set,
+            // but we are setting it fresh based on station data.
+
             val castMediaItem = MediaItem.Builder()
                 .setUri(castUri)
                 .setMediaId(localItem.mediaId ?: castUri.toString()) // Use local mediaId or URI as backup
+                .setMediaMetadata(castMediaMetadataBuilder.build()) // Add this line
                 .build()
 
             android.util.Log.d("StreamingService", "Setting MediaItem on CastPlayer: ${castMediaItem.mediaId}") // New Log
