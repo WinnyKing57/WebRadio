@@ -52,6 +52,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'androidx.media3:media3-exoplayer:1.2.1' // Updated from com.google.android.exoplayer
+    implementation 'androidx.media3:media3-session:1.2.1'
     implementation 'androidx.media3:media3-cast:1.2.1'       // Updated from com.google.android.exoplayer
     implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
     implementation 'com.google.code.gson:gson:2.10.1'
