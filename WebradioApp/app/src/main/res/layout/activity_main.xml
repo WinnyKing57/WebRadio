@@ -48,8 +48,10 @@
     <FrameLayout
         android:id="@+id/full_player_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_fitToContents="false"
+        app:behavior_skipCollapsed="true"
         android:clickable="true"
         android:focusable="true">
         <include layout="@layout/layout_full_player_bottom_sheet"/>

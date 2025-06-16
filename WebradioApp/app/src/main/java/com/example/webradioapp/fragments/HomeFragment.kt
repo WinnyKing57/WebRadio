@@ -31,16 +31,6 @@ import android.util.Log
 
 class HomeFragment : Fragment() {
 
-    private lateinit var tvHomePlaceholder: TextView // Added for placeholder management
-
-    // Now Playing UI
-    private lateinit var nowPlayingDetailsContainer: View
-    private lateinit var ivNowPlayingStationIcon: ImageView
-    private lateinit var tvNowPlayingStationName: TextView
-    private lateinit var ibNowPlayingPlayPause: ImageButton
-    private lateinit var seekbarNowPlayingVolume: SeekBar
-    private lateinit var audioManager: AudioManager
-
     // Popular Stations UI and data
     private lateinit var tvPopularStationsTitle: TextView
     private lateinit var rvPopularStations: RecyclerView
@@ -65,16 +55,6 @@ class HomeFragment : Fragment() {
         Log.d("HomeFragment", "onCreateView called")
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        tvHomePlaceholder = view.findViewById(R.id.tv_home_placeholder) // Initialize placeholder
-
-        // Initialize Now Playing UI
-        nowPlayingDetailsContainer = view.findViewById(R.id.now_playing_details_container)
-        ivNowPlayingStationIcon = view.findViewById(R.id.iv_now_playing_station_icon)
-        tvNowPlayingStationName = view.findViewById(R.id.tv_now_playing_station_name)
-        ibNowPlayingPlayPause = view.findViewById(R.id.ib_now_playing_play_pause)
-        seekbarNowPlayingVolume = view.findViewById(R.id.seekbar_now_playing_volume)
-        audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
         // Initialize Popular Stations RecyclerView and Title
         tvPopularStationsTitle = view.findViewById(R.id.tv_popular_stations_title)
         rvPopularStations = view.findViewById(R.id.recycler_view_popular_stations)
@@ -94,76 +74,9 @@ class HomeFragment : Fragment() {
         setupHistoryStationsRecyclerView() // New setup call
 
         observeFavoriteChanges() // Combined observer
-        setupNowPlayingObservers() // New call
-        setupNowPlayingControls() // New call
 
         loadPopularStations()
         loadHistoryStations() // New data loading call
-    }
-
-    private fun setupNowPlayingObservers() {
-        StreamingService.isPlayingLiveData.observe(viewLifecycleOwner) { isPlaying ->
-            if (nowPlayingDetailsContainer.visibility == View.VISIBLE) { // Only update if section is visible
-                ibNowPlayingPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
-            }
-        }
-
-        StreamingService.currentPlayingStationLiveData.observe(viewLifecycleOwner) { station ->
-            if (station != null) {
-                nowPlayingDetailsContainer.visibility = View.VISIBLE
-                tvNowPlayingStationName.text = station.name
-                com.bumptech.glide.Glide.with(this@HomeFragment) // or requireContext()
-                    .load(station.favicon)
-                    .placeholder(R.drawable.ic_radio_placeholder)
-                    .error(R.drawable.ic_radio_placeholder)
-                    .into(ivNowPlayingStationIcon)
-                // Update play/pause button state based on current isPlayingLiveData value
-                val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
-                ibNowPlayingPlayPause.setImageResource(if (currentIsPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
-                tvHomePlaceholder.visibility = View.GONE // If this section is active, general placeholder can hide.
-            } else {
-                nowPlayingDetailsContainer.visibility = View.GONE
-                // Optionally, make tvHomePlaceholder visible again if no other content is showing
-                // if (currentPopularStations.isEmpty() && currentHistoryStations.isEmpty()) {
-                //    tvHomePlaceholder.visibility = View.VISIBLE
-                // }
-            }
-        }
-
-        StreamingService.playerErrorLiveData.observe(viewLifecycleOwner) { errorMessage ->
-            errorMessage?.let {
-                // Display the error. Could be a Toast, or update a dedicated error TextView in the "Now Playing" area.
-                Toast.makeText(requireContext(), "Playback Error: $it", Toast.LENGTH_LONG).show()
-                // Optionally, reset the error in LiveData
-                // StreamingService.playerErrorLiveData.postValue(null) // Be careful if multiple observers
-            }
-        }
-    }
-
-    private fun setupNowPlayingControls() {
-        ibNowPlayingPlayPause.setOnClickListener {
-            val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
-            val action = if (currentIsPlaying) StreamingService.ACTION_PAUSE else StreamingService.ACTION_PLAY
-            Intent(activity, StreamingService::class.java).also { intent ->
-                intent.action = action
-                activity?.startService(intent)
-            }
-        }
-
-        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        seekbarNowPlayingVolume.max = maxVolume
-        seekbarNowPlayingVolume.progress = currentVolume
-
-        seekbarNowPlayingVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
     }
 
     override fun onResume() {
@@ -286,29 +199,22 @@ class HomeFragment : Fragment() {
                         popularStationsAdapter.submitList(currentPopularStations.toList())
                         rvPopularStations.visibility = View.VISIBLE // Ensure RV is visible
                         tvPopularStationsTitle.visibility = View.VISIBLE // Ensure title is visible
-                        tvHomePlaceholder.visibility = View.GONE // Hide placeholder if stations are loaded
                     } else {
                         // Handle empty list if needed, maybe show a specific message or keep placeholder
                         rvPopularStations.visibility = View.GONE // Hide RV if no stations
                         tvPopularStationsTitle.visibility = View.GONE // Hide title if no stations
-                        tvHomePlaceholder.text = "No popular stations available at the moment."
-                        tvHomePlaceholder.visibility = View.VISIBLE
                     }
                 } else {
                     Log.e("HomeFragment", "loadPopularStations - API call failed: ${response.message()}")
                     // Optional: Show error message here
                     rvPopularStations.visibility = View.GONE // Hide RV on error
                     tvPopularStationsTitle.visibility = View.GONE // Hide title on error
-                    tvHomePlaceholder.text = "Could not load popular stations."
-                    tvHomePlaceholder.visibility = View.VISIBLE
                 }
             } catch (e: Exception) {
                 Log.e("HomeFragment", "loadPopularStations - Exception: ${e.message}", e)
                 // Optional: Show error message here
                 rvPopularStations.visibility = View.GONE // Hide RV on exception
                 tvPopularStationsTitle.visibility = View.GONE // Hide title on exception
-                tvHomePlaceholder.text = "Error loading popular stations."
-                tvHomePlaceholder.visibility = View.VISIBLE
             } finally {
                 // Optional: Hide loading indicator here
             }

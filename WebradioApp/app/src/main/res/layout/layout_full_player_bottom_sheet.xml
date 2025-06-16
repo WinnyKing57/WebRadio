@@ -5,13 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/full_player_bottom_sheet_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingBottom="16dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="0dp"
-    android:background="?attr/colorSurface"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    android:background="?attr/colorSurface">
 
     <View
         android:id="@+id/drag_handle"
