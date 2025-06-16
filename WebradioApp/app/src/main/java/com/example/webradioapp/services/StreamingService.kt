@@ -245,9 +245,6 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         }
 
         // We can also listen to onMediaItemTransition or onPlaybackStateChanged for history logging
-        }
-
-        // We can also listen to onMediaItemTransition or onPlaybackStateChanged for history logging
         override fun onPlaybackStateChanged(playbackState: Int) {
             if (playbackState == Player.STATE_READY && activePlayer?.playWhenReady == true) {
                 // This is a good place to log to history if we have the station object
