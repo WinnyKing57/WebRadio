@@ -111,13 +111,13 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
 
         // Initialize new Mini Player views
         newMiniPlayerViewContainer = findViewById(R.id.mini_player_view_container)
-        ivNewMiniPlayerStationIcon = newMiniPlayerViewContainer.findViewById(R.id.iv_mini_player_station_icon)
+        ivNewMiniPlayerStationIcon = newMiniPlayerViewContainer.findViewById(R.id.iv_mini_player_album_art)
         tvNewMiniPlayerStationName = newMiniPlayerViewContainer.findViewById(R.id.tv_mini_player_station_name)
         ibNewMiniPlayerPlayPause = newMiniPlayerViewContainer.findViewById(R.id.ib_mini_player_play_pause)
 
         // Initialize Full Player (BottomSheet) views
         fullPlayerBottomSheetView = findViewById(R.id.full_player_bottom_sheet)
-        ivFullPlayerStationArtwork = fullPlayerBottomSheetView.findViewById(R.id.iv_full_player_station_artwork)
+        ivFullPlayerStationArtwork = fullPlayerBottomSheetView.findViewById(R.id.iv_full_player_album_art)
         tvFullPlayerStationName = fullPlayerBottomSheetView.findViewById(R.id.tv_full_player_station_name)
         tvFullPlayerSongTitle = fullPlayerBottomSheetView.findViewById(R.id.tv_full_player_song_title)
         tvFullPlayerArtistName = fullPlayerBottomSheetView.findViewById(R.id.tv_full_player_artist_name)
