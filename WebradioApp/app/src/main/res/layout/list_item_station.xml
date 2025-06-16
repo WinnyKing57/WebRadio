@@ -21,13 +21,15 @@
             android:id="@+id/image_view_station_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_outline_radio_24" <!-- Updated placeholder icon -->
+            android:src="@drawable/ic_outline_radio_24"
             android:contentDescription="Station Icon"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.SmallComponentsRounded" <!-- For rounded corners -->
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.App.SmallComponentsRounded"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
+        <!-- Updated placeholder icon -->
+        <!-- For rounded corners -->
 
         <TextView
             android:id="@+id/tv_station_name"
@@ -64,23 +66,25 @@
             android:id="@+id/btn_favorite"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_outline_star_border_24" <!-- Updated icon -->
+            android:src="@drawable/ic_outline_star_border_24"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Favorite"
             app:layout_constraintEnd_toStartOf="@+id/btn_item_play"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
+        <!-- Updated icon -->
 
         <ImageButton
             android:id="@+id/btn_item_play"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_outline_play_arrow_24" <!-- Updated icon -->
+            android:src="@drawable/ic_outline_play_arrow_24"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Play"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
+        <!-- Updated icon -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
