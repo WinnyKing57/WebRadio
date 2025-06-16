@@ -267,9 +267,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                     .error(R.drawable.ic_radio_placeholder)
                     .into(ivFullPlayerStationArtwork)
 
-                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) {
-                     newMiniPlayerViewContainer.visibility = View.VISIBLE
-                }
+                newMiniPlayerViewContainer.visibility = View.VISIBLE
                 // Favorite status for full player button will be handled by observeFavoriteChanges
             } else {
                 newMiniPlayerViewContainer.visibility = View.GONE

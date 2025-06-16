@@ -26,6 +26,11 @@ import androidx.media3.common.MediaItem // Changed
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException // Changed
 import androidx.media3.common.Player // Changed
+import androidx.media3.session.MediaSession
+// Potentially add for PendingIntent if creating one for setSessionActivity:
+// import android.app.PendingIntent
+// import android.content.Intent
+// import com.example.webradioapp.activities.MainActivity
 import androidx.media3.cast.CastPlayer // Changed
 import androidx.media3.cast.SessionAvailabilityListener // Changed
 import com.google.android.gms.cast.framework.CastContext
@@ -58,6 +63,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     // private lateinit var sharedPrefsManager: SharedPreferencesManager // Still used for Theme
     private lateinit var stationRepository: com.example.webradioapp.db.StationRepository
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var mediaSession: MediaSession? = null
 
 
     // Listener for Cast session events
@@ -146,6 +152,21 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         activePlayer = if (currentSession != null) castPlayer else localPlayer
         sessionManager.addSessionManagerListener(sessionManagerListener, CastSession::class.java)
         // castPlayer.setSessionAvailabilityListener(sessionAvailabilityListener) // Alternative listener
+
+        if (localPlayer != null) {
+            // val sessionActivityPendingIntent = PendingIntent.getActivity(
+            //     this,
+            //     0,
+            //     Intent(this, MainActivity::class.java),
+            //     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            // ) // Optional: Good for session to open UI
+
+            mediaSession = MediaSession.Builder(this, localPlayer!!)
+                // .setSessionActivity(sessionActivityPendingIntent) // Uncomment if using
+                .build()
+        } else {
+            android.util.Log.e("StreamingService", "LocalPlayer is null, MediaSession cannot be initialized.")
+        }
 
         createNotificationChannel()
     }
@@ -313,6 +334,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                         activePlayer?.play() // This should trigger onIsPlayingChanged(true) via listener
                         _isPlaying.postValue(true) // Set explicitly after play()
                         isPlayingLiveData.postValue(true)  // Set explicitly after play()
+                        mediaSession?.isActive = true
 
 
                         // Log to history using Repository and serviceScope
@@ -343,6 +365,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                 _currentPlayingStation.postValue(null)
                 currentPlayingStationLiveData.postValue(null)
                 abandonAudioFocus()
+                mediaSession?.isActive = false
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
             }
@@ -532,6 +555,8 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
 
     override fun onDestroy() {
+        mediaSession?.release()
+        mediaSession = null
         super.onDestroy()
         serviceScope.cancel() // Cancel all coroutines started by this service
         localPlayer?.release()
