@@ -1,0 +1,7 @@
+<resources>
+    <!-- ... other styles ... -->
+    <style name="ShapeAppearance.App.SmallComponentsRounded" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
+    </style>
+</resources>
