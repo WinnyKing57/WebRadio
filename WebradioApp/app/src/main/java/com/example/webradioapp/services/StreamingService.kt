@@ -188,14 +188,46 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
             }
             _isPlaying.postValue(isPlayingValue)
             isPlayingLiveData.postValue(isPlayingValue) // Update static LiveData
+
+            // Fallback logic for currentPlayingStationLiveData
+            if (isPlayingValue && currentPlayingStationLiveData.value == null) {
+                activePlayer?.currentMediaItem?.let { mediaItem ->
+                    // Attempt to reconstruct or retrieve RadioStation from mediaItem
+                    // The 'tag' property of MediaItem is available via mediaItem.localConfiguration?.tag
+                    val stationFromTag = mediaItem.localConfiguration?.tag as? RadioStation
+                    if (stationFromTag != null) {
+                        _currentPlayingStation.postValue(stationFromTag)
+                        currentPlayingStationLiveData.postValue(stationFromTag)
+                        android.util.Log.d("StreamingService", "Fallback: Updated currentPlayingStationLiveData from MediaItem.tag.")
+                    } else {
+                        // Fallback to trying to get it from a repository if you have one and use mediaId
+                        // This requires stationRepository to be accessible here and a synchronous way to get station
+                        // This is a blocking call, consider if it's appropriate for your threading model.
+                        try {
+                            // Assuming stationRepository has a method like getStationByIdBlocking
+                            // If not, this part needs to be adapted or removed.
+                            val stationFromRepo = stationRepository.getStationByIdBlocking(mediaItem.mediaId)
+                            if (stationFromRepo != null) {
+                                _currentPlayingStation.postValue(stationFromRepo)
+                                currentPlayingStationLiveData.postValue(stationFromRepo)
+                                android.util.Log.d("StreamingService", "Fallback: Updated currentPlayingStationLiveData from Repository using MediaItem.mediaId.")
+                            } else {
+                                android.util.Log.w("StreamingService", "Fallback: Could not retrieve station from MediaItem.tag or repository. Media ID: ${mediaItem.mediaId}")
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.e("StreamingService", "Fallback: Error accessing repository for station. Media ID: ${mediaItem.mediaId}", e)
+                        }
+                    }
+                }
+            }
         }
 
         override fun onPlayerError(error: PlaybackException) {
             val playerName = if (activePlayer == localPlayer) "localPlayer" else if (activePlayer == castPlayer) "castPlayer" else "unknownPlayer"
             android.util.Log.e("StreamingService", "ExoPlayer Error from $playerName: ${error.errorCodeName} - ${error.localizedMessage}", error) // Enhanced log
 
-            activePlayer?.stop()
-            activePlayer?.clearMediaItems()
+            // activePlayer?.stop() // Decide if stopping is always the right action on error
+            // activePlayer?.clearMediaItems() // Decide if clearing items is appropriate
 
             _isPlaying.postValue(false)
             isPlayingLiveData.postValue(false)
@@ -204,17 +236,15 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
             val userFriendlyMessage = "Error playing stream: ${error.localizedMessage ?: "Unknown playback error"}"
             playerErrorLiveData.postValue(userFriendlyMessage) // Post error message
 
-            // currentPlayingStationLiveData and _currentPlayingStation are kept as is for now per refined understanding,
-            // but if we want to clear it:
+            // Temporarily comment out to keep mini player visible on error for debugging
             // _currentPlayingStation.postValue(null)
             // currentPlayingStationLiveData.postValue(null)
-            // The original code already nulled them out, so let's keep that for consistency unless a change is desired.
-            // Re-adding the nulling based on original code's behavior seen in previous steps.
-            _currentPlayingStation.postValue(null)
-            currentPlayingStationLiveData.postValue(null)
 
             // Toast removed, will be handled by observers
-            stopForeground(STOP_FOREGROUND_DETACH)
+            // stopForeground(STOP_FOREGROUND_DETACH) // Decide if foreground should stop on all errors
+        }
+
+        // We can also listen to onMediaItemTransition or onPlaybackStateChanged for history logging
         }
 
         // We can also listen to onMediaItemTransition or onPlaybackStateChanged for history logging
@@ -254,15 +284,18 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                                 .build()
                         }
 
-                        android.util.Log.d("StreamingService", "Setting MediaItem on activePlayer: ${mediaItemToPlay.mediaId}") // New Log
-                        activePlayer?.setMediaItem(mediaItemToPlay)
+                        // Ensure LiveData is updated before prepare() and play()
                         _currentPlayingStation.postValue(station) // Update current station
                         currentPlayingStationLiveData.postValue(station) // Update static LiveData
+
+                        android.util.Log.d("StreamingService", "Setting MediaItem on activePlayer: ${mediaItemToPlay.mediaId}") // New Log
+                        activePlayer?.setMediaItem(mediaItemToPlay)
                         activePlayer?.prepare()
                         android.util.Log.d("StreamingService", "Calling play on activePlayer.") // New Log
                         activePlayer?.play() // This should trigger onIsPlayingChanged(true) via listener
-                        // _isPlaying.postValue(true) // Set explicitly if listener is too slow or unreliable for immediate UI
-                        // isPlayingLiveData.postValue(true)
+                        _isPlaying.postValue(true) // Set explicitly after play()
+                        isPlayingLiveData.postValue(true)  // Set explicitly after play()
+
 
                         // Log to history using Repository and serviceScope
                         serviceScope.launch {
@@ -274,15 +307,15 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                     if (requestAudioFocus()) {
                         android.util.Log.d("StreamingService", "Resuming play on activePlayer.") // New Log
                         activePlayer?.play() // This should trigger onIsPlayingChanged(true)
-                        // _isPlaying.postValue(true)
-                        // isPlayingLiveData.postValue(true)
+                        _isPlaying.postValue(true) // Set explicitly after play()
+                        isPlayingLiveData.postValue(true) // Set explicitly after play()
                     }
                 }
             }
             ACTION_PAUSE -> {
                 activePlayer?.pause() // This should trigger onIsPlayingChanged(false)
-                // _isPlaying.postValue(false)
-                // isPlayingLiveData.postValue(false)
+                // _isPlaying.postValue(false) // Listener should handle this
+                // isPlayingLiveData.postValue(false) // Listener should handle this
             }
             ACTION_STOP -> {
                 activePlayer?.stop()
