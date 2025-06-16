@@ -60,10 +60,11 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
     private lateinit var fullPlayerBottomSheetView: View // ID: full_player_bottom_sheet (the FrameLayout acting as bottom sheet)
     private lateinit var ivFullPlayerStationArtwork: ImageView // ID: iv_full_player_station_artwork
     private lateinit var tvFullPlayerStationName: TextView // ID: tv_full_player_station_name
-    private lateinit var tvFullPlayerStationDetails: TextView // ID: tv_full_player_station_details
+    private lateinit var tvFullPlayerSongTitle: TextView
+    private lateinit var tvFullPlayerArtistName: TextView
     private lateinit var ibFullPlayerPlayPause: ImageButton // ID: ib_full_player_play_pause
     private lateinit var ibFullPlayerFavorite: ImageButton // ID: ib_full_player_favorite
-    private lateinit var seekbarFullPlayerVolume: SeekBar // ID: seekbar_full_player_volume
+    private lateinit var seekbarVolume: SeekBar // ID: seekbar_volume
     // Removed ibMiniPlayerSleepTimer as its functionality is not being re-added in this step
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
@@ -118,10 +119,11 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         fullPlayerBottomSheetView = findViewById(R.id.full_player_bottom_sheet)
         ivFullPlayerStationArtwork = fullPlayerBottomSheetView.findViewById(R.id.iv_full_player_station_artwork)
         tvFullPlayerStationName = fullPlayerBottomSheetView.findViewById(R.id.tv_full_player_station_name)
-        tvFullPlayerStationDetails = fullPlayerBottomSheetView.findViewById(R.id.tv_full_player_station_details)
+        tvFullPlayerSongTitle = fullPlayerBottomSheetView.findViewById(R.id.tv_full_player_song_title)
+        tvFullPlayerArtistName = fullPlayerBottomSheetView.findViewById(R.id.tv_full_player_artist_name)
         ibFullPlayerPlayPause = fullPlayerBottomSheetView.findViewById(R.id.ib_full_player_play_pause)
         ibFullPlayerFavorite = fullPlayerBottomSheetView.findViewById(R.id.ib_full_player_favorite)
-        seekbarFullPlayerVolume = fullPlayerBottomSheetView.findViewById(R.id.seekbar_full_player_volume)
+        seekbarVolume = fullPlayerBottomSheetView.findViewById(R.id.seekbar_volume)
 
         // Setup BottomSheetBehavior
         bottomSheetBehavior = BottomSheetBehavior.from(fullPlayerBottomSheetView)
@@ -250,7 +252,8 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
             if (station != null) {
                 tvNewMiniPlayerStationName.text = station.name
                 tvFullPlayerStationName.text = station.name
-                tvFullPlayerStationDetails.text = "${station.genre ?: ""} - ${station.country ?: ""}" // Example detail
+                tvFullPlayerSongTitle.text = station.genre ?: "" // Using genre as placeholder for song title
+                tvFullPlayerArtistName.text = station.country ?: "" // Using country as placeholder for artist name
 
                 Glide.with(this@MainActivity)
                     .load(station.favicon)
@@ -275,7 +278,8 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                 }
                 tvNewMiniPlayerStationName.text = ""
                 tvFullPlayerStationName.text = "Nothing Playing"
-                tvFullPlayerStationDetails.text = ""
+                tvFullPlayerSongTitle.text = ""
+                tvFullPlayerArtistName.text = ""
                 ivNewMiniPlayerStationIcon.setImageResource(R.drawable.ic_radio_placeholder)
                 ivFullPlayerStationArtwork.setImageResource(R.drawable.ic_radio_placeholder)
             }
@@ -306,10 +310,10 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
     private fun setupVolumeControls() {
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        seekbarFullPlayerVolume.max = maxVolume
-        seekbarFullPlayerVolume.progress = currentVolume
+        seekbarVolume.max = maxVolume
+        seekbarVolume.progress = currentVolume
 
-        seekbarFullPlayerVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seekbarVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)

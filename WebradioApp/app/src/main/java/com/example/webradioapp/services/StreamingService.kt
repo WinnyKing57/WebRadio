@@ -203,7 +203,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                         // Fallback to trying to get it from a repository if you have one and use mediaId
                         serviceScope.launch {
                             try {
-                                val stationFromRepo = stationRepository.getStationByIdBlocking(mediaItem.mediaId)
+                                val stationFromRepo = stationRepository.getStationById(mediaItem.mediaId).firstOrNull()
                                 if (stationFromRepo != null) {
                                     _currentPlayingStation.postValue(stationFromRepo)
                                     currentPlayingStationLiveData.postValue(stationFromRepo)
