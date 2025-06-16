@@ -201,21 +201,23 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                         android.util.Log.d("StreamingService", "Fallback: Updated currentPlayingStationLiveData from MediaItem.tag.")
                     } else {
                         // Fallback to trying to get it from a repository if you have one and use mediaId
-                        // This requires stationRepository to be accessible here and a synchronous way to get station
-                        // This is a blocking call, consider if it's appropriate for your threading model.
-                        try {
-                            // Assuming stationRepository has a method like getStationByIdBlocking
-                            // If not, this part needs to be adapted or removed.
-                            val stationFromRepo = stationRepository.getStationByIdBlocking(mediaItem.mediaId)
-                            if (stationFromRepo != null) {
-                                _currentPlayingStation.postValue(stationFromRepo)
-                                currentPlayingStationLiveData.postValue(stationFromRepo)
-                                android.util.Log.d("StreamingService", "Fallback: Updated currentPlayingStationLiveData from Repository using MediaItem.mediaId.")
-                            } else {
-                                android.util.Log.w("StreamingService", "Fallback: Could not retrieve station from MediaItem.tag or repository. Media ID: ${mediaItem.mediaId}")
+                        serviceScope.launch {
+                            try {
+                                val stationFromRepo = stationRepository.getStationById(mediaItem.mediaId)
+                                if (stationFromRepo != null) {
+                                    _currentPlayingStation.postValue(stationFromRepo)
+                                    currentPlayingStationLiveData.postValue(stationFromRepo)
+                                    android.util.Log.d("StreamingService", "Fallback: Updated currentPlayingStationLiveData from Repository using MediaItem.mediaId.")
+                                } else {
+                                    // This log is now only relevant if getStationById returns null,
+                                    // the stationFromTag was already checked before this coroutine.
+                                    // Consider if this specific log is needed here or if the outer one for mediaItem.mediaId is sufficient.
+                                    // For now, keeping it to indicate the repository lookup failed.
+                                    android.util.Log.w("StreamingService", "Fallback: Repository lookup for Media ID ${mediaItem.mediaId} returned null.")
+                                }
+                            } catch (e: Exception) {
+                                android.util.Log.e("StreamingService", "Fallback: Error accessing repository for station. Media ID: ${mediaItem.mediaId}", e)
                             }
-                        } catch (e: Exception) {
-                            android.util.Log.e("StreamingService", "Fallback: Error accessing repository for station. Media ID: ${mediaItem.mediaId}", e)
                         }
                     }
                 }
