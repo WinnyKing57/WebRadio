@@ -27,4 +27,14 @@
     <!-- Star Colors for Dark Theme (adjust if needed for better contrast) -->
     <color name="yellow_700_star">#FDD835</color> <!-- Slightly brighter yellow for dark bg -->
     <color name="grey_500_star">#BDBDBD</color> <!-- Lighter grey for dark bg -->
+
+    <color name="modern_primary">#007f99</color> <!-- Slightly brighter for dark mode -->
+    <color name="modern_primary_variant">#005f73</color>
+    <color name="modern_secondary">#94d2bd</color> <!-- Lighter, less saturated teal for dark mode accent -->
+    <color name="modern_on_primary">#FFFFFF</color>
+    <color name="modern_on_secondary">#000000</color>
+    <color name="modern_surface_dark">#121212</color>
+    <color name="modern_background_dark">#0A0A0A</color>
+    <color name="modern_on_surface_dark">#FFFFFF</color>
+    <color name="modern_on_background_dark">#FFFFFF</color>
 </resources>

@@ -3,21 +3,25 @@
     <!-- Base application theme for Dark Mode. -->
     <style name="Theme.WebradioApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item> <!-- Lighter primary for dark theme -->
-        <item name="colorPrimaryVariant">@color/purple_700</item> <!-- Can be same or adjusted -->
-        <item name="colorOnPrimary">@color/material_on_primary</item> <!-- Using defined dark theme on_primary -->
+        <item name="colorPrimary">@color/modern_primary</item> <!-- Lighter primary for dark theme -->
+        <item name="colorPrimaryVariant">@color/modern_primary_variant</item> <!-- Can be same or adjusted -->
+        <item name="colorOnPrimary">@color/modern_on_primary</item> <!-- Using defined dark theme on_primary -->
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item> <!-- Adjusted for dark -->
-        <item name="colorOnSecondary">@color/material_on_secondary</item>
+        <item name="colorSecondary">@color/modern_secondary</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item> <!-- TODO: Add modern_secondary_variant if available or remove if not used -->
+        <item name="colorOnSecondary">@color/modern_on_secondary</item>
 
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorSurface</item> <!-- Or colorPrimaryVariant, adjust as needed -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item> <!-- Or colorPrimaryVariant, adjust as needed -->
 
         <!-- Material theming attributes for dark theme -->
-        <item name="colorSurface">@color/material_surface</item>
-        <item name="android:colorBackground">@color/material_background</item>
-        <item name="colorOnSurface">@color/material_on_surface</item>
-        <item name="colorOnBackground">@color/material_on_background</item>
+        <item name="colorSurface">@color/modern_surface_dark</item>
+        <item name="android:colorBackground">@color/modern_background_dark</item>
+        <item name="colorOnSurface">@color/modern_on_surface_dark</item>
+        <item name="colorOnBackground">@color/modern_on_background_dark</item>
+
+        <!-- Font family -->
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/montserrat</item>
     </style>
 </resources>

@@ -28,4 +28,14 @@
     <color name="custom_accent_orange_500">#FF9800</color> <!-- Material Orange 500 -->
     <color name="custom_accent_orange_700">#F57C00</color> <!-- Material Orange 700 -->
     <color name="custom_accent_orange_200">#FFCC80</color> <!-- Material Orange 200 -->
+
+    <color name="modern_primary">#005f73</color>
+    <color name="modern_primary_variant">#00343d</color>
+    <color name="modern_secondary">#0a9396</color>
+    <color name="modern_on_primary">#FFFFFF</color>
+    <color name="modern_on_secondary">#000000</color>
+    <color name="modern_surface">#FFFFFF</color>
+    <color name="modern_background">#F0F4F8</color>
+    <color name="modern_on_surface">#000000</color>
+    <color name="modern_on_background">#000000</color>
 </resources>

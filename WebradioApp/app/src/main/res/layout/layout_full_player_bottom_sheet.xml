@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
-        android:id="@+id/iv_full_player_station_artwork"
+        android:id="@+id/iv_full_player_album_art"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_max="240dp"
         app:layout_constraintHeight_max="240dp"
-        android:contentDescription="Station Artwork" />
+        android:contentDescription="Station Album Artwork" />
 
     <TextView
         android:id="@+id/tv_full_player_station_name"
@@ -47,13 +47,27 @@
         android:textAlignment="center"
         android:maxLines="2"
         android:ellipsize="end"
-        app:layout_constraintTop_toBottomOf="@id/iv_full_player_station_artwork"
+        app:layout_constraintTop_toBottomOf="@id/iv_full_player_album_art"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="Very Long Radio Station Name That Might Wrap"/>
 
     <TextView
-        android:id="@+id/tv_full_player_station_details"
+        android:id="@+id/tv_full_player_song_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textAlignment="center"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/tv_full_player_station_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Current Song Title Playing"/>
+
+    <TextView
+        android:id="@+id/tv_full_player_artist_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -62,30 +76,39 @@
         android:textAlignment="center"
         android:maxLines="1"
         android:ellipsize="end"
-        app:layout_constraintTop_toBottomOf="@id/tv_full_player_station_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_full_player_song_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="Electronic / House - Germany" />
+        tools:text="Artist Name" />
 
     <LinearLayout
         android:id="@+id/layout_playback_controls"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="24dp"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toBottomOf="@id/tv_full_player_station_details"
+        android:gravity="center_vertical|center_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tv_full_player_artist_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
             android:id="@+id/ib_full_player_favorite"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_star_border"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Favorite"
-            android:layout_marginEnd="24dp"/>
+            android:layout_marginEnd="16dp"/>
+
+        <ImageButton
+            android:id="@+id/ib_full_player_previous"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Previous Station"
+            android:layout_marginEnd="16dp"/>
 
         <ImageButton
             android:id="@+id/ib_full_player_play_pause"
@@ -97,14 +120,23 @@
             android:contentDescription="Play/Pause"/>
 
         <ImageButton
-            android:id="@+id/ib_full_player_stop"
+            android:id="@+id/ib_full_player_next"
             android:layout_width="56dp"
             android:layout_height="56dp"
+            android:src="@android:drawable/ic_media_next"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Next Station"
+            android:layout_marginStart="16dp"/>
+
+        <ImageButton
+            android:id="@+id/ib_full_player_stop"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_settings"
             android:visibility="invisible"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Stop"
-            android:layout_marginStart="24dp"/>
+            android:contentDescription="Stop / Settings"
+            android:layout_marginStart="16dp"/>
     </LinearLayout>
 
     <TextView
@@ -118,7 +150,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
-        android:id="@+id/seekbar_full_player_volume"
+        android:id="@+id/seekbar_volume"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

@@ -12,7 +12,7 @@
     android:paddingEnd="12dp">
 
     <ImageView
-        android:id="@+id/iv_mini_player_station_icon"
+        android:id="@+id/iv_mini_player_album_art"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentStart="true"
@@ -20,24 +20,45 @@
         android:layout_marginEnd="12dp"
         android:src="@drawable/ic_radio_placeholder"
         android:scaleType="centerCrop"
-        android:contentDescription="Station Icon" />
+        android:contentDescription="Station Album Art" />
 
-    <TextView
-        android:id="@+id/tv_mini_player_station_name"
+    <LinearLayout
+        android:id="@+id/layout_mini_player_text_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/iv_mini_player_station_icon"
+        android:layout_toEndOf="@id/iv_mini_player_album_art"
         android:layout_toStartOf="@id/ib_mini_player_play_pause"
         android:layout_centerVertical="true"
-        android:textAppearance="?attr/textAppearanceBody1"
-        android:maxLines="1"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:singleLine="true"
-        tools:text="Very Long Radio Station Name That Needs to Scroll" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_mini_player_station_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:maxLines="1"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            tools:text="Very Long Radio Station Name" />
+
+        <TextView
+            android:id="@+id/tv_mini_player_song_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:maxLines="1"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            tools:text="Song Title - Artist Name" />
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/ib_mini_player_play_pause"
