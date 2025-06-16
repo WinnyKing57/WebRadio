@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import android.content.Context // Added
 import android.media.AudioManager // Added
+import androidx.lifecycle.Observer // Added
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -111,7 +112,11 @@ class HomeFragment : Fragment() {
             if (station != null) {
                 nowPlayingDetailsContainer.visibility = View.VISIBLE
                 tvNowPlayingStationName.text = station.name
-                // TODO: Load station.favicon into ivNowPlayingStationIcon (e.g., using Glide/Coil)
+                com.bumptech.glide.Glide.with(this@HomeFragment) // or requireContext()
+                    .load(station.favicon)
+                    .placeholder(R.drawable.ic_radio_placeholder)
+                    .error(R.drawable.ic_radio_placeholder)
+                    .into(ivNowPlayingStationIcon)
                 // Update play/pause button state based on current isPlayingLiveData value
                 val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
                 ibNowPlayingPlayPause.setImageResource(if (currentIsPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow)
@@ -217,25 +222,47 @@ class HomeFragment : Fragment() {
     // Combined observer for favorite changes
     private fun observeFavoriteChanges() {
         Log.d("HomeFragment", "observeFavoriteChanges() called")
-        viewLifecycleOwner.lifecycleScope.launch {
-            Log.d("HomeFragment", "observeFavoriteChanges - coroutine started, collecting flow")
-            favoritesViewModel.favoriteStations.collect { favoriteStations ->
-                Log.d("HomeFragment", "observeFavoriteChanges - collected favorites, size: ${favoriteStations.size}")
-                currentFavoritesSet = favoriteStations.map { it.id }.toSet()
+        favoritesViewModel.favoriteStations.observe(viewLifecycleOwner, Observer { favoriteStationsList ->
+            val favs = favoriteStationsList ?: emptyList() // Ensure non-null list
+            currentFavoritesSet = favs.map { station -> station.id }.toSet()
+            Log.d("HomeFragment", "observeFavoriteChanges - LiveData observed, favorites size: ${favs.size}")
 
-                // Update popular stations
-                currentPopularStations = currentPopularStations.map { station ->
-                    station.copy(isFavorite = currentFavoritesSet.contains(station.id))
-                }
-                popularStationsAdapter.submitList(currentPopularStations.toList())
-
-                // Update history stations
-                currentHistoryStations = currentHistoryStations.map { station ->
-                    station.copy(isFavorite = currentFavoritesSet.contains(station.id))
-                }
-                historyStationsAdapter.submitList(currentHistoryStations.toList())
+            // Update popular stations if their favorite status might have changed
+            val updatedPopularStations = currentPopularStations.map { station ->
+                station.copy(isFavorite = currentFavoritesSet.contains(station.id))
             }
-        }
+            var popularHasChanged = popularStationsAdapter.currentList.size != updatedPopularStations.size
+            if (!popularHasChanged) {
+                for (i in popularStationsAdapter.currentList.indices) {
+                    if (popularStationsAdapter.currentList[i].isFavorite != updatedPopularStations.getOrNull(i)?.isFavorite) {
+                        popularHasChanged = true
+                        break
+                    }
+                }
+            }
+            if (popularHasChanged) {
+                currentPopularStations = updatedPopularStations // Keep local copy in sync
+                popularStationsAdapter.submitList(updatedPopularStations.toList())
+            }
+
+            // Update history stations if their favorite status might have changed
+            val updatedHistoryStations = currentHistoryStations.map { station ->
+                station.copy(isFavorite = currentFavoritesSet.contains(station.id))
+            }
+            var historyHasChanged = historyStationsAdapter.currentList.size != updatedHistoryStations.size
+            if (!historyHasChanged) {
+                 for (i in historyStationsAdapter.currentList.indices) {
+                    if (historyStationsAdapter.currentList[i].isFavorite != updatedHistoryStations.getOrNull(i)?.isFavorite) {
+                        historyHasChanged = true
+                        break
+                    }
+                }
+            }
+            if (historyHasChanged) {
+                currentHistoryStations = updatedHistoryStations // Keep local copy in sync
+                historyStationsAdapter.submitList(updatedHistoryStations.toList())
+            }
+        })
     }
 
     private fun loadPopularStations() {
