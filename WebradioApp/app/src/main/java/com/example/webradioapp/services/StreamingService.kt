@@ -60,6 +60,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     private val binder = LocalBinder()
     private lateinit var audioManager: AudioManager
     private var audioFocusRequest: AudioFocusRequest? = null
+    private var pausedByAudioFocusLoss: Boolean = false
     // private lateinit var sharedPrefsManager: SharedPreferencesManager // Still used for Theme
     private lateinit var stationRepository: com.example.webradioapp.db.StationRepository
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -197,12 +198,17 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlayingValue: Boolean) {
             // Update notification based on activePlayer.isPlaying
-            if (activePlayer?.isPlaying == true) {
-                startForeground(NOTIFICATION_ID, createNotification(currentPlayingStationLiveData.value, if (activePlayer is CastPlayer) "Casting" else "Playing"))
+            val station = _currentPlayingStation.value // Use instance LiveData
+            val statusKey = if (activePlayer is CastPlayer) {
+                if (isPlayingValue) "notification_status_casting" else "notification_status_casting_paused"
             } else {
-                 // Update notification to paused state or stop foreground if not playing
+                if (isPlayingValue) "notification_status_playing" else "notification_status_paused"
+            }
+            if (isPlayingValue) {
+                startForeground(NOTIFICATION_ID, createNotification(station, statusKey, sleepTimerEndTimeMillis))
+            } else {
                 if (activePlayer?.playbackState != Player.STATE_IDLE && activePlayer?.playbackState != Player.STATE_ENDED) {
-                     startForeground(NOTIFICATION_ID, createNotification(currentPlayingStationLiveData.value, if (activePlayer is CastPlayer) "Casting Paused" else "Paused"))
+                    startForeground(NOTIFICATION_ID, createNotification(station, statusKey, sleepTimerEndTimeMillis))
                 } else {
                     stopForeground(STOP_FOREGROUND_DETACH)
                 }
@@ -360,19 +366,17 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
 
     private fun setSleepTimer(durationMillis: Long) {
         cancelSleepTimer() // Cancel any existing timer
-
         if (durationMillis > 0) {
             sleepTimerEndTimeMillis = System.currentTimeMillis() + durationMillis
             sleepTimerRunnable = Runnable {
-                // Pause playback, could also be stopSelf() depending on desired behavior
                 activePlayer?.pause()
-                // Optionally, update notification or inform UI
-                Toast.makeText(applicationContext, "Sleep timer ended.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.toast_sleep_timer_ended), Toast.LENGTH_SHORT).show()
                 sleepTimerEndTimeMillis = 0L // Reset
+                updateNotificationState() // Update notification
             }
             handler.postDelayed(sleepTimerRunnable!!, durationMillis)
-            Toast.makeText(applicationContext, "Sleep timer set for ${durationMillis / 60000} minutes.", Toast.LENGTH_SHORT).show()
-            // TODO: Update notification to show timer is active
+            Toast.makeText(applicationContext, getString(R.string.toast_sleep_timer_set, durationMillis / 60000), Toast.LENGTH_SHORT).show()
+            updateNotificationState() // Update notification
         }
     }
 
@@ -380,10 +384,23 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         sleepTimerRunnable?.let {
             handler.removeCallbacks(it)
             sleepTimerRunnable = null
-            Toast.makeText(applicationContext, "Sleep timer cancelled.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, getString(R.string.toast_sleep_timer_cancelled), Toast.LENGTH_SHORT).show()
         }
         sleepTimerEndTimeMillis = 0L
-        // TODO: Update notification to remove timer indication
+        updateNotificationState() // Update notification
+    }
+
+    private fun updateNotificationState() {
+        if (_isPlaying.value == true || (activePlayer?.playbackState != Player.STATE_IDLE && activePlayer?.playbackState != Player.STATE_ENDED)) {
+             val station = _currentPlayingStation.value
+             val isPlayingVal = _isPlaying.value ?: false
+             val statusKey = if (activePlayer is CastPlayer) {
+                if (isPlayingVal) "notification_status_casting" else "notification_status_casting_paused"
+             } else {
+                if (isPlayingVal) "notification_status_playing" else "notification_status_paused"
+             }
+             startForeground(NOTIFICATION_ID, createNotification(station, statusKey, sleepTimerEndTimeMillis))
+        }
     }
 
     private fun switchToCastPlayer() {
@@ -443,7 +460,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         } ?: run {
             android.util.Log.d("StreamingService", "switchToCastPlayer: No current MediaItem to transfer.") // New Log
         }
-        startForeground(NOTIFICATION_ID, createNotification(_currentPlayingStation.value, "Casting"))
+        startForeground(NOTIFICATION_ID, createNotification(_currentPlayingStation.value, "notification_status_casting", sleepTimerEndTimeMillis))
     }
 
     private fun switchToLocalPlayer() {
@@ -464,7 +481,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         }
          // Update notification, UI, etc.
         if (localPlayer?.isPlaying == true) {
-            startForeground(NOTIFICATION_ID, createNotification(_currentPlayingStation.value, "Playing"))
+            startForeground(NOTIFICATION_ID, createNotification(_currentPlayingStation.value, "notification_status_playing", sleepTimerEndTimeMillis))
         } else {
             stopForeground(STOP_FOREGROUND_DETACH) // Or update to paused
         }
@@ -501,9 +518,15 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     override fun onAudioFocusChange(focusChange: Int) {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_LOSS -> {
+                if (activePlayer?.isPlaying == true) { // Check if it was actually playing
+                    pausedByAudioFocusLoss = true
+                }
                 pausePlayback() // Or stop, depending on desired behavior
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                if (activePlayer?.isPlaying == true) { // Check if it was actually playing
+                    pausedByAudioFocusLoss = true
+                }
                 pausePlayback()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
@@ -511,10 +534,10 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
             }
             AudioManager.AUDIOFOCUS_GAIN -> {
                 activePlayer?.volume = 1.0f // Restore volume
-                 if (activePlayer?.playWhenReady == false && activePlayer?.playbackState == Player.STATE_READY) {
-                    // Resume if paused due to transient loss, and if it's appropriate to do so
-                    // activePlayer?.play()
+                if (pausedByAudioFocusLoss && activePlayer?.playWhenReady == false && activePlayer?.playbackState == Player.STATE_READY) {
+                    activePlayer?.play()
                 }
+                pausedByAudioFocusLoss = false // Reset the flag
             }
         }
     }
@@ -565,41 +588,44 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         }
     }
 
-    private fun createNotification(station: RadioStation?, contentTextHint: String): Notification {
-        val title = station?.name ?: "Web Radio"
-        // val text = contentTextHint // Original suggestion
-        // Let's use station genre if available, otherwise the hint.
-        val text = station?.genre?.takeIf { it.isNotBlank() } ?: contentTextHint
+    private fun createNotification(station: RadioStation?, contentTextHintKey: String, sleepTimerEndTimeMillis: Long = 0L): Notification {
+        val title = station?.name ?: getString(R.string.notification_title_default) // Use string resource
+        var text = getString(resources.getIdentifier(contentTextHintKey, "string", packageName)) // Get hint from resource
 
+        if (sleepTimerEndTimeMillis > 0) {
+            val remainingMinutes = (sleepTimerEndTimeMillis - System.currentTimeMillis()) / 60000
+            if (remainingMinutes > 0) {
+                text += " (${getString(R.string.notification_sleep_timer_active, remainingMinutes)})"
+            }
+        }
+        // ... rest of the notification build (intents, actions) remains same
+        // Make sure to use string resources for "Play" and "Pause" actions too.
+        val playActionText = getString(R.string.notification_action_play)
+        val pauseActionText = getString(R.string.notification_action_pause)
 
-        val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         } else {
             PendingIntent.FLAG_UPDATE_CURRENT
         }
+        val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, pendingIntentFlags)
 
-        // Add actions for Play/Pause to the notification
         val playIntent = Intent(this, StreamingService::class.java).apply { action = ACTION_PLAY }
-        val playPendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT else PendingIntent.FLAG_UPDATE_CURRENT
-        val playPendingIntent = PendingIntent.getService(this, 1, playIntent, playPendingIntentFlags)
+        val playPendingIntent = PendingIntent.getService(this, 1, playIntent, pendingIntentFlags)
 
         val pauseIntent = Intent(this, StreamingService::class.java).apply { action = ACTION_PAUSE }
-        val pausePendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT else PendingIntent.FLAG_UPDATE_CURRENT
-        val pausePendingIntent = PendingIntent.getService(this, 2, pauseIntent, pausePendingIntentFlags)
-
+        val pausePendingIntent = PendingIntent.getService(this, 2, pauseIntent, pendingIntentFlags)
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(text)
-            .setSmallIcon(R.drawable.ic_radio_placeholder) // Replace with actual icon
-            // TODO: Consider using station?.favicon for .setLargeIcon() if available and loaded as Bitmap
+            .setSmallIcon(R.drawable.ic_radio_placeholder)
             .setContentIntent(pendingIntent)
-            .addAction(R.drawable.ic_play_arrow, "Play", playPendingIntent) // Replace with actual icon
-            .addAction(R.drawable.ic_pause, "Pause", pausePendingIntent) // Replace with actual icon
+            .addAction(R.drawable.ic_play_arrow, playActionText, playPendingIntent)
+            .addAction(R.drawable.ic_pause, pauseActionText, pausePendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setOngoing(true) // Makes the notification non-dismissable while service is in foreground
+            .setOngoing(true)
             .build()
     }
 }

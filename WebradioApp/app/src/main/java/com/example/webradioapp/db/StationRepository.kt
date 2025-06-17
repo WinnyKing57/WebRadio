@@ -16,6 +16,8 @@ import com.example.webradioapp.network.Tag     // Network model for Genres
 import com.example.webradioapp.network.Language // Network model
 import kotlinx.coroutines.flow.first // To check if cache is empty
 import android.util.Log // For logging
+import android.content.Context // Added for SharedPreferencesManager
+import com.example.webradioapp.utils.SharedPreferencesManager // Added for SharedPreferencesManager
 
 /**
  * Repository class for accessing and managing station data from the Room database.
@@ -25,6 +27,7 @@ import android.util.Log // For logging
  * @property historyStationDao DAO for history station operations.
  */
 class StationRepository(
+    private val context: Context, // Added context
     private val favoriteStationDao: FavoriteStationDao,
     private val historyStationDao: HistoryStationDao,
     private val countryDao: CountryDao,
@@ -32,6 +35,10 @@ class StationRepository(
     private val languageDao: LanguageDao,
     private val apiService: RadioBrowserApiService
 ) {
+
+    private companion object {
+        const val CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000L // 24 hours
+    }
 
     // Favorite operations
     val favoriteStations = favoriteStationDao.getFavoriteStations()
@@ -100,29 +107,32 @@ class StationRepository(
     }
 
     suspend fun refreshCountries() {
-        // Simple strategy: Refresh if cache is empty.
-        // A more advanced strategy could use timestamps or periodic refresh.
-        if (countryDao.getAll().first().isEmpty()) {
+        val lastUpdate = SharedPreferencesManager.getLastUpdateTimestamp(context, "last_update_countries") // Use appropriate key
+        val isCacheStale = System.currentTimeMillis() - lastUpdate > CACHE_EXPIRY_MS
+        val isCacheEmpty = countryDao.getAll().first().isEmpty()
+
+        if (isCacheStale || isCacheEmpty) {
+            Log.d("StationRepository", "Refreshing countries. Stale: $isCacheStale, Empty: $isCacheEmpty")
             try {
                 val response = apiService.getCountries()
                 if (response.isSuccessful) {
                     val countriesFromApi = response.body() ?: emptyList()
                     if (countriesFromApi.isNotEmpty()) {
-                        val countryEntities = countriesFromApi.map { networkCountry ->
-                            CountryEntity(name = networkCountry.name, stationCount = networkCountry.stationcount)
-                        }
-                        countryDao.deleteAll() // Clear old cache
-                        countryDao.insertAll(countryEntities)
+                        countryDao.deleteAll()
+                        countryDao.insertAll(countriesFromApi.map { CountryEntity(name = it.name, stationCount = it.stationcount) })
+                        SharedPreferencesManager.setLastUpdateTimestamp(context, "last_update_countries", System.currentTimeMillis())
                         Log.d("StationRepository", "Countries cache refreshed from API.")
+                    } else if (isCacheEmpty) { // If API returns empty but cache was also empty, clear timestamp to try again sooner
+                        SharedPreferencesManager.setLastUpdateTimestamp(context, "last_update_countries", 0L)
                     }
                 } else {
-                    Log.e("StationRepository", "Failed to fetch countries: ${response.message()}")
+                    Log.e("StationRepository", "Failed to fetch countries: ${response.code()} ${response.message()}")
                 }
             } catch (e: Exception) {
                 Log.e("StationRepository", "Exception when fetching countries: ${e.message}", e)
             }
         } else {
-            Log.d("StationRepository", "Countries cache is not empty, no refresh needed now.")
+            Log.d("StationRepository", "Countries cache is fresh, no refresh needed now.")
         }
     }
 
@@ -132,7 +142,12 @@ class StationRepository(
     }
 
     suspend fun refreshGenres() {
-        if (genreDao.getAll().first().isEmpty()) {
+        val lastUpdate = SharedPreferencesManager.getLastUpdateTimestamp(context, "last_update_genres")
+        val isCacheStale = System.currentTimeMillis() - lastUpdate > CACHE_EXPIRY_MS
+        val isCacheEmpty = genreDao.getAll().first().isEmpty()
+
+        if (isCacheStale || isCacheEmpty) {
+            Log.d("StationRepository", "Refreshing genres. Stale: $isCacheStale, Empty: $isCacheEmpty")
             try {
                 // Using getTags() from API for genres
                 val response = apiService.getTags(limit = 200) // Fetch a reasonable number of tags
@@ -144,16 +159,19 @@ class StationRepository(
                         }
                         genreDao.deleteAll()
                         genreDao.insertAll(genreEntities)
+                        SharedPreferencesManager.setLastUpdateTimestamp(context, "last_update_genres", System.currentTimeMillis())
                         Log.d("StationRepository", "Genres cache refreshed from API.")
+                    } else if (isCacheEmpty) {
+                        SharedPreferencesManager.setLastUpdateTimestamp(context, "last_update_genres", 0L)
                     }
                 } else {
-                    Log.e("StationRepository", "Failed to fetch genres (tags): ${response.message()}")
+                    Log.e("StationRepository", "Failed to fetch genres (tags): ${response.code()} ${response.message()}")
                 }
             } catch (e: Exception) {
                 Log.e("StationRepository", "Exception when fetching genres (tags): ${e.message}", e)
             }
         } else {
-            Log.d("StationRepository", "Genres cache is not empty, no refresh needed now.")
+            Log.d("StationRepository", "Genres cache is fresh, no refresh needed now.")
         }
     }
 
@@ -163,7 +181,12 @@ class StationRepository(
     }
 
     suspend fun refreshLanguages() {
-        if (languageDao.getAll().first().isEmpty()) {
+        val lastUpdate = SharedPreferencesManager.getLastUpdateTimestamp(context, "last_update_languages")
+        val isCacheStale = System.currentTimeMillis() - lastUpdate > CACHE_EXPIRY_MS
+        val isCacheEmpty = languageDao.getAll().first().isEmpty()
+
+        if (isCacheStale || isCacheEmpty) {
+            Log.d("StationRepository", "Refreshing languages. Stale: $isCacheStale, Empty: $isCacheEmpty")
             try {
                 val response = apiService.getLanguages()
                 if (response.isSuccessful) {
@@ -174,16 +197,19 @@ class StationRepository(
                         }
                         languageDao.deleteAll()
                         languageDao.insertAll(languageEntities)
+                        SharedPreferencesManager.setLastUpdateTimestamp(context, "last_update_languages", System.currentTimeMillis())
                         Log.d("StationRepository", "Languages cache refreshed from API.")
+                    } else if (isCacheEmpty) {
+                        SharedPreferencesManager.setLastUpdateTimestamp(context, "last_update_languages", 0L)
                     }
                 } else {
-                    Log.e("StationRepository", "Failed to fetch languages: ${response.message()}")
+                    Log.e("StationRepository", "Failed to fetch languages: ${response.code()} ${response.message()}")
                 }
             } catch (e: Exception) {
                 Log.e("StationRepository", "Exception when fetching languages: ${e.message}", e)
             }
         } else {
-            Log.d("StationRepository", "Languages cache is not empty, no refresh needed now.")
+            Log.d("StationRepository", "Languages cache is fresh, no refresh needed now.")
         }
     }
 }

@@ -3,9 +3,13 @@ package com.example.webradioapp.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.webradioapp.db.AppDatabase
 import com.example.webradioapp.db.StationRepository // Import Repository
 import com.example.webradioapp.model.RadioStation
+import com.example.webradioapp.network.ApiClient // Assuming ApiClient provides radioBrowserApiService
 import kotlinx.coroutines.flow.Flow
 // Removed: MutableStateFlow and asStateFlow for _currentStationFavoriteStatus
 import kotlinx.coroutines.launch
@@ -24,7 +28,15 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         val database = AppDatabase.getDatabase(application)
-        repository = StationRepository(database.favoriteStationDao(), database.historyStationDao())
+        repository = StationRepository(
+            application.applicationContext, // Pass context
+            database.favoriteStationDao(),
+            database.historyStationDao(),
+            database.countryDao(), // Assuming these are available from AppDatabase
+            database.genreDao(),
+            database.languageDao(),
+            ApiClient.radioBrowserApiService // Assuming ApiClient provides this
+        )
     }
 
     fun toggleFavoriteStatus(station: RadioStation) {

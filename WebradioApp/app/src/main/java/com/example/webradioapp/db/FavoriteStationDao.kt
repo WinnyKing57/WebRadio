@@ -45,5 +45,5 @@ interface FavoriteStationDao {
     fun getStationById(stationId: String): Flow<RadioStation?>
 
     @Query("SELECT * FROM stations ORDER BY name ASC")
-    fun getAllStations(): kotlinx.coroutines.flow.Flow<List<com.example.webradioapp.model.RadioStation>>
+    fun getAllStations(): Flow<List<RadioStation>>
 }

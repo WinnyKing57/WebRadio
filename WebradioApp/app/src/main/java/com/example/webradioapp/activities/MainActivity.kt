@@ -44,13 +44,6 @@ import androidx.lifecycle.Observer // Added for explicit Observer
  */
 class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDialogListener {
 
-    // Old Mini-Player views (to be removed or repurposed if IDs are identical)
-    // private lateinit var miniPlayerContainer: View // This ID might be different now (new: mini_player_view_container)
-    // private lateinit var ivMiniPlayerIcon: ImageView // Old ID: iv_mini_player_icon
-    // private lateinit var tvMiniPlayerStationName: TextView // Old ID: tv_mini_player_station_name
-    // private lateinit var ibMiniPlayerPlayPause: ImageButton // Old ID: ib_mini_player_play_pause
-    // private lateinit var ibMiniPlayerSleepTimer: ImageButton // Old ID: ib_mini_player_sleep_timer
-
     // New Mini-Player (from layout_bottom_mini_player.xml)
     private lateinit var newMiniPlayerViewContainer: View // ID: mini_player_view_container (the FrameLayout)
     private lateinit var ivNewMiniPlayerStationIcon: ImageView // ID: iv_mini_player_station_icon
@@ -149,7 +142,6 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
             // Log error or inform user that Cast is unavailable
             e.printStackTrace()
         }
-        // NAV_GRAPH_CACHE_BUST_001
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -172,10 +164,10 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                 Log.d("MainActivity", "Sleep timer finished. Stopping playback.")
                 playbackViewModel.stopPlayback()
                 // Optionally, update UI to show timer finished or hide timer indication
-                Toast.makeText(this@MainActivity, "Sleep timer finished", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, getString(R.string.toast_sleep_timer_finished), Toast.LENGTH_SHORT).show()
             }
         }.start()
-        Toast.makeText(this, "Sleep timer set for $minutes minutes", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.toast_sleep_timer_set, minutes), Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
@@ -203,7 +195,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                     // Maybe pick from history or a default station.
                     // For now, log or show a Toast.
                     Log.w("MainActivity", "Play pressed but no current station in PlaybackViewModel.")
-                    Toast.makeText(this, "Select a station to play", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.toast_select_station_to_play), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -283,7 +275,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
                 tvNewMiniPlayerStationName.text = ""
-                tvFullPlayerStationName.text = "Nothing Playing"
+                tvFullPlayerStationName.text = getString(R.string.text_nothing_playing)
                 tvFullPlayerSongTitle.text = ""
                 tvFullPlayerArtistName.text = ""
                 ivNewMiniPlayerStationIcon.setImageResource(R.drawable.ic_radio_placeholder)

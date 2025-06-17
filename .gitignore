@@ -38,3 +38,6 @@ WebradioApp/app/src/main/res/mipmap-xhdpi/Thumbs.db
 WebradioApp/app/src/main/res/mipmap-mdpi/Thumbs.db
 WebradioApp/app/src/main/res/mipmap-ldpi/Thumbs.db
 WebradioApp/app/src/main/res/mipmap-hdpi/Thumbs.db
+
+# Ignore attached assets directory
+attached_assets/

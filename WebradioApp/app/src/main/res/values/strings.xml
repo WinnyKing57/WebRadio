@@ -4,4 +4,29 @@
     <!-- Notification Channel Strings -->
     <string name="notification_channel_name_station_updates">Station Updates</string>
     <string name="notification_channel_description_station_updates">Notifications about station updates or general app information.</string>
+
+    <!-- For MainActivity Toasts -->
+    <string name="toast_sleep_timer_finished">Sleep timer finished</string>
+    <string name="toast_sleep_timer_set">Sleep timer set for %d minutes</string>
+    <string name="toast_select_station_to_play">Select a station to play</string>
+    <string name="text_nothing_playing">Nothing Playing</string>
+
+    <!-- For StreamingService Toasts -->
+    <string name="toast_sleep_timer_ended">Sleep timer ended.</string>
+    <!-- toast_sleep_timer_set is already defined for MainActivity, can be reused if identical -->
+    <string name="toast_sleep_timer_cancelled">Sleep timer cancelled.</string>
+
+    <!-- For StreamingService Notifications -->
+    <string name="notification_title_default">Web Radio</string>
+    <string name="notification_status_playing">Playing</string>
+    <string name="notification_status_casting">Casting</string>
+    <string name="notification_status_paused">Paused</string>
+    <string name="notification_status_casting_paused">Casting Paused</string>
+    <string name="notification_sleep_timer_active">Sleep: %d min</string>
+    <string name="notification_action_play">Play</string>
+    <string name="notification_action_pause">Pause</string>
+
+    <!-- Other strings from AddEditAlarmFragment if this subtask were to include them -->
+    <!-- For now, focusing on MainActivity and StreamingService -->
+
 </resources>

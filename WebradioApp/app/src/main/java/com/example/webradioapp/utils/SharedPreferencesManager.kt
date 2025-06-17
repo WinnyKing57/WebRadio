@@ -34,6 +34,11 @@ object SharedPreferencesManager {
     private const val KEY_STATION_HISTORY = "station_history"
     private const val MAX_HISTORY_SIZE = 20 // Optionnel, pour limiter la taille
 
+    // Keys for last update timestamps (for caching)
+    private const val KEY_LAST_UPDATE_COUNTRIES = "last_update_countries"
+    private const val KEY_LAST_UPDATE_GENRES = "last_update_genres"
+    private const val KEY_LAST_UPDATE_LANGUAGES = "last_update_languages"
+
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
@@ -132,5 +137,13 @@ object SharedPreferencesManager {
         getPreferences(context).edit()
             .putInt(KEY_NIGHT_MODE, mode)
             .apply()
+    }
+
+    fun getLastUpdateTimestamp(context: Context, key: String): Long {
+        return getPreferences(context).getLong(key, 0L)
+    }
+
+    fun setLastUpdateTimestamp(context: Context, key: String, timestamp: Long) {
+        getPreferences(context).edit().putLong(key, timestamp).apply()
     }
 }
