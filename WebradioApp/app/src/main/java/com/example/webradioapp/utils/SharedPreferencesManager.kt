@@ -12,6 +12,13 @@ import com.example.webradioapp.model.RadioStation // Assurez-vous que RadioStati
 object SharedPreferencesManager {
 
     private const val PREFS_NAME = "WebRadioPrefs"
+
+    // Night Mode Constants
+    const val NIGHT_MODE_SYSTEM = 0 // Or -1 if AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM is -1
+    const val NIGHT_MODE_LIGHT = 1
+    const val NIGHT_MODE_DARK = 2
+    private const val KEY_NIGHT_MODE = "night_mode_preference"
+
     const val ACCENT_THEME_DEFAULT = "Default"
     const val ACCENT_THEME_BLUE = "AccentBlue"
     const val ACCENT_THEME_GREEN = "AccentGreen"
@@ -111,5 +118,19 @@ object SharedPreferencesManager {
 
         val jsonHistory = Gson().toJson(trimmedHistory)
         getPreferences(context).edit().putString(KEY_STATION_HISTORY, jsonHistory).apply()
+    }
+
+    fun getNightModePreference(context: Context): Int {
+        // AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM is often -1 or another value, adjust default accordingly
+        // For this example, let's assume 0 for system, 1 for light, 2 for dark.
+        // The actual default in AppCompatDelegate.setDefaultNightMode is MODE_NIGHT_FOLLOW_SYSTEM.
+        // Let's align with typical settings values: 0=System, 1=Light, 2=Dark.
+        return getPreferences(context).getInt(KEY_NIGHT_MODE, NIGHT_MODE_SYSTEM)
+    }
+
+    fun setNightModePreference(context: Context, mode: Int) {
+        getPreferences(context).edit()
+            .putInt(KEY_NIGHT_MODE, mode)
+            .apply()
     }
 }

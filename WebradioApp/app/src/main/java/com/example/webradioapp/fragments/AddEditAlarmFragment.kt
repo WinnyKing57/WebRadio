@@ -45,6 +45,8 @@ class AddEditAlarmFragment : Fragment() {
         // Assuming StationViewModel exists and provides a list of all stations
         stationViewModel = ViewModelProvider(requireActivity()).get(StationViewModel::class.java)
 
+        observeAlarmScheduledStatus() // Add observer for scheduling status
+
 
         val alarmId = args.alarmId
         if (alarmId != -1) { // Editing existing alarm
@@ -149,6 +151,18 @@ class AddEditAlarmFragment : Fragment() {
             Toast.makeText(context, "Alarm updated", Toast.LENGTH_SHORT).show()
         }
         findNavController().popBackStack()
+    }
+
+    private fun observeAlarmScheduledStatus() {
+        alarmViewModel.alarmScheduledStatus.observe(viewLifecycleOwner) { (success, message) ->
+            if (!success) {
+                Toast.makeText(context, message ?: "Failed to schedule alarm. Check permissions.", Toast.LENGTH_LONG).show()
+                // Potentially clear the event in ViewModel if it's a one-time event
+            } else {
+                // Optional: Show a success message for scheduling, though save/update already shows one.
+                // Toast.makeText(context, "Alarm involving $message scheduled successfully.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun deleteAlarm() {

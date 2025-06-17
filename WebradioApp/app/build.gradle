@@ -1,9 +1,9 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id 'kotlin-parcelize'
-    id 'com.google.devtools.ksp'
-    id 'androidx.navigation.safeargs.kotlin'
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    id 'kotlin-parcelize' // No version needed here, managed by Kotlin plugin
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.navigation.safeargs.kotlin)
 }
 
 android {
@@ -22,7 +22,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -42,36 +42,36 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation "androidx.fragment:fragment-ktx:1.6.2" // Added
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
-    implementation 'androidx.media3:media3-exoplayer:1.2.1' // Updated from com.google.android.exoplayer
-    implementation 'androidx.media3:media3-session:1.2.1'
-    implementation 'androidx.media3:media3-cast:1.2.1'       // Updated from com.google.android.exoplayer
-    implementation 'com.google.android.gms:play-services-cast-framework:21.3.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.material
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.fragment.ktx
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
+    implementation libs.androidx.media3.exoplayer
+    implementation libs.androidx.media3.session
+    implementation libs.androidx.media3.cast
+    implementation libs.google.play.services.cast.framework
+    implementation libs.google.gson
 
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
+    implementation libs.squareup.retrofit2.retrofit
+    implementation libs.squareup.retrofit2.converter.gson
+    implementation libs.squareup.okhttp3.logging.interceptor
 
-    implementation "androidx.room:room-runtime:2.6.1"
-    ksp "androidx.room:room-compiler:2.6.1"
-    implementation "androidx.room:room-ktx:2.6.1"
+    implementation libs.androidx.room.runtime
+    ksp libs.androidx.room.compiler
+    implementation libs.androidx.room.ktx
 
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    ksp("com.github.bumptech.glide:compiler:4.12.0")
+    implementation libs.github.bumptech.glide
+    ksp libs.github.bumptech.glide.compiler
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1" // Added
+    implementation libs.jetbrains.kotlinx.coroutines.core
+    implementation libs.jetbrains.kotlinx.coroutines.android
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.espresso.core
 }

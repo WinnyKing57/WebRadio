@@ -14,10 +14,10 @@ class AlarmManagerHelper(private val context: Context) {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun scheduleAlarm(alarm: Alarm) {
+    fun scheduleAlarm(alarm: Alarm): Boolean { // Added return type
         if (!alarm.isEnabled) {
             Log.d("AlarmManagerHelper", "Alarm ${alarm.id} is disabled, not scheduling.")
-            return
+            return true // Or false, depending on how you define success for disabled alarms
         }
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
@@ -50,20 +50,24 @@ class AlarmManagerHelper(private val context: Context) {
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-                Log.w("AlarmManagerHelper", "Cannot schedule exact alarms. App needs SCHEDULE_EXACT_ALARM permission or user setting enabled.")
-                // Optionally, notify the user or fallback to inexact alarm.
-                // For now, we'll still try to set it, but it might behave as inexact.
+                Log.e("AlarmManagerHelper", "Cannot schedule exact alarm ${alarm.id}. The SCHEDULE_EXACT_ALARM permission is denied by the user or the capability is unavailable. Alarm will not be set.")
+                // TODO: Notify user through UI (e.g., via ViewModel callback or event)
+                // Consider if this should throw an exception or how to propagate failure clearly.
+                return false // Indicate failure
             }
 
+            // If the check passes (or API < S), proceed to set the alarm.
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 calendar.timeInMillis,
                 pendingIntent
             )
             Log.d("AlarmManagerHelper", "Alarm ${alarm.id} scheduled for ${calendar.time}")
+            return true // Indicate success
         } catch (e: SecurityException) {
-            Log.e("AlarmManagerHelper", "SecurityException: Cannot schedule exact alarms. Check permissions.", e)
-            // Notify user or handle appropriately
+            Log.e("AlarmManagerHelper", "SecurityException: Cannot schedule exact alarm ${alarm.id}. Check permissions (USE_EXACT_ALARM might be required and not granted on Android 14+ if app targets API 33+).", e)
+            // TODO: Notify user through UI
+            return false // Indicate failure
         }
     }
 
@@ -92,9 +96,13 @@ class AlarmManagerHelper(private val context: Context) {
     fun rescheduleAllAlarms(alarms: List<Alarm>) {
         alarms.forEach { alarm ->
             if (alarm.isEnabled) {
-                scheduleAlarm(alarm)
+                val scheduled = scheduleAlarm(alarm) // scheduleAlarm now returns boolean
+                if (!scheduled) {
+                    Log.w("AlarmManagerHelper", "Failed to reschedule alarm ${alarm.id}")
+                    // Optionally, update alarm's state in DB to reflect it's not properly scheduled
+                }
             } else {
-                cancelAlarm(alarm) // Ensure disabled alarms are not scheduled
+                cancelAlarm(alarm)
             }
         }
     }

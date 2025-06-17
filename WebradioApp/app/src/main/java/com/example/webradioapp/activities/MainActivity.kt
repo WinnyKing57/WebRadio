@@ -33,6 +33,7 @@ import com.example.webradioapp.dialogs.SleepTimerDialogFragment
 import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.viewmodels.StationViewModel // Added
 import com.example.webradioapp.viewmodels.FavoritesViewModel // Added
+import com.example.webradioapp.viewmodels.PlaybackViewModel // Added
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import androidx.lifecycle.Observer // Added for explicit Observer
 
@@ -72,6 +73,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
 
     private val stationViewModel: StationViewModel by viewModels() // Ensured ViewModel is present
     private val favoritesViewModel: FavoritesViewModel by viewModels() // Added for favorite status
+    private val playbackViewModel: PlaybackViewModel by viewModels()
 
     private var sleepTimer: CountDownTimer? = null
 
@@ -132,7 +134,8 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
 
         setupNewPlayerControls()
         setupBottomSheetCallback()
-        setupNewLiveDataObservers()
+        // setupNewLiveDataObservers() // Will be replaced by setupPlaybackObservers
+        setupPlaybackObservers() // New method for PlaybackViewModel observers
         setupVolumeControls()
         observeFavoriteChanges() // Added
 
@@ -167,10 +170,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
 
             override fun onFinish() {
                 Log.d("MainActivity", "Sleep timer finished. Stopping playback.")
-                Intent(this@MainActivity, StreamingService::class.java).also { intent ->
-                    intent.action = StreamingService.ACTION_STOP
-                    startService(intent)
-                }
+                playbackViewModel.stopPlayback()
                 // Optionally, update UI to show timer finished or hide timer indication
                 Toast.makeText(this@MainActivity, "Sleep timer finished", Toast.LENGTH_SHORT).show()
             }
@@ -189,28 +189,30 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         }
 
         val playPauseClickListener = View.OnClickListener {
-            val currentIsPlaying = StreamingService.isPlayingLiveData.value ?: false
-            val action = if (currentIsPlaying) StreamingService.ACTION_PAUSE else StreamingService.ACTION_PLAY
-            Intent(this, StreamingService::class.java).also { intentValue ->
-                intentValue.action = action
-                // If station is null but user clicks play (e.g. on mini player that was visible),
-                // the service should handle this (e.g. play last station or do nothing)
-                // For now, we assume currentPlayingStationLiveData.value is the source of truth if action is PLAY
-                if (action == StreamingService.ACTION_PLAY && StreamingService.currentPlayingStationLiveData.value == null) {
-                    // Optionally handle case where play is hit with no station (e.g. show message)
-                    // For now, service will handle this (or not, if no station info passed)
-                } else if (StreamingService.currentPlayingStationLiveData.value != null) {
-                     intentValue.putExtra(StreamingService.EXTRA_STATION_OBJECT, StreamingService.currentPlayingStationLiveData.value)
+            val currentIsPlaying = playbackViewModel.isPlaying.value ?: false
+            if (currentIsPlaying) {
+                playbackViewModel.pausePlayback()
+            } else {
+                // Ensure there's a station to play. This logic might need adjustment.
+                // Perhaps get the last played station or current selection from another ViewModel.
+                // For now, assuming currentPlayingStation holds what should be played if paused.
+                playbackViewModel.currentPlayingStation.value?.let { stationToPlay ->
+                    playbackViewModel.playStation(stationToPlay)
+                } ?: run {
+                    // Handle case: play pressed but no station is selected/available.
+                    // Maybe pick from history or a default station.
+                    // For now, log or show a Toast.
+                    Log.w("MainActivity", "Play pressed but no current station in PlaybackViewModel.")
+                    Toast.makeText(this, "Select a station to play", Toast.LENGTH_SHORT).show()
                 }
-                startService(intentValue)
             }
         }
         ibNewMiniPlayerPlayPause.setOnClickListener(playPauseClickListener)
         ibFullPlayerPlayPause.setOnClickListener(playPauseClickListener)
 
         ibFullPlayerFavorite.setOnClickListener {
-            StreamingService.currentPlayingStationLiveData.value?.let { station ->
-                stationViewModel.toggleFavoriteStatus(station) // Assuming stationViewModel is available
+            playbackViewModel.currentPlayingStation.value?.let { station ->
+                favoritesViewModel.toggleFavoriteStatus(station) // Changed from stationViewModel to favoritesViewModel
             }
         }
     }
@@ -223,7 +225,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                         newMiniPlayerViewContainer.visibility = View.GONE
                     }
                     BottomSheetBehavior.STATE_COLLAPSED, BottomSheetBehavior.STATE_HIDDEN -> {
-                        if (StreamingService.currentPlayingStationLiveData.value != null) {
+                        if (playbackViewModel.currentPlayingStation.value != null) { // Use PlaybackViewModel
                             newMiniPlayerViewContainer.visibility = View.VISIBLE
                         } else {
                             newMiniPlayerViewContainer.visibility = View.GONE
@@ -241,14 +243,14 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         })
     }
 
-    private fun setupNewLiveDataObservers() {
-        StreamingService.isPlayingLiveData.observe(this) { isPlaying ->
+    private fun setupPlaybackObservers() { // New or renamed method
+        playbackViewModel.isPlaying.observe(this) { isPlaying ->
             val playPauseRes = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow
             ibNewMiniPlayerPlayPause.setImageResource(playPauseRes)
             ibFullPlayerPlayPause.setImageResource(playPauseRes)
         }
 
-        StreamingService.currentPlayingStationLiveData.observe(this) { station ->
+        playbackViewModel.currentPlayingStation.observe(this) { station ->
             if (station != null) {
                 tvNewMiniPlayerStationName.text = station.name
                 tvFullPlayerStationName.text = station.name
@@ -268,7 +270,13 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                     .into(ivFullPlayerStationArtwork)
 
                 newMiniPlayerViewContainer.visibility = View.VISIBLE
-                // Favorite status for full player button will be handled by observeFavoriteChanges
+                // Update favorite button based on the new current station
+                favoritesViewModel.favoriteStations.value?.let { favoritesList ->
+                    val isFavorite = favoritesList.any { favStation -> favStation.id == station.id }
+                    ibFullPlayerFavorite.setImageResource(
+                        if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
+                    )
+                } ?: ibFullPlayerFavorite.setImageResource(R.drawable.ic_star_border) // Default if no station
             } else {
                 newMiniPlayerViewContainer.visibility = View.GONE
                 if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
@@ -280,30 +288,31 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                 tvFullPlayerArtistName.text = ""
                 ivNewMiniPlayerStationIcon.setImageResource(R.drawable.ic_radio_placeholder)
                 ivFullPlayerStationArtwork.setImageResource(R.drawable.ic_radio_placeholder)
+                ibFullPlayerFavorite.setImageResource(R.drawable.ic_star_border) // Default if no station
             }
         }
 
-        StreamingService.playerErrorLiveData.observe(this) { errorMessage ->
+        playbackViewModel.playerError.observe(this) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
-                // Potentially hide bottom sheet or show error state within it
-                // StreamingService.playerErrorLiveData.postValue(null) // Clear error after showing
+                // Optionally, tell ViewModel to clear the error after showing
+                // playbackViewModel.clearError()
             }
         }
     }
 
     private fun observeFavoriteChanges() {
         favoritesViewModel.favoriteStations.observe(this, Observer { favoritesList ->
-            val currentStation = StreamingService.currentPlayingStationLiveData.value
+            val currentStation = playbackViewModel.currentPlayingStation.value // Use PlaybackViewModel
             currentStation?.let { station ->
-                // Ensure favoritesList is not null, though LiveData from asLiveData on a non-nullable Flow usually is.
                 val isFavorite = favoritesList?.any { favStation -> favStation.id == station.id } ?: false
                 ibFullPlayerFavorite.setImageResource(
                     if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
                 )
-            }
+            } ?: ibFullPlayerFavorite.setImageResource(R.drawable.ic_star_border) // Default if no station or favorites list is null
         })
     }
+
 
     private fun setupVolumeControls() {
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)

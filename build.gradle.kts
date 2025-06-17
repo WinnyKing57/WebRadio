@@ -1,8 +1,6 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
-
 plugins {
-    id("com.android.application") version "8.2.2" apply false
-    kotlin("android") version "1.9.20" apply false
-    id("com.google.devtools.ksp") version "1.9.20-1.0.13" apply false
-    id("androidx.navigation.safeargs.kotlin") version "2.7.7" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.navigation.safeargs.kotlin) apply false
 }
