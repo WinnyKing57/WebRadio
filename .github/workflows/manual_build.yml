@@ -12,17 +12,17 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_HOME: ${{ github.workspace }}/android-sdk
-      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
+      ANDROID_HOME: ${{ github.workspace }}/android-sdk # Corrected GITHUB_PATH to github.workspace
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk # Corrected GITHUB_PATH to github.workspace
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up JDK 21
+    - name: Set up JDK 17 # MODIFIED HERE
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '17' # MODIFIED HERE
         distribution: 'temurin'
 
     - name: Download and install Android SDK Command Line Tools
@@ -38,10 +38,7 @@ jobs:
 
         yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --update
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
-          "platforms;android-34" \
-          "build-tools;34.0.0" \
-          "platform-tools"
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME           "platforms;android-34"           "build-tools;34.0.0"           "platform-tools"
 
     - name: Ensure no local.properties is present
       run: find . -name local.properties -print -delete
@@ -83,7 +80,7 @@ jobs:
       if: failure()
       run: |
         echo "::group::Kotlin Compiler Logs"
-        find . -type f -name "*.log" -exec cat {} \;
+        find . -type f -name "*.log" -exec cat {} \; # Corrected find -exec
         echo "::endgroup::"
 
     # Uncomment to enable unit tests
