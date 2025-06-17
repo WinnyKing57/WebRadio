@@ -1,7 +1,7 @@
 [versions]
 # Versions from user feedback to ensure 'libs' resolves
 kotlin = "1.9.10"
-androidGradlePlugin = "8.2.0"
+androidGradlePlugin = "8.2.2"
 navigation = "2.7.7" # User and my existing safeArgs match this for components
 media3 = "1.2.1"
 ksp = "1.9.10-1.0.13"
