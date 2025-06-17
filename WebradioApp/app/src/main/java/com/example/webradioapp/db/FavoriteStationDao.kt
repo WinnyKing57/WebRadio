@@ -34,16 +34,16 @@ interface FavoriteStationDao {
     }
 
 
-    @Query("SELECT * FROM stations WHERE is_favorite = 1 ORDER BY name ASC")
+    @Query("SELECT id, name, stream_url, genre, country, language, favicon, is_favorite, last_played_timestamp, play_count FROM stations WHERE is_favorite = 1 ORDER BY name ASC")
     fun getFavoriteStations(): Flow<List<RadioStation>>
 
     @Query("SELECT EXISTS(SELECT 1 FROM stations WHERE id = :stationId AND is_favorite = 1)")
     suspend fun isFavorite(stationId: String): Boolean
 
     // Get a single station to check its status (useful for UI updates)
-    @Query("SELECT * FROM stations WHERE id = :stationId")
+    @Query("SELECT id, name, stream_url, genre, country, language, favicon, is_favorite, last_played_timestamp, play_count FROM stations WHERE id = :stationId")
     fun getStationById(stationId: String): Flow<RadioStation?>
 
-    @Query("SELECT * FROM stations ORDER BY name ASC")
+    @Query("SELECT id, name, stream_url, genre, country, language, favicon, is_favorite, last_played_timestamp, play_count FROM stations ORDER BY name ASC")
     fun getAllStations(): Flow<List<RadioStation>>
 }

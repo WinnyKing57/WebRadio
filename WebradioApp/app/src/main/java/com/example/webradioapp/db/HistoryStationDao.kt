@@ -43,14 +43,14 @@ interface HistoryStationDao {
     }
 
     // Helper to get a station by ID, not exposed as Flow, for internal DAO use
-    @Query("SELECT * FROM stations WHERE id = :stationId LIMIT 1")
+    @Query("SELECT id, name, stream_url, genre, country, language, favicon, is_favorite, last_played_timestamp, play_count FROM stations WHERE id = :stationId LIMIT 1")
     suspend fun getStationById(stationId: String): RadioStation?
 
-    @Query("SELECT * FROM stations WHERE last_played_timestamp > 0 ORDER BY last_played_timestamp DESC LIMIT :limit")
+    @Query("SELECT id, name, stream_url, genre, country, language, favicon, is_favorite, last_played_timestamp, play_count FROM stations WHERE last_played_timestamp > 0 ORDER BY last_played_timestamp DESC LIMIT :limit")
     fun getRecentlyPlayed(limit: Int): Flow<List<RadioStation>>
 
 
-//    @Query("SELECT * FROM stations WHERE last_played_timestamp > 0 ORDER BY last_played_timestamp DESC LIMIT :limit")
+//    @Query("SELECT id, name, stream_url, genre, country, language, favicon, is_favorite, last_played_timestamp, play_count FROM stations WHERE last_played_timestamp > 0 ORDER BY last_played_timestamp DESC LIMIT :limit")
 //    fun getStationHistory(limit: Int = 20): Flow<List<RadioStation>>
 //
 //    // For development/testing: Clear history (resets timestamp and count)

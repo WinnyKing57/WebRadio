@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id 'kotlin-parcelize' // No version needed here, managed by Kotlin plugin
     alias(libs.plugins.ksp)
-    alias(libs.plugins.navigation.safeargs.kotlin)
+    alias(libs.plugins.navigation.safe.args.kotlin) // Corrected alias
 }
 
 android {
@@ -53,6 +53,7 @@ dependencies {
     implementation libs.androidx.navigation.ui.ktx
     implementation libs.androidx.media3.exoplayer
     implementation libs.androidx.media3.session
+    implementation libs.androidx.media3.ui
     implementation libs.androidx.media3.cast
     implementation libs.google.play.services.cast.framework
     implementation libs.google.gson

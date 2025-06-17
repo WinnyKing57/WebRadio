@@ -1,26 +1,26 @@
 [versions]
-# Plugins
-androidGradlePlugin = "8.3.2"  # Updated from 8.2.2
-kotlin = "1.9.22"              # Updated from 1.9.20
-ksp = "1.9.22-1.0.17"          # Updated from 1.9.20-1.0.13
-navigationSafeArgs = "2.7.7"   # Current
+# Versions from user feedback to ensure 'libs' resolves
+kotlin = "1.9.10"
+androidGradlePlugin = "8.2.0"
+navigation = "2.7.7" # User and my existing safeArgs match this for components
+media3 = "1.2.1"
+ksp = "1.9.10-1.0.13"
 
-# Dependencies
+# Other versions (can be from my previous update if not conflicting)
 coreKtx = "1.12.0"
 appcompat = "1.6.1"
-material = "1.11.0"            # Updated from 1.10.0
+material = "1.11.0" # My update
 constraintlayout = "2.1.4"
-lifecycle = "2.7.0"            # Updated from 2.6.1
-fragmentKtx = "1.6.2"          # Consider 1.7.0 if issues with lifecycle, but 1.6.2 is fine
-navigation = "2.7.7"           # Updated from 2.5.3
-media3 = "1.3.1"               # Updated from 1.2.1
-playServicesCast = "21.5.0"    # Updated from 21.3.0
+lifecycle = "2.7.0" # My update (user had 2.6.2, this should be compatible)
+fragmentKtx = "1.6.2"
+# playServicesCast = "21.3.0" # User example for cast-framework
+playServicesCast = "21.5.0" # My update, should be fine
 gson = "2.10.1"
-retrofit = "2.9.0"             # Sticking with 2.9.0 for now, can update to 2.11.0 later if needed
-okhttpLoggingInterceptor = "4.12.0" # Updated from 4.10.0 (OkHttp BOM version)
+retrofit = "2.9.0"
+okhttpLoggingInterceptor = "4.12.0" # My update
 room = "2.6.1"
-glide = "4.16.0"               # Updated from 4.12.0
-kotlinxCoroutines = "1.7.3"    # Updated from 1.7.1
+glide = "4.16.0" # My update
+kotlinxCoroutines = "1.7.3" # My update
 
 junit = "4.13.2"
 androidxTestExtJunit = "1.1.5"
@@ -29,7 +29,7 @@ mockitoCore = "5.11.0"
 mockitoKotlin = "5.2.1"
 
 [libraries]
-# AndroidX
+# AndroidX (using user's aliases where provided, then my existing ones)
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -37,17 +37,20 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" } # For KSP
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 # Media / Cast
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
-androidx-media3-cast = { group = "androidx.media3", name = "media3-cast", version.ref = "media3" }
-google-play-services-cast-framework = { group = "com.google.android.gms", name = "play-services-cast-framework", version.ref = "playServicesCast" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" } # From user example
+androidx-media3-cast = { group = "androidx.media3", name = "media3-cast", version.ref = "media3" } # My addition, consistent
+google-play-services-cast-framework = { group = "com.google.android.gms", name = "play-services-cast-framework", version.ref = "playServicesCast" } # Alias from my previous, matches user's 'cast-framework'
 
 # Networking
 google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
@@ -57,7 +60,7 @@ squareup-okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = 
 
 # UI - Glide
 github-bumptech-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
-github-bumptech-glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" } # For KSP
+github-bumptech-glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 
 # Coroutines
 jetbrains-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
@@ -71,13 +74,12 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mo
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 jetbrains-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
-
 [plugins]
+# Aliases from user example
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationSafeArgs" }
-
-[bundles]
-# Example bundle (optional)
-# navigation = ["androidx.navigation.fragment.ktx", "androidx.navigation.ui.ktx"]
+navigation-safe-args-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" } # User alias 'navigation-safe-args-kotlin'
+# My previous alias was navigation-safeargs-kotlin, version.ref = "navigationSafeArgs"
+# I will use user's `navigation` ref for version consistency if `navigationSafeArgs` version was different.
+# User version for navigation is 2.7.7, my navigationSafeArgs was 2.7.7. So this is consistent.

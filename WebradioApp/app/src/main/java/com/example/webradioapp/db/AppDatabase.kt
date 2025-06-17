@@ -16,7 +16,7 @@ import com.example.webradioapp.db.dao.GenreDao
 import com.example.webradioapp.db.dao.LanguageDao
 
 // Incremented version to 3
-@Database(entities = [RadioStation::class, Alarm::class, CountryEntity::class, GenreEntity::class, LanguageEntity::class], version = 4, exportSchema = false)
+@Database(entities = [RadioStation::class, Alarm::class, CountryEntity::class, GenreEntity::class, LanguageEntity::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun favoriteStationDao(): FavoriteStationDao
