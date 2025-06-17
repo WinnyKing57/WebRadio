@@ -204,7 +204,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
 
         ibFullPlayerFavorite.setOnClickListener {
             playbackViewModel.currentPlayingStation.value?.let { station ->
-                favoritesViewModel.toggleFavoriteStatus(station) // Changed from stationViewModel to favoritesViewModel
+                favoritesViewModel.toggleFavorite(station)
             }
         }
     }

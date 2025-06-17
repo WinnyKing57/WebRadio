@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log // Ensure Log is imported for any new logging
 import android.widget.Toast // Added import
 import androidx.lifecycle.LiveData // Added
 import androidx.lifecycle.MutableLiveData // Added
@@ -20,6 +21,7 @@ import androidx.core.app.NotificationCompat
 import com.example.webradioapp.R
 import com.example.webradioapp.activities.MainActivity
 import com.example.webradioapp.model.RadioStation
+import com.example.webradioapp.network.ApiClient // Added for ApiClient
 import com.example.webradioapp.utils.SharedPreferencesManager
 import androidx.media3.exoplayer.ExoPlayer // Changed
 import androidx.media3.common.MediaItem // Changed
@@ -139,7 +141,16 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         // sharedPrefsManager = SharedPreferencesManager(applicationContext) // For theme
 
         val database = com.example.webradioapp.db.AppDatabase.getDatabase(applicationContext)
-        stationRepository = com.example.webradioapp.db.StationRepository(database.favoriteStationDao(), database.historyStationDao())
+        val apiService = com.example.webradioapp.network.ApiClient.radioBrowserApiService // Ensure ApiClient is imported
+        stationRepository = com.example.webradioapp.db.StationRepository(
+            applicationContext,
+            database.favoriteStationDao(),
+            database.historyStationDao(),
+            database.countryDao(),
+            database.genreDao(),
+            database.languageDao(),
+            apiService
+        )
 
         castContext = CastContext.getSharedInstance(this)
         sessionManager = castContext.sessionManager
@@ -391,15 +402,19 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
     }
 
     private fun updateNotificationState() {
-        if (_isPlaying.value == true || (activePlayer?.playbackState != Player.STATE_IDLE && activePlayer?.playbackState != Player.STATE_ENDED)) {
-             val station = _currentPlayingStation.value
-             val isPlayingVal = _isPlaying.value ?: false
-             val statusKey = if (activePlayer is CastPlayer) {
+        // Only update notification if service is in a state where it should be showing one
+        if (activePlayer?.playbackState != Player.STATE_IDLE && activePlayer?.playbackState != Player.STATE_ENDED || _isPlaying.value == true) {
+            val station = _currentPlayingStation.value
+            val isPlayingVal = _isPlaying.value ?: false // Default to false if null
+            val statusKey = if (activePlayer is CastPlayer) {
                 if (isPlayingVal) "notification_status_casting" else "notification_status_casting_paused"
-             } else {
+            } else {
                 if (isPlayingVal) "notification_status_playing" else "notification_status_paused"
-             }
-             startForeground(NOTIFICATION_ID, createNotification(station, statusKey, sleepTimerEndTimeMillis))
+            }
+            startForeground(NOTIFICATION_ID, createNotification(station, statusKey, sleepTimerEndTimeMillis))
+        } else {
+             // If not playing and in idle/ended state, consider stopping foreground or showing a different notification
+             // For now, let's assume stopForeground(STOP_FOREGROUND_DETACH) is handled by onIsPlayingChanged
         }
     }
 
