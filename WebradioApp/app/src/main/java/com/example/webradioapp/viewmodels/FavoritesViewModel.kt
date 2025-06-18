@@ -8,24 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.example.webradioapp.db.AppDatabase
 import com.example.webradioapp.db.StationRepository // Import Repository
 import com.example.webradioapp.model.RadioStation
+import com.example.webradioapp.network.ApiClient // Added import
 import kotlinx.coroutines.flow.Flow
 // import kotlinx.coroutines.flow.SharingStarted // Removed
 // import kotlinx.coroutines.flow.stateIn // Removed
 import kotlinx.coroutines.launch
 
-class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
+class FavoritesViewModel(
+    application: Application,
+    private val repository: StationRepository // Injected
+) : AndroidViewModel(application) {
 
-    private val repository: StationRepository
-
-    init {
-        val database = AppDatabase.getDatabase(application)
-        repository = StationRepository(database.favoriteStationDao(), database.historyStationDao())
-    }
+    // init block removed as repository is now injected
 
     val favoriteStations: LiveData<List<RadioStation>> = repository.favoriteStations.asLiveData()
-    val stationHistory: LiveData<List<RadioStation>> = repository.stationHistory.asLiveData()
+    // Assuming stationHistory was meant to be from the same repo, if not, adjust.
+    // For now, let's assume it refers to a general history, not a separate repo.
+    // val stationHistory: LiveData<List<RadioStation>> = repository.getRecentlyPlayedStations(20).asLiveData() // Example
 
-    // Combined toggle logic using repository
     fun toggleFavorite(station: RadioStation) {
         viewModelScope.launch {
             repository.toggleFavoriteStatus(station)

@@ -141,7 +141,7 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
         // sharedPrefsManager = SharedPreferencesManager(applicationContext) // For theme
 
         val database = com.example.webradioapp.db.AppDatabase.getDatabase(applicationContext)
-        val apiService = com.example.webradioapp.network.ApiClient.radioBrowserApiService // Ensure ApiClient is imported
+        val apiService = com.example.webradioapp.network.ApiClient.instance // Use .instance
         stationRepository = com.example.webradioapp.db.StationRepository(
             applicationContext,
             database.favoriteStationDao(),

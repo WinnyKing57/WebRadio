@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 // Fragment import might not be needed if not directly used after removing the listener.
 // import androidx.fragment.app.Fragment
 // Explicit import for SharedPreferencesManager
+import com.example.webradioapp.db.AppDatabase // Added
+import com.example.webradioapp.db.StationRepository // Added
+import com.example.webradioapp.network.ApiClient // Added
 import com.example.webradioapp.utils.SharedPreferencesManager
 import androidx.navigation.fragment.NavHostFragment // Added for NavHostFragment
 import androidx.navigation.ui.setupWithNavController // Added for setupWithNavController
@@ -32,7 +35,9 @@ import com.bumptech.glide.Glide
 import com.example.webradioapp.dialogs.SleepTimerDialogFragment
 import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.viewmodels.StationViewModel // Added
+import com.example.webradioapp.viewmodels.StationViewModelFactory // Added
 import com.example.webradioapp.viewmodels.FavoritesViewModel // Added
+import com.example.webradioapp.viewmodels.FavoritesViewModelFactory // Added
 import com.example.webradioapp.viewmodels.PlaybackViewModel // Added
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import androidx.lifecycle.Observer // Added for explicit Observer
@@ -64,8 +69,10 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var audioManager: AudioManager
 
-    private val stationViewModel: StationViewModel by viewModels() // Ensured ViewModel is present
-    private val favoritesViewModel: FavoritesViewModel by viewModels() // Added for favorite status
+    // private val stationViewModel: StationViewModel by viewModels() // Ensured ViewModel is present
+    // private val favoritesViewModel: FavoritesViewModel by viewModels() // Added for favorite status
+    private lateinit var stationViewModel: StationViewModel
+    private lateinit var favoritesViewModel: FavoritesViewModel
     private val playbackViewModel: PlaybackViewModel by viewModels()
 
     private var sleepTimer: CountDownTimer? = null
@@ -98,6 +105,26 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         setContentView(R.layout.activity_main)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager // Added
+
+        // ViewModel Initialization with Factories
+        val application = requireNotNull(this).application
+        val database = AppDatabase.getDatabase(application)
+        val apiClient = ApiClient.instance // Ensure ApiClient is imported
+        val stationRepository = StationRepository(
+            applicationContext, // or just application
+            database.favoriteStationDao(),
+            database.historyStationDao(),
+            database.countryDao(),
+            database.genreDao(),
+            database.languageDao(),
+            apiClient
+        )
+
+        val stationViewModelFactory = StationViewModelFactory(application, stationRepository)
+        stationViewModel = ViewModelProvider(this, stationViewModelFactory).get(StationViewModel::class.java)
+
+        val favoritesViewModelFactory = FavoritesViewModelFactory(application, stationRepository)
+        favoritesViewModel = ViewModelProvider(this, favoritesViewModelFactory).get(FavoritesViewModel::class.java)
 
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -204,7 +231,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
 
         ibFullPlayerFavorite.setOnClickListener {
             playbackViewModel.currentPlayingStation.value?.let { station ->
-                favoritesViewModel.toggleFavorite(station)
+                stationViewModel.toggleFavoriteStatus(station) // Call on stationViewModel
             }
         }
     }

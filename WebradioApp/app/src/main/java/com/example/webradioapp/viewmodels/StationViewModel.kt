@@ -11,9 +11,10 @@ import kotlinx.coroutines.flow.Flow
 // Removed: MutableStateFlow and asStateFlow for _currentStationFavoriteStatus
 import kotlinx.coroutines.launch
 
-class StationViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository: StationRepository
+class StationViewModel(
+    application: Application,
+    private val repository: StationRepository // Injected
+) : AndroidViewModel(application) {
 
     // Flow for recently played stations
     val recentlyPlayedStations: Flow<List<RadioStation>>
@@ -23,20 +24,9 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
     // Removed: _currentStationFavoriteStatus and currentStationFavoriteStatus
     // UI should observe getStationFavoriteFlow or the main list from FavoritesViewModel
 
-    init {
-        val database = AppDatabase.getDatabase(application)
-        repository = StationRepository(
-            application.applicationContext, // Pass context
-            database.favoriteStationDao(),
-            database.historyStationDao(),
-            database.countryDao(), // Assuming these are available from AppDatabase
-            database.genreDao(),
-            database.languageDao(),
-            ApiClient.radioBrowserApiService // Assuming ApiClient provides this
-        )
-    }
+    // init block removed as repository is now injected
 
-    fun toggleFavoriteStatus(station: RadioStation) {
+    fun toggleFavoriteStatus(station: RadioStation) { // This method was in user feedback for MainActivity
         viewModelScope.launch {
             repository.toggleFavoriteStatus(station)
             // No need to manually update _currentStationFavoriteStatus here.
