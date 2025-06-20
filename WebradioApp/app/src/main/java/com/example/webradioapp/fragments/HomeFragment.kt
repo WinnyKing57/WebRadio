@@ -28,7 +28,7 @@ import com.example.webradioapp.network.model.toDomain
 import com.example.webradioapp.services.StreamingService
 import com.example.webradioapp.viewmodels.FavoritesViewModel
 import com.example.webradioapp.viewmodels.FavoritesViewModelFactory
-import com.example.webradioapp.viewmodels.StationViewModel
+import com.example.webradioapp.viewmodels.StationViewModelFactory
 import kotlinx.coroutines.launch
 import android.util.Log
 
@@ -39,7 +39,26 @@ class HomeFragment : Fragment() {
     private lateinit var rvPopularStations: RecyclerView
     private lateinit var popularStationsAdapter: StationAdapter
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
-    private val stationViewModel: StationViewModel by viewModels() // Assuming StationViewModel also has a factory or default constructor
+    private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels {
+        val application = requireActivity().application
+        val db = AppDatabase.getDatabase(application)
+        val favoriteDao = db.favoriteStationDao()
+        val historyDao = db.historyStationDao()
+        val countryDao = db.countryDao()
+        val genreDao = db.genreDao()
+        val languageDao = db.languageDao()
+        val apiServ = ApiClient.instance // Renamed to avoid conflict with outer scope variable
+
+        StationViewModelFactory(
+            application,
+            favoriteDao,
+            historyDao,
+            countryDao,
+            genreDao,
+            languageDao,
+            apiServ
+        )
+    }
     private val favoritesViewModel: FavoritesViewModel by viewModels {
         val application = requireActivity().application
         val db = AppDatabase.getDatabase(application)
