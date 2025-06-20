@@ -19,12 +19,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.webradioapp.R
+import com.example.webradioapp.db.AppDatabase
+import com.example.webradioapp.db.StationRepository
 import com.example.webradioapp.model.RadioStation
 import com.example.webradioapp.network.ApiClient
 import com.example.webradioapp.network.RadioBrowserApiService
 import com.example.webradioapp.network.model.toDomain
 import com.example.webradioapp.services.StreamingService
 import com.example.webradioapp.viewmodels.FavoritesViewModel
+import com.example.webradioapp.viewmodels.FavoritesViewModelFactory
 import com.example.webradioapp.viewmodels.StationViewModel
 import kotlinx.coroutines.launch
 import android.util.Log
@@ -36,8 +39,21 @@ class HomeFragment : Fragment() {
     private lateinit var rvPopularStations: RecyclerView
     private lateinit var popularStationsAdapter: StationAdapter
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
-    private val stationViewModel: StationViewModel by viewModels()
-    private val favoritesViewModel: FavoritesViewModel by viewModels()
+    private val stationViewModel: StationViewModel by viewModels() // Assuming StationViewModel also has a factory or default constructor
+    private val favoritesViewModel: FavoritesViewModel by viewModels {
+        val application = requireActivity().application
+        val db = AppDatabase.getDatabase(application)
+        val stationRepository = StationRepository(
+            application,
+            db.favoriteStationDao(),
+            db.historyStationDao(),
+            db.countryDao(),
+            db.genreDao(),
+            db.languageDao(),
+            ApiClient.instance
+        )
+        FavoritesViewModelFactory(application, stationRepository)
+    }
     private var currentPopularStations: List<RadioStation> = emptyList()
     private var currentFavoritesSet: Set<String> = emptySet() // This will be the single source for favorite IDs
 
