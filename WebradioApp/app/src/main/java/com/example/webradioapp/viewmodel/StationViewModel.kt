@@ -8,6 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.webradioapp.db.AppDatabase
 import com.example.webradioapp.db.FavoriteStationDao
 import com.example.webradioapp.db.HistoryStationDao
+import com.example.webradioapp.db.dao.CountryDao
+import com.example.webradioapp.db.dao.GenreDao
+import com.example.webradioapp.db.dao.LanguageDao
+import com.example.webradioapp.network.ApiClient
 import com.example.webradioapp.model.RadioStation
 import kotlinx.coroutines.launch
 
@@ -17,7 +21,10 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
 
     private val favoriteStationDao: FavoriteStationDao
     private val historyStationDao: HistoryStationDao
-    private val stationRepository: com.example.webradioapp.db.StationRepository // Added
+    private val countryDao: CountryDao
+    private val genreDao: GenreDao
+    private val languageDao: LanguageDao
+    private val stationRepository: com.example.webradioapp.db.StationRepository
     // For simplicity, let's assume "allStations" for selection could come from favorites or history.
     // A more robust app would have a clearer source for "all selectable stations".
     val allStations: LiveData<List<RadioStation>> // This will be a combination or a specific source
@@ -32,7 +39,20 @@ class StationViewModel(application: Application) : AndroidViewModel(application)
         val database = AppDatabase.getDatabase(application)
         favoriteStationDao = database.favoriteStationDao()
         historyStationDao = database.historyStationDao()
-        stationRepository = com.example.webradioapp.db.StationRepository(favoriteStationDao, historyStationDao) // Added
+        countryDao = database.countryDao()
+        genreDao = database.genreDao()
+        languageDao = database.languageDao()
+        val apiService = ApiClient.instance
+
+        stationRepository = com.example.webradioapp.db.StationRepository(
+            application.applicationContext,
+            favoriteStationDao,
+            historyStationDao,
+            countryDao,
+            genreDao,
+            languageDao,
+            apiService
+        )
 
         // Example: Populate allStations with favorites for now.
         // This should be replaced with a more robust way of getting selectable stations.
