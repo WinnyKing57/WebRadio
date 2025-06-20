@@ -109,15 +109,17 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         // ViewModel Initialization with Factories
         val application = requireNotNull(this).application
         val database = AppDatabase.getDatabase(application)
-        val apiClient = ApiClient.instance // Ensure ApiClient is imported
-        val stationRepository = StationRepository(
+        val apiClientInstance = ApiClient.instance // Ensure ApiClient is imported
+        val apiService: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance // Explicit typing
+
+        val stationRepository = com.example.webradioapp.db.StationRepository( // Use fully qualified name for clarity
             applicationContext, // or just application
             database.favoriteStationDao(),
             database.historyStationDao(),
             database.countryDao(),
             database.genreDao(),
             database.languageDao(),
-            apiClient
+            apiService // Pass the new explicitly typed variable
         )
 
         val stationViewModelFactory = StationViewModelFactory(application, stationRepository)
