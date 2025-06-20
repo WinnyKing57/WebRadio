@@ -70,8 +70,26 @@ class SearchFragment : Fragment() {
     private var tagsList: List<Tag> = emptyList()
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
-    private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels()
-    private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels() // To observe all favorites
+    private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels() // Assuming this is already corrected or has a default constructor
+    private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels {
+        val application = requireActivity().application
+        val db = com.example.webradioapp.db.AppDatabase.getDatabase(application)
+
+        val apiClientInstance = com.example.webradioapp.network.ApiClient.instance
+        val apiServ: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance // Renamed to apiServ to avoid conflict if any
+
+        val stationRepository = com.example.webradioapp.db.StationRepository(
+            application,
+            db.favoriteStationDao(),
+            db.historyStationDao(),
+            db.countryDao(),
+            db.genreDao(),
+            db.languageDao(),
+            apiServ
+        )
+
+        com.example.webradioapp.viewmodels.FavoritesViewModelFactory(application, stationRepository)
+    }
     private var searchJob: Job? = null // This is for the main search, keep it separate
     private var currentStationList: List<RadioStation> = emptyList()
     private var currentFavoritesSet: Set<String> = emptySet()

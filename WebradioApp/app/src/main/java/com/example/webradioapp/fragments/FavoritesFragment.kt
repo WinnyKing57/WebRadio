@@ -14,10 +14,15 @@ import androidx.lifecycle.Observer // Added
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.webradioapp.R
+import com.example.webradioapp.db.AppDatabase
+import com.example.webradioapp.db.StationRepository
 import com.example.webradioapp.model.RadioStation
+import com.example.webradioapp.network.ApiClient
+import com.example.webradioapp.network.RadioBrowserApiService
 import com.example.webradioapp.services.StreamingService
 // Removed: import com.example.webradioapp.utils.SharedPreferencesManager
 import com.example.webradioapp.viewmodels.FavoritesViewModel
+import com.example.webradioapp.viewmodels.FavoritesViewModelFactory
 // Removed: import com.example.webradioapp.viewmodels.StationViewModel
 // import kotlinx.coroutines.launch // Removed if not used elsewhere
 
@@ -29,7 +34,25 @@ class FavoritesFragment : Fragment() {
     // private lateinit var historyAdapter: StationAdapter // Removed
     // private lateinit var sharedPrefsManager: SharedPreferencesManager // Removed
 
-    private val favoritesViewModel: FavoritesViewModel by viewModels()
+    private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels {
+        val application = requireActivity().application
+        val db = AppDatabase.getDatabase(application)
+
+        val apiClientInstance = ApiClient.instance
+        val apiService: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance
+
+        val stationRepository = com.example.webradioapp.db.StationRepository(
+            application,
+            db.favoriteStationDao(),
+            db.historyStationDao(),
+            db.countryDao(),
+            db.genreDao(),
+            db.languageDao(),
+            apiService
+        )
+
+        FavoritesViewModelFactory(application, stationRepository)
+    }
     // private val stationViewModel: StationViewModel by viewModels() // Removed as it's no longer used
 
     override fun onCreateView(

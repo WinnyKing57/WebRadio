@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         val apiService: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance // Explicit typing
 
         val stationRepository = com.example.webradioapp.db.StationRepository( // Use fully qualified name for clarity
-            applicationContext, // or just application
+            application, // Or applicationContext if application is not the direct Application instance
             database.favoriteStationDao(),
             database.historyStationDao(),
             database.countryDao(),
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         stationViewModel = ViewModelProvider(this, stationViewModelFactory).get(StationViewModel::class.java)
 
         val favoritesViewModelFactory = FavoritesViewModelFactory(application, stationRepository)
-        favoritesViewModel = ViewModelProvider(this, favoritesViewModelFactory).get(FavoritesViewModel::class.java)
+        favoritesViewModel = ViewModelProvider(this, favoritesViewModelFactory).get(com.example.webradioapp.viewmodels.FavoritesViewModel::class.java) // Ensure fully qualified name for FavoritesViewModel
 
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
