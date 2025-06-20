@@ -2,29 +2,20 @@ package com.example.webradioapp.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData // Added
-import androidx.lifecycle.asLiveData // Added
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.webradioapp.db.AppDatabase
-import com.example.webradioapp.db.StationRepository // Import Repository
+import com.example.webradioapp.db.StationRepository // Ensure this import is present
 import com.example.webradioapp.model.RadioStation
-import com.example.webradioapp.network.ApiClient // Added import
 import kotlinx.coroutines.flow.Flow
-// import kotlinx.coroutines.flow.SharingStarted // Removed
-// import kotlinx.coroutines.flow.stateIn // Removed
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
     application: Application,
-    private val repository: StationRepository // Injected
+    private val repository: StationRepository // Changed from stationRepository to repository for consistency if needed, or keep as stationRepository
 ) : AndroidViewModel(application) {
 
-    // init block removed as repository is now injected
-
     val favoriteStations: LiveData<List<RadioStation>> = repository.favoriteStations.asLiveData()
-    // Assuming stationHistory was meant to be from the same repo, if not, adjust.
-    // For now, let's assume it refers to a general history, not a separate repo.
-    // val stationHistory: LiveData<List<RadioStation>> = repository.getRecentlyPlayedStations(20).asLiveData() // Example
 
     fun toggleFavorite(station: RadioStation) {
         viewModelScope.launch {
@@ -32,18 +23,15 @@ class FavoritesViewModel(
         }
     }
 
-    // Specifically to remove a favorite (e.g., from favorites list)
     fun removeFavorite(station: RadioStation) {
         viewModelScope.launch {
             repository.removeFavorite(station.id)
         }
     }
 
-    // addStationToHistory is primarily a write operation, better handled by something
-    // directly used by StreamingService (like the repository itself, or a dedicated PlayerViewModel).
-    // We expose the Flow for observing history here.
-
-     fun isStationFavorite(stationId: String): Flow<RadioStation?> { // For observing single station status
+    fun isStationFavorite(stationId: String): Flow<RadioStation?> {
         return repository.getStationById(stationId)
     }
+
+    // Ensure all other methods use `this.repository`
 }

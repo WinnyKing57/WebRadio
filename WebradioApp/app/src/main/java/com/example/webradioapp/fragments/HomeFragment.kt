@@ -61,18 +61,26 @@ class HomeFragment : Fragment() {
         // Now call StationViewModelFactory with Application and StationRepository
         StationViewModelFactory(application, stationRepository)
     }
-    private val favoritesViewModel: FavoritesViewModel by viewModels {
+    private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels {
         val application = requireActivity().application
         val db = AppDatabase.getDatabase(application)
-        val stationRepository = StationRepository(
-            application,
+
+        // Explicitly type apiService for clarity, consistent with other ViewModel factory setups
+        val apiClientInstance = ApiClient.instance
+        val apiService: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance
+
+        // Create StationRepository instance
+        val stationRepository = com.example.webradioapp.db.StationRepository(
+            application, // Pass application context
             db.favoriteStationDao(),
             db.historyStationDao(),
             db.countryDao(),
             db.genreDao(),
             db.languageDao(),
-            ApiClient.instance
+            apiService // Pass the explicitly typed apiService
         )
+
+        // Now call FavoritesViewModelFactory with Application and StationRepository
         FavoritesViewModelFactory(application, stationRepository)
     }
     private var currentPopularStations: List<RadioStation> = emptyList()
