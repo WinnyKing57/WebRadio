@@ -2,64 +2,79 @@ package com.example.webradioapp.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.webradioapp.db.FavoriteStationDao
-import com.example.webradioapp.db.HistoryStationDao
-import com.example.webradioapp.db.StationRepository
-import com.example.webradioapp.db.dao.CountryDao
-import com.example.webradioapp.db.dao.GenreDao
-import com.example.webradioapp.db.dao.LanguageDao
+// Remove direct DAO imports if they are no longer used directly by StationViewModel
+// import com.example.webradioapp.db.FavoriteStationDao
+// import com.example.webradioapp.db.HistoryStationDao
+// import com.example.webradioapp.db.dao.CountryDao
+// import com.example.webradioapp.db.dao.GenreDao
+// import com.example.webradioapp.db.dao.LanguageDao
+// import com.example.webradioapp.network.RadioBrowserApiService
+import com.example.webradioapp.db.StationRepository // Ensure this import is present
 import com.example.webradioapp.model.RadioStation
-import com.example.webradioapp.network.RadioBrowserApiService
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.Flow // For isStationFavorite return type
 import kotlinx.coroutines.launch
 
 class StationViewModel(
     application: Application,
-    favoriteStationDao: FavoriteStationDao,
-    historyStationDao: HistoryStationDao,
-    countryDao: CountryDao,
-    genreDao: GenreDao,
-    languageDao: LanguageDao,
-    apiService: RadioBrowserApiService
+    private val stationRepository: StationRepository // Injected
 ) : AndroidViewModel(application) {
 
-    private val repository: StationRepository
+    // The stationRepository is now injected, so no need for an init block
+    // to create it from individual DAOs.
 
-    init {
-        repository = StationRepository(
-            application.applicationContext,
-            favoriteStationDao,
-            historyStationDao,
-            countryDao,
-            genreDao,
-            languageDao,
-            apiService
-        )
+    // LiveData for stations, now fetched via the injected repository
+    val allStations: LiveData<List<RadioStation>> = stationRepository.allPersistedStations.asLiveData()
+    val favoriteStations: LiveData<List<RadioStation>> = stationRepository.favoriteStations.asLiveData() // If needed
+
+    // Example: Exposing recently played stations from the repository
+    val recentlyPlayedStations: Flow<List<RadioStation>> = stationRepository.getRecentlyPlayedStations(20) // Default limit 20
+
+
+    // Methods that delegate to the repository
+    fun addStationToHistory(station: RadioStation) {
+        viewModelScope.launch {
+            stationRepository.addStationToHistory(station)
+        }
     }
-
-    // Flow for recently played stations
-    val recentlyPlayedStations: Flow<List<RadioStation>>
-        get() = repository.getRecentlyPlayedStations(limit = 10)
-
 
     fun toggleFavoriteStatus(station: RadioStation) {
         viewModelScope.launch {
-            repository.toggleFavoriteStatus(station)
+            stationRepository.toggleFavoriteStatus(station)
         }
     }
 
-    suspend fun isFavorite(stationId: String): Boolean {
-        return repository.isFavorite(stationId)
+    fun isStationFavorite(stationId: String): Flow<RadioStation?> { // Assuming getStationById returns Flow<RadioStation?>
+        return stationRepository.getStationById(stationId)
     }
 
-    fun getStationFlow(stationId: String): Flow<RadioStation?> {
-        return repository.getStationById(stationId)
-    }
-
-    fun addStationToHistory(station: RadioStation) {
+    fun refreshCountries() {
         viewModelScope.launch {
-            repository.addStationToHistory(station)
+            stationRepository.refreshCountries()
         }
     }
+
+    fun refreshGenres() {
+        viewModelScope.launch {
+            stationRepository.refreshGenres()
+        }
+    }
+
+    fun refreshLanguages() {
+        viewModelScope.launch {
+            stationRepository.refreshLanguages()
+        }
+    }
+
+    // Add any other methods that StationViewModel previously had,
+    // ensuring they now use the injected stationRepository.
+    // For example, if there was a method to fetch stations from network:
+    // fun fetchStationsFromNetwork() {
+    //     viewModelScope.launch {
+    //         // This would depend on how StationRepository exposes network fetching
+    //         // e.g., stationRepository.fetchAndCacheAllStations()
+    //     }
+    // }
 }
