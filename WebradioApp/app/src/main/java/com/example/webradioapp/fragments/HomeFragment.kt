@@ -42,22 +42,24 @@ class HomeFragment : Fragment() {
     private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels {
         val application = requireActivity().application
         val db = AppDatabase.getDatabase(application)
-        val favoriteDao = db.favoriteStationDao()
-        val historyDao = db.historyStationDao()
-        val countryDao = db.countryDao()
-        val genreDao = db.genreDao()
-        val languageDao = db.languageDao()
-        val apiServ = ApiClient.instance // Renamed to avoid conflict with outer scope variable
 
-        StationViewModelFactory(
-            application,
-            favoriteDao,
-            historyDao,
-            countryDao,
-            genreDao,
-            languageDao,
-            apiServ
+        // Explicitly type apiService for clarity, matching MainActivity pattern
+        val apiClientInstance = ApiClient.instance
+        val apiServ: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance // Renamed to apiServ as in original
+
+        // Create StationRepository instance
+        val stationRepository = com.example.webradioapp.db.StationRepository(
+            application, // Pass application context
+            db.favoriteStationDao(),
+            db.historyStationDao(),
+            db.countryDao(),
+            db.genreDao(),
+            db.languageDao(),
+            apiServ // Pass the explicitly typed apiService
         )
+
+        // Now call StationViewModelFactory with Application and StationRepository
+        StationViewModelFactory(application, stationRepository)
     }
     private val favoritesViewModel: FavoritesViewModel by viewModels {
         val application = requireActivity().application
