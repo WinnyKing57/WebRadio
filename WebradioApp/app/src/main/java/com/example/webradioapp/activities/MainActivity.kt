@@ -21,6 +21,7 @@ import com.example.webradioapp.R // Already present, ensure it's used correctly
 // Removed duplicate imports, ensured necessary ones are present
 import com.example.webradioapp.services.StreamingService
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigationrail.NavigationRailView
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -128,10 +129,23 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         val favoritesViewModelFactory = FavoritesViewModelFactory(application, stationRepository)
         favoritesViewModel = ViewModelProvider(this, favoritesViewModelFactory).get(com.example.webradioapp.viewmodels.FavoritesViewModel::class.java) // Ensure fully qualified name for FavoritesViewModel
 
-        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        navView.setupWithNavController(navController)
+
+        val bottomNavView = findViewById<BottomNavigationView?>(R.id.bottom_navigation)
+        val navigationRailView = findViewById<NavigationRailView?>(R.id.navigation_rail)
+
+        if (bottomNavView != null) {
+            bottomNavView.setupWithNavController(navController)
+            Log.d("MainActivity", "BottomNavigationView setup complete.")
+        } else if (navigationRailView != null) {
+            navigationRailView.setupWithNavController(navController)
+            Log.d("MainActivity", "NavigationRailView setup complete.")
+        } else {
+            Log.e("MainActivity", "Neither BottomNavigationView nor NavigationRailView found. Navigation will not work.")
+            // Potentially throw an exception or handle this error state more gracefully
+            // For now, logging an error is the primary action.
+        }
 
         // Initialize new Mini Player views
         newMiniPlayerViewContainer = findViewById(R.id.mini_player_view_container)
