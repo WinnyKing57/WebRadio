@@ -330,13 +330,21 @@ class StreamingService : Service(), AudioManager.OnAudioFocusChangeListener {
                         // Ensure LiveData is updated before prepare() and play()
                         _currentPlayingStation.postValue(station) // Update current station
 
-                        android.util.Log.d("StreamingService", "Setting MediaItem on activePlayer: ${mediaItemToPlay.mediaId}") // New Log
-                        activePlayer?.setMediaItem(mediaItemToPlay)
-                        activePlayer?.prepare()
-                        android.util.Log.d("StreamingService", "Calling play on activePlayer.") // New Log
-                        activePlayer?.play() // This should trigger onIsPlayingChanged(true) via listener
-                        _isPlaying.postValue(true) // Set explicitly after play()
-
+                        try {
+                            android.util.Log.d("StreamingService", "Setting MediaItem on activePlayer: ${mediaItemToPlay.mediaId}")
+                            activePlayer?.setMediaItem(mediaItemToPlay)
+                            activePlayer?.prepare() // This can throw exceptions
+                            android.util.Log.d("StreamingService", "Calling play on activePlayer.")
+                            activePlayer?.play()
+                            _isPlaying.postValue(true) // Set explicitly after play()
+                        } catch (e: Exception) {
+                            Log.e("StreamingService", "Error during setMediaItem/prepare/play for ${station.streamUrl}", e)
+                            _playerError.postValue("Failed to start playback: ${e.localizedMessage ?: "Unknown error"}")
+                            _isPlaying.postValue(false)
+                            // Consider if _currentPlayingStation.postValue(null) is needed here,
+                            // or if keeping the station visible but in an error state is better.
+                            // For now, leave _currentPlayingStation as is, error will indicate failure.
+                        }
 
                         // Log to history using Repository and serviceScope
                         serviceScope.launch {
