@@ -26,6 +26,9 @@
     <string name="notification_action_play">Play</string>
     <string name="notification_action_pause">Pause</string>
 
+    <!-- String resource for unavailable metadata -->
+    <string name="text_metadata_unavailable">Metadata unavailable</string>
+
     <!-- Other strings from AddEditAlarmFragment if this subtask were to include them -->
     <!-- For now, focusing on MainActivity and StreamingService -->
 
