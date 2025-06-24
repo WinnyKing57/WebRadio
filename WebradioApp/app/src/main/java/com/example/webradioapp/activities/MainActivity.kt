@@ -255,30 +255,24 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
     private fun setupBottomSheetCallback() {
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        newMiniPlayerViewContainer.visibility = View.GONE
-                    }
-                    BottomSheetBehavior.STATE_COLLAPSED, BottomSheetBehavior.STATE_HIDDEN -> {
-                        if (playbackViewModel.currentPlayingStation.value != null) { // Use PlaybackViewModel
-                            newMiniPlayerViewContainer.visibility = View.VISIBLE
-                        } else {
-                            newMiniPlayerViewContainer.visibility = View.GONE
-                        }
-                    }
-                    // Other states can be handled if needed (DRAGGING, SETTLING, HALF_EXPANDED)
-                    else -> { /* No-op */ }
-                }
+                // Visibility is now handled by updatePlayerUIVisibility,
+                // which is called by the currentPlayingStation observer and this callback.
+                updatePlayerUIVisibility(playbackViewModel.currentPlayingStation.value)
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                // Example: Fade out mini player as bottom sheet slides up
-                // newMiniPlayerViewContainer.alpha = 1.0f - slideOffset
+                // Optional: Fade out mini player as bottom sheet slides up
+                // This can be refined later if desired.
+                // if (newMiniPlayerViewContainer.visibility == View.VISIBLE && slideOffset > 0) {
+                //     newMiniPlayerViewContainer.alpha = 1.0f - slideOffset
+                // } else if (slideOffset == 0f) {
+                //    newMiniPlayerViewContainer.alpha = 1.0f
+                // }
             }
         })
     }
 
-    private fun setupPlaybackObservers() { // New or renamed method
+    private fun setupPlaybackObservers() {
         playbackViewModel.isPlaying.observe(this) { isPlaying ->
             val playPauseRes = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow
             ibNewMiniPlayerPlayPause.setImageResource(playPauseRes)
@@ -286,11 +280,15 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
         }
 
         playbackViewModel.currentPlayingStation.observe(this) { station ->
+            updatePlayerUIVisibility(station) // Centralized logic call
             if (station != null) {
                 tvNewMiniPlayerStationName.text = station.name
+                tvNewMiniPlayerStationName.isSelected = true // For marquee
+
                 tvFullPlayerStationName.text = station.name
-                tvFullPlayerSongTitle.text = station.genre ?: "" // Using genre as placeholder for song title
-                tvFullPlayerArtistName.text = station.country ?: "" // Using country as placeholder for artist name
+                // Placeholders for song title and artist name, actual metadata handling would be more complex
+                tvFullPlayerSongTitle.text = station.genre ?: getString(R.string.text_metadata_unavailable)
+                tvFullPlayerArtistName.text = station.country ?: ""
 
                 Glide.with(this@MainActivity)
                     .load(station.favicon)
@@ -299,31 +297,28 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                     .into(ivNewMiniPlayerStationIcon)
 
                 Glide.with(this@MainActivity)
-                    .load(station.favicon.ifEmpty { station.favicon }) // Use favicon, or a larger image URL if available
-                    .placeholder(R.drawable.ic_radio_placeholder) // Larger placeholder for artwork
+                    .load(station.favicon.ifEmpty { station.favicon }) // Consider a larger image if available
+                    .placeholder(R.drawable.ic_radio_placeholder)
                     .error(R.drawable.ic_radio_placeholder)
                     .into(ivFullPlayerStationArtwork)
 
-                newMiniPlayerViewContainer.visibility = View.VISIBLE
-                // Update favorite button based on the new current station
+                // Favorite button state update
                 favoritesViewModel.favoriteStations.value?.let { favoritesList ->
                     val isFavorite = favoritesList.any { favStation -> favStation.id == station.id }
                     ibFullPlayerFavorite.setImageResource(
                         if (isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
                     )
-                } ?: ibFullPlayerFavorite.setImageResource(R.drawable.ic_star_border) // Default if no station
+                } ?: ibFullPlayerFavorite.setImageResource(R.drawable.ic_star_border)
+
             } else {
-                newMiniPlayerViewContainer.visibility = View.GONE
-                if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                }
+                // Clear UI when no station is playing
                 tvNewMiniPlayerStationName.text = ""
                 tvFullPlayerStationName.text = getString(R.string.text_nothing_playing)
                 tvFullPlayerSongTitle.text = ""
                 tvFullPlayerArtistName.text = ""
                 ivNewMiniPlayerStationIcon.setImageResource(R.drawable.ic_radio_placeholder)
                 ivFullPlayerStationArtwork.setImageResource(R.drawable.ic_radio_placeholder)
-                ibFullPlayerFavorite.setImageResource(R.drawable.ic_star_border) // Default if no station
+                ibFullPlayerFavorite.setImageResource(R.drawable.ic_star_border)
             }
         }
 
@@ -332,6 +327,28 @@ class MainActivity : AppCompatActivity(), SleepTimerDialogFragment.SleepTimerDia
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
                 // Optionally, tell ViewModel to clear the error after showing
                 // playbackViewModel.clearError()
+            }
+        }
+    }
+
+    // New helper method to centralize visibility logic
+    private fun updatePlayerUIVisibility(station: RadioStation?) {
+        if (station != null) {
+            // A station is active or being loaded
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                newMiniPlayerViewContainer.visibility = View.GONE
+            } else {
+                newMiniPlayerViewContainer.visibility = View.VISIBLE
+                // Ensure marquee is active for mini player station name if it's visible
+                tvNewMiniPlayerStationName.isSelected = true
+            }
+        } else {
+            // No station is active
+            newMiniPlayerViewContainer.visibility = View.GONE
+            // If no station, and full player is not already hidden, hide it.
+            // This prevents an empty full player from showing if it was previously expanded.
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
     }
