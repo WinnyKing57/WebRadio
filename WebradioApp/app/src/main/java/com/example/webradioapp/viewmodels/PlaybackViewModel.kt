@@ -37,7 +37,14 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
             // Start observing LiveData from the service instance
             streamingService?.isPlaying?.observeForever(isPlayingObserver)
             streamingService?.currentPlayingStation?.observeForever(currentStationObserver)
-            streamingService?.playerError?.observeForever(playerErrorObserver) // Assuming service will have this
+            streamingService?.playerError?.observeForever(playerErrorObserver)
+
+            // Explicitly update ViewModel's LiveData with current values from the service.
+            // This is a defensive measure; observeForever should ideally handle this by
+            // immediately invoking the observer with the current value if one exists.
+            currentStationObserver.invoke(streamingService?.currentPlayingStation?.value)
+            isPlayingObserver.invoke(streamingService?.isPlaying?.value ?: false)
+            playerErrorObserver.invoke(streamingService?.playerError?.value)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
