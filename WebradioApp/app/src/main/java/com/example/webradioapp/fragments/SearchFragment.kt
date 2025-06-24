@@ -70,22 +70,41 @@ class SearchFragment : Fragment() {
     private var tagsList: List<Tag> = emptyList()
 
     private val apiService: RadioBrowserApiService by lazy { ApiClient.instance }
-    private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels() // Assuming this is already corrected or has a default constructor
-    private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels {
+
+    // Corrected instantiation for stationViewModel using StationViewModelFactory
+    private val stationViewModel: com.example.webradioapp.viewmodels.StationViewModel by viewModels {
         val application = requireActivity().application
         val db = com.example.webradioapp.db.AppDatabase.getDatabase(application)
-
-        val apiClientInstance = com.example.webradioapp.network.ApiClient.instance
-        val apiServ: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance // Renamed to apiServ to avoid conflict if any
+        val apiClientInstance = com.example.webradioapp.network.ApiClient.instance // Ensure ApiClient is correctly providing the service
+        val localApiService: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance // Use a local variable
 
         val stationRepository = com.example.webradioapp.db.StationRepository(
-            application,
+            application.applicationContext, // Use applicationContext
             db.favoriteStationDao(),
             db.historyStationDao(),
             db.countryDao(),
             db.genreDao(),
             db.languageDao(),
-            apiServ
+            localApiService // Pass the local ApiService instance
+        )
+        com.example.webradioapp.viewmodels.StationViewModelFactory(application, stationRepository)
+    }
+
+    private val favoritesViewModel: com.example.webradioapp.viewmodels.FavoritesViewModel by viewModels {
+        val application = requireActivity().application
+        val db = com.example.webradioapp.db.AppDatabase.getDatabase(application)
+
+        val apiClientInstance = com.example.webradioapp.network.ApiClient.instance
+        val localApiService: com.example.webradioapp.network.RadioBrowserApiService = apiClientInstance // Use a local variable for clarity
+
+        val stationRepository = com.example.webradioapp.db.StationRepository(
+            application.applicationContext, // Use applicationContext
+            db.favoriteStationDao(),
+            db.historyStationDao(),
+            db.countryDao(),
+            db.genreDao(),
+            db.languageDao(),
+            localApiService // Pass the local ApiService instance
         )
 
         com.example.webradioapp.viewmodels.FavoritesViewModelFactory(application, stationRepository)
